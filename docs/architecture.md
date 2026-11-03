@@ -38,8 +38,16 @@ expanded with the groups of `Search/synonyms.json` that have a word starting wit
 typed already finds its translation. An icon matches when, for every typed word, one of its names, its library or its
 identifier starts with one of the expansions.
 
-The names of the icons come from `Search/icon-names.json` (`{ "imageres.dll": { "3": ["folder", "carpeta"] } }`),
-loaded into the cache on every start.
+The names of the icons come from `Search/icon-names.json`, loaded into the cache on every start. Each icon has its
+English name, its Spanish name and a few keywords in both languages:
+`{ "imageres.dll": { "108": ["Music folder", "Carpeta de música", "audio", "song", "canción"] } }`. The window shows
+the name of the language of the interface, and the search uses the words of both names and of the keywords. Icons
+whose pixels at 48 px are exactly the same as an earlier one also carry the keywords `duplicate` and `duplicado`.
+
+The catalog was written by looking at every icon of a build of Windows 11 from 2026 with `tools/IconExport`, which
+exports each icon to PNG, lists the identical ones in `duplicates.txt` and draws contact sheets with the identifier
+under each icon (`dotnet run --project tools/IconExport -p:Platform=x64`; its output in `tools/IconExport/out` is not
+versioned). Icons added by later builds of Windows are shown with their identifier until the catalog names them.
 
 ## Folder changes
 
@@ -58,8 +66,6 @@ Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the
 
 ## Still missing
 
-- **Names of the icons:** `icon-names.json` is empty, so the grid names each icon *Icon <id>* and the search only
-  finds icons by library and identifier until the catalog is filled in. The synonyms are ready.
 - **Check on a real folder:** the package builds and its manifest validates, but applying an icon from the context
   menu has not been tried on an installed package yet. In particular, confirm that the shell writes `IconResource`
   (not `IconFile` and `IconIndex`) and keeps `%SystemRoot%` unexpanded.

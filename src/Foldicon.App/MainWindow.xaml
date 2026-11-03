@@ -62,7 +62,7 @@
         ContainerContentChanging="OnContainerContentChanging">
         <GridView.ItemTemplate>
           <DataTemplate x:DataType="models:IconItem">
-            <Grid Width="56" Height="56" ToolTipService.ToolTip="{x:Bind Reference}">
+            <Grid Width="56" Height="56" ToolTipService.ToolTip="{x:Bind ToolTip}">
               <Image Source="{x:Bind Image, Mode=OneWay}" Width="32" Height="32" />
             </Grid>
           </DataTemplate>

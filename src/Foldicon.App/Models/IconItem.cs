@@ -20,8 +20,11 @@ public sealed partial class IconItem(IconReference icon, string name) : INotifyP
 
     public string Name { get; } = name;
 
-    // Text shown under the name and in the tooltip, as in "imageres.dll,-3"
+    // Text shown under the name, as in "imageres.dll,-3"
     public string Reference => Icon.ToString();
+
+    // Text of the tooltip of the cell: the name over the reference
+    public string ToolTip => $"{Name}{Environment.NewLine}{Reference}";
 
     public ImageSource? Image
     {

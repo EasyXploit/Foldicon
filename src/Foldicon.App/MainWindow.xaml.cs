@@ -28,6 +28,8 @@ public sealed partial class MainWindow : Window
     private readonly FolderIconService folders = FolderIconService.ForSystem();
     private readonly SynonymTable synonyms = SynonymTable.LoadEmbedded();
     private readonly Dictionary<IconReference, IconItem> items = [];
+    private readonly Dictionary<IconReference, IconCatalogEntry> catalog =
+        IconCatalog.LoadEmbedded().ToDictionary(entry => entry.Icon);
     private IconIndexStore? store;
 
     // IconResource the folder had before it was restored, for Undo
@@ -74,7 +76,7 @@ public sealed partial class MainWindow : Window
             {
                 var opened = IconIndexStore.OpenDefault();
                 IconIndexer.ForSystem(opened).Refresh(SystemIconLibraries.All);
-                opened.ReplaceNames(IconCatalog.LoadEmbedded());
+                opened.ReplaceNames(IconCatalog.Terms(catalog.Values));
                 return opened;
             });
             Filter();
@@ -109,8 +111,11 @@ public sealed partial class MainWindow : Window
         {
             if (!items.TryGetValue(icon, out var item))
             {
-                // TODO: show the name of the catalog once icon-names.json is filled in
-                item = new IconItem(icon, string.Format(System.Globalization.CultureInfo.CurrentCulture, strings.GetString("IconNameFormat"), icon.ResourceId));
+                // Names the icon in the language of the interface, or by its identifier when the catalog lacks it
+                var name = catalog.TryGetValue(icon, out var entry)
+                    ? entry.NameFor(System.Globalization.CultureInfo.CurrentUICulture)
+                    : string.Format(System.Globalization.CultureInfo.CurrentCulture, strings.GetString("IconNameFormat"), icon.ResourceId);
+                item = new IconItem(icon, name);
                 items[icon] = item;
             }
 

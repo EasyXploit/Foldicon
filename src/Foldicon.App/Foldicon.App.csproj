@@ -13,6 +13,8 @@
     <!-- One runtime per package, so it only carries the native SQLite of its own architecture -->
     <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
     <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <!-- Carries the .NET runtime inside the package, so it installs on a PC without .NET -->
+    <SelfContained>true</SelfContained>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsPackageType>MSIX</WindowsPackageType>

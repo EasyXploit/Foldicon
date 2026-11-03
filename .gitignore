@@ -50,3 +50,6 @@ logs/
 
 # Output of the icon export tool
 tools/IconExport/out/
+
+# Local installers built by scripts/Build-Installer.ps1
+dist/

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Windows 10 2004 or later, with *Developer mode* on to install local packages.
+- Windows 10 2004 or later.
 - .NET 10 SDK.
 - Visual Studio 2026 with the *.NET desktop development* and *Desktop development with C++* workloads. ARM64 builds of
   the context menu also need the *MSVC ARM64 build tools* component.
@@ -21,21 +21,29 @@ $msbuild = "$env:ProgramFiles\Microsoft Visual Studio\18\Community\MSBuild\Curre
 `dotnet build src\Foldicon.App -p:Platform=x64` still works for the app alone: it warns that the package will have no
 context menu when the DLL of the extension was not built before.
 
-## Package, sign and install
+## Local installer
 
 ```powershell
-# Creates the development certificate once; -Trust needs an elevated PowerShell
-.\scripts\New-DevCertificate.ps1 -Trust
-
-# Builds the MSIX
-& $msbuild src\Foldicon.App\Foldicon.App.csproj -p:Configuration=Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageDir=..\..\AppPackages\
-
-# Signs it and installs it
-.\scripts\Sign-Package.ps1 -Package AppPackages\Foldicon.App_0.1.0.0_x64_Test\Foldicon.App_0.1.0.0_x64.msix
-Add-AppxPackage AppPackages\Foldicon.App_0.1.0.0_x64_Test\Foldicon.App_0.1.0.0_x64.msix
+.\scripts\Build-Installer.ps1            # or -Platform ARM64
 ```
 
-Explorer loads new context menu commands when it starts again: sign out or restart Explorer after the first install.
+It builds the solution in Release, packages the app, signs the MSIX with the development certificate (created in the
+store of the current user by `scripts\New-DevCertificate.ps1` when it is missing) and lays out
+`dist\Foldicon-<version>\`:
+
+| File | What it is |
+| --- | --- |
+| `Foldicon_<version>_<platform>.msix` | The signed package. It carries .NET, so the PC needs no runtime installed. |
+| `Dependencies\*.msix` | The Windows App Runtime the package depends on. |
+| `Foldicon.cer` | The public part of the development certificate. The private key never leaves the store. |
+| `Install.cmd`, `Install.ps1` | Trust the certificate in Trusted People (one administrator prompt) and install the package for the current user. |
+| `Uninstall.cmd`, `Uninstall.ps1` | Remove the package; `-RemoveCertificate` also stops trusting the certificate. |
+| `README.txt` | The same instructions, in English and Spanish. |
+
+The script never trusts the certificate nor installs anything on the PC that builds it. The sources of the files of the
+installer are in `scripts\installer\`, and `dist\` is not versioned.
+
+Explorer loads new context menu commands when it starts again: sign out and in after the first install.
 
 The Store builds are uploaded unsigned (`.msixupload`), and the Store signs them with the identity reserved for the
 app; the development certificate is never part of them.

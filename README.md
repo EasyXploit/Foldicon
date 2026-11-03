@@ -49,8 +49,8 @@ nuget.org.
 dotnet test tests\Foldicon.Core.Tests -p:Platform=x64
 ```
 
-To try the package locally, see [docs/building.md](docs/building.md): it is signed with a self-signed development
-certificate created by `scripts\New-DevCertificate.ps1`.
+To build a local installer, run `scripts\Build-Installer.ps1`: it leaves in `dist\Foldicon-<version>\` a signed MSIX
+with an `Install.cmd` that installs it on any PC. See [docs/building.md](docs/building.md).
 
 ## Distribution
 

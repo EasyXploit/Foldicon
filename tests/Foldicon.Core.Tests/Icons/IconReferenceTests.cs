@@ -14,6 +14,12 @@ public sealed class IconReferenceTests
     }
 
     [TestMethod]
+    public void writes_the_library_path_unexpanded()
+    {
+        Assert.AreEqual(@"%SystemRoot%\System32\shell32.dll", new IconReference("shell32.dll", 4).LibraryPath());
+    }
+
+    [TestMethod]
     public void shows_library_and_negative_identifier()
     {
         Assert.AreEqual("shell32.dll,-16802", new IconReference("shell32.dll", 16802).ToString());

@@ -1,7 +1,7 @@
 // Declarations of the shell, user and GDI functions used to turn an icon of a library into pixels
 using System.Runtime.InteropServices;
 
-namespace Foldicon.App.Interop;
+namespace Foldicon.Core.Interop;
 
 internal static partial class NativeIcons
 {

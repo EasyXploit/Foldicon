@@ -1,6 +1,7 @@
 // Function to load an icon as an image of the interface, reading its pixels off the interface thread
 using System.Runtime.InteropServices.WindowsRuntime;
 using Foldicon.Core.Icons;
+using Foldicon.Core.Imaging;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -11,8 +12,17 @@ internal static class IconImageLoader
     // Returns the icon at the size in physical pixels, or null when it cannot be read
     public static async Task<ImageSource?> LoadAsync(IconReference icon, int size)
     {
-        // Reads the pixels in the background
-        var pixels = await Task.Run(() => IconPixelReader.Read(icon, size));
+        // Reads the pixels in the background, premultiplied as WriteableBitmap expects
+        var pixels = await Task.Run(() =>
+        {
+            var read = IconPixelReader.Read(icon, size);
+            if (read is not null)
+            {
+                IconPixels.Premultiply(read);
+            }
+
+            return read;
+        });
         if (pixels is null)
         {
             return null;

@@ -8,7 +8,7 @@ namespace Foldicon.Core.Storage;
 public sealed class IconIndexStore : IDisposable
 {
     // Version of the schema; a cache written with another one is dropped and rebuilt
-    private const int SchemaVersion = 1;
+    private const int SchemaVersion = 2;
 
     private readonly SqliteConnection connection;
 
@@ -49,7 +49,7 @@ public sealed class IconIndexStore : IDisposable
                 library TEXT NOT NULL,
                 resource_id INTEGER NOT NULL,
                 term TEXT NOT NULL);
-            CREATE INDEX IF NOT EXISTS names_by_term ON names (term);
+            CREATE INDEX IF NOT EXISTS names_by_icon ON names (library, resource_id, term);
             PRAGMA user_version = {SchemaVersion};
             """);
     }

@@ -1,0 +1,15 @@
+<!-- Development tool that exports every system icon to PNG and draws contact sheets to name them -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>Foldicon.Tools.IconExport</RootNamespace>
+    <Platforms>x64;ARM64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Foldicon.Core\Foldicon.Core.csproj" />
+  </ItemGroup>
+</Project>

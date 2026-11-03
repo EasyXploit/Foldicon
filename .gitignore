@@ -47,3 +47,6 @@ logs/
 *.msixbundle
 *.msixupload
 **/coverage/
+
+# Output of the icon export tool
+tools/IconExport/out/

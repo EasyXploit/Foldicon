@@ -1,0 +1,270 @@
+// Window of the picker: loads the index, filters it and applies the chosen icon to the folder
+using System.Diagnostics;
+using Foldicon.App.Imaging;
+using Foldicon.App.Interop;
+using Foldicon.App.Models;
+using Foldicon.Core.Folders;
+using Foldicon.Core.Icons;
+using Foldicon.Core.Indexing;
+using Foldicon.Core.Search;
+using Foldicon.Core.Storage;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.Windows.ApplicationModel.Resources;
+using Windows.Graphics;
+using Windows.System;
+
+namespace Foldicon.App;
+
+public sealed partial class MainWindow : Window
+{
+    // Size of the window in effective pixels
+    private const int WindowWidth = 900;
+    private const int WindowHeight = 640;
+
+    private readonly string? folder;
+    private readonly ResourceLoader strings = new();
+    private readonly FolderIconService folders = FolderIconService.ForSystem();
+    private readonly SynonymTable synonyms = SynonymTable.LoadEmbedded();
+    private readonly Dictionary<IconReference, IconItem> items = [];
+    private IconIndexStore? store;
+
+    // IconResource the folder had before the last change, for Undo
+    private string? previousIcon;
+
+    public MainWindow(string? folder)
+    {
+        this.folder = folder;
+        InitializeComponent();
+
+        // Draws the content under the title bar, over Mica, at a compact size
+        Title = strings.GetString("AppDisplayName");
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(TitleBar);
+        var scale = NativeDpi.GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
+        AppWindow.Resize(new SizeInt32((int)(WindowWidth * scale), (int)(WindowHeight * scale)));
+        AppWindow.SetIcon("Assets/Foldicon.ico");
+
+        // Adds one tab per library after "All"
+        foreach (var library in SystemIconLibraries.All)
+        {
+            LibraryBar.Items.Add(new SelectorBarItem { Text = library, Tag = library });
+        }
+
+        // Shows the folder, or explains how to open the app when there is none
+        FolderText.Text = folder ?? "";
+        if (folder is null || !Directory.Exists(folder))
+        {
+            ShowResult(InfoBarSeverity.Error, folder is null ? "NoFolderMessage" : "FolderNotFoundMessage", canUndo: false);
+            ApplyButton.IsEnabled = false;
+            RestoreButton.IsEnabled = false;
+        }
+
+        Root.Loaded += OnLoaded;
+        Closed += (_, _) => store?.Dispose();
+    }
+
+    // Opens the cache and brings it up to date in the background, then shows every icon
+    private async void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            store = await Task.Run(() =>
+            {
+                var opened = IconIndexStore.OpenDefault();
+                IconIndexer.ForSystem(opened).Refresh(SystemIconLibraries.All);
+                opened.ReplaceNames(IconCatalog.LoadEmbedded());
+                return opened;
+            });
+            Filter();
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or Microsoft.Data.Sqlite.SqliteException)
+        {
+            Trace.TraceError($"Index failed: {exception}");
+            ShowResult(InfoBarSeverity.Error, "IndexFailedMessage", canUndo: false);
+        }
+        finally
+        {
+            LoadingRing.IsActive = false;
+        }
+
+        SearchBox.Focus(FocusState.Programmatic);
+    }
+
+    // Shows the icons that match the search box and the selected tab
+    private void Filter()
+    {
+        if (store is null)
+        {
+            return;
+        }
+
+        // Runs the search with the synonyms of each typed word
+        var library = LibraryBar.SelectedItem?.Tag as string;
+        var results = store.Search(SearchQuery.Parse(SearchBox.Text, synonyms), library);
+
+        // Reuses the items already built, so their images stay loaded
+        var shown = results.Select(icon =>
+        {
+            if (!items.TryGetValue(icon, out var item))
+            {
+                // TODO: show the name of the catalog once icon-names.json is filled in
+                item = new IconItem(icon, string.Format(System.Globalization.CultureInfo.CurrentCulture, strings.GetString("IconNameFormat"), icon.ResourceId));
+                items[icon] = item;
+            }
+
+            return item;
+        }).ToList();
+
+        IconGrid.ItemsSource = shown;
+        EmptyText.Visibility = shown.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        if (shown.Count > 0)
+        {
+            IconGrid.SelectedIndex = 0;
+        }
+    }
+
+    // Loads the image of a cell when the grid draws it for the first time
+    private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (!args.InRecycleQueue && args.Item is IconItem item)
+        {
+            item.EnsureImage(Root.XamlRoot?.RasterizationScale ?? 1.0);
+        }
+    }
+
+    // Shows the selected icon at every size of the preview
+    private async void OnIconSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (IconGrid.SelectedItem is not IconItem item)
+        {
+            return;
+        }
+
+        SelectedName.Text = item.Name;
+        SelectedReference.Text = item.Reference;
+        var scale = Root.XamlRoot?.RasterizationScale ?? 1.0;
+        foreach (var (image, size) in new[] { (Preview256, 256), (Preview48, 48), (Preview32, 32), (Preview24, 24), (Preview16, 16) })
+        {
+            var source = await IconImageLoader.LoadAsync(item.Icon, (int)Math.Round(size * scale));
+
+            // Stops when another icon was selected while this one was loading
+            if (IconGrid.SelectedItem != item)
+            {
+                return;
+            }
+
+            image.Source = source;
+        }
+    }
+
+    // Applies the selected icon and offers to undo it
+    private void ApplySelected()
+    {
+        if (folder is null || !ApplyButton.IsEnabled || IconGrid.SelectedItem is not IconItem item)
+        {
+            return;
+        }
+
+        Run(() => previousIcon = folders.Apply(folder, item.Icon), "AppliedMessage", canUndo: true);
+    }
+
+    // Puts back the default icon of the folder and offers to undo it
+    private void OnRestoreClick(object sender, RoutedEventArgs e)
+    {
+        if (folder is null)
+        {
+            return;
+        }
+
+        Run(() =>
+        {
+            previousIcon = folders.GetCurrent(folder);
+            folders.Restore(folder);
+        }, "RestoredMessage", canUndo: true);
+    }
+
+    // Puts back the icon the folder had before the last change
+    private void OnUndoClick(object sender, RoutedEventArgs e)
+    {
+        if (folder is null)
+        {
+            return;
+        }
+
+        Run(() => folders.Undo(folder, previousIcon), "UndoneMessage", canUndo: false);
+    }
+
+    // Runs a change of the folder and reports how it went
+    private void Run(Action change, string successMessage, bool canUndo)
+    {
+        try
+        {
+            change();
+            ShowResult(InfoBarSeverity.Success, successMessage, canUndo);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.COMException)
+        {
+            Trace.TraceError($"Folder change failed: {exception}");
+            ShowResult(InfoBarSeverity.Error, "ApplyFailedMessage", canUndo: false);
+        }
+    }
+
+    // Opens the bar of results with a translated message
+    private void ShowResult(InfoBarSeverity severity, string message, bool canUndo)
+    {
+        ResultBar.Severity = severity;
+        ResultBar.Message = strings.GetString(message);
+        UndoButton.Visibility = canUndo ? Visibility.Visible : Visibility.Collapsed;
+        ResultBar.IsOpen = true;
+    }
+
+    private void OnApplyClick(object sender, RoutedEventArgs e) => ApplySelected();
+
+    private void OnIconDoubleTapped(object sender, DoubleTappedRoutedEventArgs e) => ApplySelected();
+
+    private void OnCancelClick(object sender, RoutedEventArgs e) => Close();
+
+    private void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) => Filter();
+
+    private void OnLibraryChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args) => Filter();
+
+    // Moves to the grid when the search is submitted
+    private void OnSearchSubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) =>
+        IconGrid.Focus(FocusState.Keyboard);
+
+    // Moves to the grid with the down arrow
+    private void OnSearchKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Down)
+        {
+            IconGrid.Focus(FocusState.Keyboard);
+            e.Handled = true;
+        }
+    }
+
+    // Applies the selected icon with Enter
+    private void OnGridKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Enter)
+        {
+            ApplySelected();
+            e.Handled = true;
+        }
+    }
+
+    // Moves to the search box with Ctrl+F
+    private void OnFindInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        SearchBox.Focus(FocusState.Keyboard);
+        args.Handled = true;
+    }
+
+    // Closes the window with Esc
+    private void OnEscapeInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        Close();
+        args.Handled = true;
+    }
+}

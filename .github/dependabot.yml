@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # NuGet packages of every project, versioned in Directory.Packages.props
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+
+  # Actions used by the workflows
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

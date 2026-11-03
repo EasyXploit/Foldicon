@@ -1,0 +1,49 @@
+# .NET and Visual Studio
+bin/
+obj/
+x64/
+ARM64/
+AppPackages/
+BundleArtifacts/
+.vs/
+*.user
+*.suo
+packages/
+TestResults/
+
+# C++ build output
+*.ipch
+*.aps
+*.VC.db
+*.VC.opendb
+
+# Editors and system
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Local data and secrets
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-journal
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+
+# Logs
+*.log
+logs/
+
+# Generated packages and coverage
+*.msix
+*.msixbundle
+*.msixupload
+**/coverage/

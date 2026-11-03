@@ -1,0 +1,25 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="ARM64" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/Foldicon.App/Foldicon.App.csproj">
+      <BuildDependency Project="src/Foldicon.ContextMenu/Foldicon.ContextMenu.vcxproj" />
+      <Deploy />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+    </Project>
+    <Project Path="src/Foldicon.ContextMenu/Foldicon.ContextMenu.vcxproj" Id="3d1a7c52-6e0b-4f3a-9c1d-2b7e5a4f8c10" />
+    <Project Path="src/Foldicon.Core/Foldicon.Core.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Foldicon.Core.Tests/Foldicon.Core.Tests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+    </Project>
+  </Folder>
+</Solution>

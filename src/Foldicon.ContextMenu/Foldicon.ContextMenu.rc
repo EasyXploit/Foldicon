@@ -1,0 +1,15 @@
+// Strings of the context menu in English and Spanish; Windows picks the one of the language of the user
+#include <winres.h>
+#include "resource.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+STRINGTABLE
+BEGIN
+    IDS_CHANGE_FOLDER_ICON "Change folder icon..."
+END
+
+LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_MODERN
+STRINGTABLE
+BEGIN
+    IDS_CHANGE_FOLDER_ICON "Cambiar icono de carpeta..."
+END

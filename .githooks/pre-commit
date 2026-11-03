@@ -1,0 +1,13 @@
+#!/bin/sh
+# Blocks the commit when gitleaks finds a secret in the staged changes.
+# Install gitleaks from https://github.com/gitleaks/gitleaks/releases and keep it in the PATH.
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks no está instalado; instálalo antes de hacer commit" >&2
+    exit 1
+fi
+
+if ! gitleaks git --pre-commit --staged --redact --no-banner --verbose .; then
+    echo "pre-commit: gitleaks ha encontrado un posible secreto en los cambios; quítalo antes de hacer commit" >&2
+    exit 1
+fi

@@ -1,0 +1,26 @@
+# Builds the whole solution, including the C++ context menu, and runs the unit tests of the core
+name: build
+
+on:
+  push:
+  pull_request:
+
+# The jobs only read the code; no token can write to the repository
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      # Official action only; pin it to a full commit SHA when the repository is published
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # MSBuild of the Visual Studio already on the runner, located without third-party actions
+      - shell: pwsh
+        run: |
+          $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | Select-Object -First 1
+          & $msbuild Foldicon.slnx -restore -p:Configuration=Release -p:Platform=x64 -nologo -v:m
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - run: dotnet test tests/Foldicon.Core.Tests -c Release -p:Platform=x64 --no-build

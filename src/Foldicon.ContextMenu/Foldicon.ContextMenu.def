@@ -1,0 +1,4 @@
+; Entry points of the COM server, called by the surrogate process of Explorer
+EXPORTS
+    DllGetClassObject PRIVATE
+    DllCanUnloadNow PRIVATE

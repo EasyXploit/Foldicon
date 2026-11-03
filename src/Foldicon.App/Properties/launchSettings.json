@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Foldicon (Package)": {
+      "commandName": "MsixPackage",
+      "commandLineArgs": "--pick \"%USERPROFILE%\\Pictures\""
+    }
+  }
+}

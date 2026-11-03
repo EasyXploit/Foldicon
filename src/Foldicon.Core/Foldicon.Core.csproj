@@ -1,0 +1,18 @@
+<!-- Logic of Foldicon without interface: icon index, search and folder customization -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>Foldicon.Core</RootNamespace>
+    <Platforms>x64;ARM64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Search\synonyms.json" LogicalName="Foldicon.Core.synonyms.json" />
+    <EmbeddedResource Include="Search\icon-names.json" LogicalName="Foldicon.Core.icon-names.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Foldicon.Core.Tests" />
+  </ItemGroup>
+</Project>

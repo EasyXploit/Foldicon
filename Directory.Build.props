@@ -1,0 +1,16 @@
+<!-- Build settings shared by every .NET project of the repository -->
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Company>Sencimo Labs</Company>
+    <Product>Foldicon</Product>
+    <Copyright>Copyright (c) 2026 Sencimo Labs</Copyright>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

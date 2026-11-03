@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Interface strings in Spanish; every key exists in both languages -->
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Foldicon</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Cambia el icono de una carpeta con los iconos de Windows.</value>
+  </data>
+  <data name="AppTitle.Text" xml:space="preserve">
+    <value>Foldicon</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Buscar iconos (Ctrl+F)</value>
+  </data>
+  <data name="AllTab.Text" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="EmptyText.Text" xml:space="preserve">
+    <value>Ningún icono coincide con la búsqueda.</value>
+  </data>
+  <data name="IconNameFormat" xml:space="preserve">
+    <value>Icono {0}</value>
+  </data>
+  <data name="RestoreButton.Content" xml:space="preserve">
+    <value>Restaurar predeterminado</value>
+  </data>
+  <data name="CancelButton.Content" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="ApplyButton.Content" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="UndoButton.Content" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="AppliedMessage" xml:space="preserve">
+    <value>Se ha aplicado el icono a la carpeta.</value>
+  </data>
+  <data name="RestoredMessage" xml:space="preserve">
+    <value>Se ha restaurado el icono predeterminado.</value>
+  </data>
+  <data name="UndoneMessage" xml:space="preserve">
+    <value>Se ha deshecho el cambio.</value>
+  </data>
+  <data name="ApplyFailedMessage" xml:space="preserve">
+    <value>No se ha podido cambiar el icono de la carpeta. Comprueba que puedes escribir en ella.</value>
+  </data>
+  <data name="IndexFailedMessage" xml:space="preserve">
+    <value>No se han podido leer los iconos de Windows.</value>
+  </data>
+  <data name="NoFolderMessage" xml:space="preserve">
+    <value>Abre Foldicon desde el menú contextual de una carpeta: Cambiar icono de carpeta…</value>
+  </data>
+  <data name="FolderNotFoundMessage" xml:space="preserve">
+    <value>La carpeta no existe.</value>
+  </data>
+</root>

@@ -1,0 +1,54 @@
+<!-- WinUI 3 app of the icon picker, packaged as MSIX together with the context menu extension -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <RootNamespace>Foldicon.App</RootNamespace>
+    <AssemblyName>Foldicon</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Foldicon.ico</ApplicationIcon>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <!-- One runtime per package, so it only carries the native SQLite of its own architecture -->
+    <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsPackageType>MSIX</WindowsPackageType>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <!-- Local packages are signed by scripts/Sign-Package.ps1; the Store signs its own -->
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxBundle>Never</AppxBundle>
+    <GenerateAppInstallerFile>false</GenerateAppInstallerFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Foldicon.Core\Foldicon.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\**\*.png" />
+    <Content Include="Assets\Foldicon.ico" />
+  </ItemGroup>
+
+  <!-- Puts the context menu DLL, built before by MSBuild from the solution, at the root of the package -->
+  <PropertyGroup>
+    <ContextMenuDll>$(MSBuildThisFileDirectory)..\Foldicon.ContextMenu\bin\$(Platform)\$(Configuration)\Foldicon.ContextMenu.dll</ContextMenuDll>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(ContextMenuDll)')">
+    <Content Include="$(ContextMenuDll)" Link="Foldicon.ContextMenu.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="WarnMissingContextMenu" BeforeTargets="Build" Condition="!Exists('$(ContextMenuDll)')">
+    <Warning Text="Foldicon.ContextMenu.dll is not built for $(Platform)|$(Configuration); the package will have no context menu. Build Foldicon.slnx with MSBuild." />
+  </Target>
+
+  <ItemGroup>
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+</Project>

@@ -45,13 +45,14 @@ loaded into the cache on every start.
 
 `FolderIconService` works through two interfaces, so it is tested without the shell or the disk:
 
-- **Apply** reads the current `IconResource` (kept for *Undo*) and calls `SHGetSetFolderCustomSettings` with
+- **Apply** reads the current `IconResource`, which it returns, and calls `SHGetSetFolderCustomSettings` with
   `FCSM_ICONFILE`, `%SystemRoot%\System32\<library>` and `-<id>`. The shell merges the key into the existing
   `desktop.ini` and marks the folder as customized.
 - **Restore** removes only `IconResource` from `[.ShellClassInfo]`, drops the section if nothing is left in it, and
   deletes the file, with the read-only and system marks of the folder, if the file is left empty. The file keeps its
   encoding (UTF-16 as the shell writes it, or its bytes unchanged otherwise).
-- **Undo** writes the previous value again, or restores the default icon when there was none.
+- **Undo** writes the previous value again, or restores the default icon when there was none. The window offers it
+  after *Restore default*; *Apply* closes the window as soon as the icon is written.
 
 Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the folder.
 

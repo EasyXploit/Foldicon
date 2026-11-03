@@ -30,7 +30,7 @@ public sealed partial class MainWindow : Window
     private readonly Dictionary<IconReference, IconItem> items = [];
     private IconIndexStore? store;
 
-    // IconResource the folder had before the last change, for Undo
+    // IconResource the folder had before it was restored, for Undo
     private string? previousIcon;
 
     public MainWindow(string? folder)
@@ -159,7 +159,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    // Applies the selected icon and offers to undo it
+    // Applies the selected icon and closes the window, or stays open to show why it failed
     private void ApplySelected()
     {
         if (folder is null || !ApplyButton.IsEnabled || IconGrid.SelectedItem is not IconItem item)
@@ -167,7 +167,10 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        Run(() => previousIcon = folders.Apply(folder, item.Icon), "AppliedMessage", canUndo: true);
+        if (Run(() => folders.Apply(folder, item.Icon), successMessage: null, canUndo: false))
+        {
+            Close();
+        }
     }
 
     // Puts back the default icon of the folder and offers to undo it
@@ -196,18 +199,24 @@ public sealed partial class MainWindow : Window
         Run(() => folders.Undo(folder, previousIcon), "UndoneMessage", canUndo: false);
     }
 
-    // Runs a change of the folder and reports how it went
-    private void Run(Action change, string successMessage, bool canUndo)
+    // Runs a change of the folder, reports how it went when there is a message for it, and returns whether it worked
+    private bool Run(Action change, string? successMessage, bool canUndo)
     {
         try
         {
             change();
-            ShowResult(InfoBarSeverity.Success, successMessage, canUndo);
+            if (successMessage is not null)
+            {
+                ShowResult(InfoBarSeverity.Success, successMessage, canUndo);
+            }
+
+            return true;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.COMException)
         {
             Trace.TraceError($"Folder change failed: {exception}");
             ShowResult(InfoBarSeverity.Error, "ApplyFailedMessage", canUndo: false);
+            return false;
         }
     }
 

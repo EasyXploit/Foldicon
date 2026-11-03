@@ -46,9 +46,6 @@
   <data name="UndoButton.Content" xml:space="preserve">
     <value>Deshacer</value>
   </data>
-  <data name="AppliedMessage" xml:space="preserve">
-    <value>Se ha aplicado el icono a la carpeta.</value>
-  </data>
   <data name="RestoredMessage" xml:space="preserve">
     <value>Se ha restaurado el icono predeterminado.</value>
   </data>

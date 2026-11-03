@@ -46,9 +46,6 @@
   <data name="UndoButton.Content" xml:space="preserve">
     <value>Undo</value>
   </data>
-  <data name="AppliedMessage" xml:space="preserve">
-    <value>The icon was applied to the folder.</value>
-  </data>
   <data name="RestoredMessage" xml:space="preserve">
     <value>The default icon was restored.</value>
   </data>

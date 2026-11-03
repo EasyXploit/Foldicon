@@ -12,8 +12,8 @@ choose **Change folder icon…**, search the icon, and apply it.
   icons, and a preview at 16, 24, 32, 48 and 256 px with the name and the `library,-id` reference of the icon.
 - **Search** by name in English and Spanish, with synonyms (`carpeta` also finds `folder`), and by library or
   identifier (`shell32 4`).
-- **Apply, restore and undo:** *Apply* writes the icon, *Restore default* removes it, and the bar that confirms either
-  change offers *Undo*.
+- **Apply and restore:** *Apply* writes the icon and closes the window; *Restore default* removes it, and the bar that
+  confirms it offers *Undo*.
 - **Keyboard:** <kbd>Ctrl</kbd>+<kbd>F</kbd> goes to the search box, the arrows move in the grid,
   <kbd>Enter</kbd> or a double click applies, <kbd>Esc</kbd> closes.
 - **Icons of** `imageres.dll`, `shell32.dll`, `ddores.dll`, `pifmgr.dll`, `moricons.dll`, `wmploc.dll`,

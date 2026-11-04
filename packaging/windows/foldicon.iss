@@ -53,6 +53,9 @@ Compression=lzma2/ultra
 SolidCompression=yes
 WizardStyle=modern
 
+; Keeps a log in the temporary folder, to see why the registration of the context menu failed
+SetupLogging=yes
+
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -94,6 +97,7 @@ begin
   Result := ExecAsOriginalUser('powershell.exe',
     ExpandConstant('-NoProfile -ExecutionPolicy Bypass -File "{app}\shell\Register-Shell.ps1" -InstallFolder "{app}"'),
     '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
+  Log(Format('Registration of the context menu package finished with code %d', [ResultCode]));
 end;
 
 { Adds the classic item of the context menu of folders, for every user of the computer }

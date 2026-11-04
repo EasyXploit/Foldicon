@@ -64,4 +64,16 @@
   <data name="FolderNotFoundMessage" xml:space="preserve">
     <value>The folder does not exist.</value>
   </data>
+  <data name="TabsBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Previous tabs</value>
+  </data>
+  <data name="TabsBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Previous tabs</value>
+  </data>
+  <data name="TabsForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Next tabs</value>
+  </data>
+  <data name="TabsForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Next tabs</value>
+  </data>
 </root>

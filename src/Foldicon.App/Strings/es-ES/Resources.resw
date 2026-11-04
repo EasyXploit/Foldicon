@@ -64,4 +64,16 @@
   <data name="FolderNotFoundMessage" xml:space="preserve">
     <value>La carpeta no existe.</value>
   </data>
+  <data name="TabsBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Pestañas anteriores</value>
+  </data>
+  <data name="TabsBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pestañas anteriores</value>
+  </data>
+  <data name="TabsForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Pestañas siguientes</value>
+  </data>
+  <data name="TabsForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pestañas siguientes</value>
+  </data>
 </root>

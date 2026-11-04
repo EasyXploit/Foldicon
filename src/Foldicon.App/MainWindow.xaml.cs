@@ -23,6 +23,9 @@ public sealed partial class MainWindow : Window
     private const int WindowWidth = 900;
     private const int WindowHeight = 640;
 
+    // Share of the visible width that the arrows of the tabs scroll
+    private const double TabsScrollStep = 0.75;
+
     private readonly string? folder;
     private readonly ResourceLoader strings = new();
     private readonly FolderIconService folders = FolderIconService.ForSystem();
@@ -62,6 +65,9 @@ public sealed partial class MainWindow : Window
             ApplyButton.IsEnabled = false;
             RestoreButton.IsEnabled = false;
         }
+
+        // Listens to the wheel even after the scroll viewer handles it
+        LibraryScroller.AddHandler(UIElement.PointerWheelChangedEvent, new PointerEventHandler(OnLibraryWheel), true);
 
         Root.Loaded += OnLoaded;
         Closed += (_, _) => store?.Dispose();
@@ -249,7 +255,43 @@ public sealed partial class MainWindow : Window
 
     private void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) => Filter();
 
-    private void OnLibraryChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args) => Filter();
+    // Shows the icons of the selected tab and brings the tab into view, also when it was reached with the keyboard
+    private void OnLibraryChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    {
+        Filter();
+        sender.SelectedItem?.StartBringIntoView();
+    }
+
+    // Turns the wheel into a sideways scroll over the tabs
+    private void OnLibraryWheel(object sender, PointerRoutedEventArgs e)
+    {
+        var delta = e.GetCurrentPoint(LibraryScroller).Properties.MouseWheelDelta;
+        LibraryScroller.ChangeView(LibraryScroller.HorizontalOffset - delta, null, null);
+        e.Handled = true;
+    }
+
+    private void OnTabsBackClick(object sender, RoutedEventArgs e) => ScrollTabs(-1);
+
+    private void OnTabsForwardClick(object sender, RoutedEventArgs e) => ScrollTabs(1);
+
+    // Moves the tabs by most of the visible width
+    private void ScrollTabs(int direction) =>
+        LibraryScroller.ChangeView(LibraryScroller.HorizontalOffset + direction * LibraryScroller.ViewportWidth * TabsScrollStep, null, null);
+
+    private void OnLibraryScrollChanged(object? sender, ScrollViewerViewChangedEventArgs e) => UpdateTabArrows();
+
+    private void OnLibraryScrollerSizeChanged(object sender, SizeChangedEventArgs e) => UpdateTabArrows();
+
+    // Shows the arrows only when the tabs do not fit, and enables each one while there is room in its direction
+    private void UpdateTabArrows()
+    {
+        var overflow = LibraryScroller.ScrollableWidth > 0;
+        var visibility = overflow ? Visibility.Visible : Visibility.Collapsed;
+        TabsBackButton.Visibility = visibility;
+        TabsForwardButton.Visibility = visibility;
+        TabsBackButton.IsEnabled = LibraryScroller.HorizontalOffset > 0;
+        TabsForwardButton.IsEnabled = LibraryScroller.HorizontalOffset < LibraryScroller.ScrollableWidth - 1;
+    }
 
     // Moves to the grid when the search is submitted
     private void OnSearchSubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) =>

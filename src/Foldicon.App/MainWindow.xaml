@@ -41,9 +41,36 @@
       QuerySubmitted="OnSearchSubmitted"
       KeyDown="OnSearchKeyDown" />
 
-    <SelectorBar x:Name="LibraryBar" Grid.Row="2" SelectionChanged="OnLibraryChanged">
-      <SelectorBarItem x:Uid="AllTab" IsSelected="True" />
-    </SelectorBar>
+    <!-- One tab per library, scrolled sideways when they do not fit, with arrows only then -->
+    <Grid Grid.Row="2" ColumnSpacing="4">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <Button x:Name="TabsBackButton" x:Uid="TabsBackButton" Background="Transparent" BorderThickness="0" Padding="8" Visibility="Collapsed" Click="OnTabsBackClick">
+        <FontIcon Glyph="&#xE76B;" FontSize="12" />
+      </Button>
+
+      <ScrollViewer
+        x:Name="LibraryScroller"
+        Grid.Column="1"
+        HorizontalScrollMode="Enabled"
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollMode="Disabled"
+        VerticalScrollBarVisibility="Disabled"
+        ViewChanged="OnLibraryScrollChanged"
+        SizeChanged="OnLibraryScrollerSizeChanged">
+        <SelectorBar x:Name="LibraryBar" HorizontalAlignment="Left" SelectionChanged="OnLibraryChanged">
+          <SelectorBarItem x:Uid="AllTab" IsSelected="True" />
+        </SelectorBar>
+      </ScrollViewer>
+
+      <Button x:Name="TabsForwardButton" x:Uid="TabsForwardButton" Grid.Column="2" Background="Transparent" BorderThickness="0" Padding="8" Visibility="Collapsed" Click="OnTabsForwardClick">
+        <FontIcon Glyph="&#xE76C;" FontSize="12" />
+      </Button>
+    </Grid>
 
     <Grid Grid.Row="3" ColumnSpacing="16">
       <Grid.ColumnDefinitions>

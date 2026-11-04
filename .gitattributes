@@ -8,3 +8,4 @@
 *.jpg binary
 *.txt text eol=crlf
 *.iss text eol=crlf
+*.svg text eol=lf

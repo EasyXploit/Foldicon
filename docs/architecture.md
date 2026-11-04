@@ -81,4 +81,3 @@ Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the
   C++ project has no test project of its own yet.
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a
   folder keeps showing its old icon.
-- **Real logos:** the images of `Assets/` are placeholders.

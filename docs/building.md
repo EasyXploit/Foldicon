@@ -21,6 +21,12 @@ $msbuild = "$env:ProgramFiles\Microsoft Visual Studio\18\Community\MSBuild\Curre
 `dotnet build src\Foldicon.App -p:Platform=x64` still works for the app alone: it warns that the package will have no
 context menu when the DLL of the extension was not built before.
 
+## Logo
+
+`assets\logo\foldicon.svg` is the source of every image. After changing it, run `scripts\Render-Logo.ps1`, which
+rasterizes it with Edge or Chrome in headless mode and writes the logos of `src\Foldicon.App\Assets` and `Foldicon.ico`,
+the icon of the executable, the window, the installer and the context menu.
+
 ## Installer
 
 ```powershell

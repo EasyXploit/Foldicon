@@ -81,9 +81,6 @@ Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the
 
 ## Still missing
 
-- **Check on an installed copy:** the window and the folder changes were tried on the real system, and the shell writes
-  `IconResource` with `%SystemRoot%` unexpanded and keeps the other keys, but the setup and the item of the context menu
-  have not been tried installed yet.
 - **Tests of the C++ command:** the quoting of `BuildPickArguments` mirrors `LaunchArguments`, which is tested, but the
   C++ project has no test project of its own yet.
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a

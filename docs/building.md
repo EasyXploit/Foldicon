@@ -42,7 +42,8 @@ that builds it.
 The setup installs in Program Files, with a normal entry in the installed apps. It trusts the certificate in Trusted
 People of the machine and registers the package for the user who started it, which gives the installation folder the
 identity the modern context menu needs. If that fails, it adds a classic item for every user instead, which shows under
-*Show more options*. The item of the modern menu is per user, so any other user of the PC has to run the setup too. The
+*Show more options*. The package always goes to the system volume, because on a PC whose default volume for apps is
+another drive Windows can refuse it with `0x800701C0` (untrusted mount point). The item of the modern menu is per user, so any other user of the PC has to run the setup too. The
 uninstaller removes the package for every user, the trust in the certificate and the classic item.
 
 The setup is not signed with a commercial certificate, so SmartScreen warns when it runs on a PC that downloaded it.

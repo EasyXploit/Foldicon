@@ -17,7 +17,8 @@
     <SelfContained>true</SelfContained>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <WindowsPackageType>MSIX</WindowsPackageType>
+    <!-- MSIX for the Store; scripts/Build-Installer.ps1 passes None and a self-contained Windows App SDK -->
+    <WindowsPackageType Condition="'$(WindowsPackageType)' == ''">MSIX</WindowsPackageType>
     <DefaultLanguage>en-US</DefaultLanguage>
     <!-- Local packages are signed by scripts/Sign-Package.ps1; the Store signs its own -->
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
@@ -35,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\**\*.png" />
-    <Content Include="Assets\Foldicon.ico" />
+    <Content Include="Assets\**\*.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\Foldicon.ico" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- Puts the context menu DLL, built before by MSBuild from the solution, at the root of the package -->

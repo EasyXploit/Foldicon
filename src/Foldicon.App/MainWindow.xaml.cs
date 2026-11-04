@@ -46,7 +46,7 @@ public sealed partial class MainWindow : Window
         SetTitleBar(TitleBar);
         var scale = NativeDpi.GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
         AppWindow.Resize(new SizeInt32((int)(WindowWidth * scale), (int)(WindowHeight * scale)));
-        AppWindow.SetIcon("Assets/Foldicon.ico");
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "Foldicon.ico"));
 
         // Adds one tab per library after "All"
         foreach (var library in SystemIconLibraries.All)

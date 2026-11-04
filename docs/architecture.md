@@ -42,6 +42,10 @@ expanded with the groups of `Search/synonyms.json` that have a word starting wit
 typed already finds its translation. An icon matches when, for every typed word, one of its names, its library or its
 identifier starts with one of the expansions.
 
+While nothing is being searched, the *All* tab starts with the folders of `imageres.dll`, follows with each library in
+the order of the tabs and leaves the repeated and blank icons at the end (`IconBrowseOrder`). There is no ranking by
+relevance: a search and the tab of a library list the matches by library and identifier.
+
 The names of the icons come from `Search/icon-names.json`, loaded into the cache on every start. Each icon has its
 English name, its Spanish name and a few keywords in both languages:
 `{ "imageres.dll": { "108": ["Music folder", "Carpeta de música", "audio", "song", "canción"] } }`. The window shows

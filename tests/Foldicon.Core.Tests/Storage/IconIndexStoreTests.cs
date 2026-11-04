@@ -36,6 +36,27 @@ public sealed class IconIndexStoreTests
     }
 
     [TestMethod]
+    public void lists_the_libraries_in_the_order_of_the_tabs()
+    {
+        using var store = InMemoryStore.Open();
+        store.ReplaceLibrary(new LibraryIcons("ddores.dll", Stamp, [1]));
+        store.ReplaceLibrary(new LibraryIcons("custom.dll", Stamp, [1]));
+        store.ReplaceLibrary(new LibraryIcons("shell32.dll", Stamp, [2, 1]));
+        store.ReplaceLibrary(new LibraryIcons("imageres.dll", Stamp, [9]));
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                new IconReference("imageres.dll", 9),
+                new IconReference("shell32.dll", 1),
+                new IconReference("shell32.dll", 2),
+                new IconReference("ddores.dll", 1),
+                new IconReference("custom.dll", 1),
+            },
+            store.Search([], null).ToArray());
+    }
+
+    [TestMethod]
     public void narrows_the_search_to_one_library()
     {
         using var store = Seeded();

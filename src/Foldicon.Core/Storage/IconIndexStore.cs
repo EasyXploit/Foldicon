@@ -153,9 +153,9 @@ public sealed class IconIndexStore : IDisposable
             conditions.Add("(" + string.Join(" OR ", alternatives) + ")");
         }
 
-        // Runs the query in the order of the libraries and their identifiers
+        // Runs the query, ordered by the identifiers inside each library
         var where = conditions.Count == 0 ? "" : "WHERE " + string.Join(" AND ", conditions);
-        command.CommandText = $"SELECT i.library, i.resource_id FROM icons i {where} ORDER BY i.library, i.resource_id";
+        command.CommandText = $"SELECT i.library, i.resource_id FROM icons i {where} ORDER BY i.resource_id";
         var results = new List<IconReference>();
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -163,7 +163,8 @@ public sealed class IconIndexStore : IDisposable
             results.Add(new IconReference(reader.GetString(0), reader.GetInt32(1)));
         }
 
-        return results;
+        // Keeps the libraries in the order of the tabs, which a stable sort leaves inside each one by identifier
+        return results.OrderBy(icon => SystemIconLibraries.Rank(icon.Library)).ToList();
     }
 
     // Escapes the wildcards of LIKE in a word typed by the user

@@ -104,7 +104,14 @@ public sealed partial class MainWindow : Window
 
         // Runs the search with the synonyms of each typed word
         var library = LibraryBar.SelectedItem?.Tag as string;
-        var results = store.Search(SearchQuery.Parse(SearchBox.Text, synonyms), library);
+        var query = SearchQuery.Parse(SearchBox.Text, synonyms);
+        var results = store.Search(query, library);
+
+        // Browses the "All" tab in its own order while nothing is being searched
+        if (library is null && query.Count == 0)
+        {
+            results = IconBrowseOrder.Sort(results, catalog);
+        }
 
         // Reuses the items already built, so their images stay loaded
         var shown = results.Select(icon =>

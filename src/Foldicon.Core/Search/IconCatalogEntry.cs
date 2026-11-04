@@ -6,6 +6,13 @@ namespace Foldicon.Core.Search;
 
 public sealed record IconCatalogEntry(IconReference Icon, string English, string Spanish, IReadOnlyList<string> Keywords)
 {
+    // Checks whether the icon shows a folder, from the words of its English name
+    public bool IsFolder => TextNormalizer.Words(English).Contains("folder");
+
+    // Checks whether the icon only repeats another one or shows nothing
+    public bool IsFiller =>
+        Keywords.Contains("duplicate") || English == "Blank" || English.StartsWith("Blank (", StringComparison.Ordinal);
+
     // Returns the name in Spanish for a Spanish culture and in English for any other
     public string NameFor(CultureInfo culture)
     {

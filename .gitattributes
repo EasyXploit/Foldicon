@@ -7,3 +7,4 @@
 *.ico binary
 *.jpg binary
 *.txt text eol=crlf
+*.iss text eol=crlf

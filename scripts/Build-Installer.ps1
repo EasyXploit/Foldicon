@@ -1,23 +1,18 @@
-# Builds the local installer of Foldicon in dist\Foldicon-<version>\: the signed MSIX, the Windows App Runtime it
-# depends on, the public development certificate and the install and uninstall scripts
+# Builds the Windows installer of Foldicon in dist\Foldicon-Setup-<version>.exe
 #
-# It creates the development certificate in the store of the current user when there is none, but it never trusts it
-# on this PC nor installs anything: that is what Install.cmd does on the PC that receives the folder. The private key
-# never leaves the certificate store.
-
-[CmdletBinding()]
-param(
-    [ValidateSet('x64', 'ARM64')]
-    [string]$Platform = 'x64'
-)
+# It publishes the app without a package, self-contained, packs and signs the package with external location of the
+# context menu, and compiles packaging\windows\foldicon.iss with Inno Setup. It creates the development certificate in
+# the store of the current user when there is none, but it never trusts it on this PC nor installs anything. The
+# private key never leaves the certificate store.
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
+$platform = 'x64'
 
-# Reads the version of the package from its manifest
+# Reads the version of the package from its manifest, and the three parts shown to the user
 [xml]$manifest = Get-Content (Join-Path $root 'src\Foldicon.App\Package.appxmanifest')
-$version = $manifest.Package.Identity.Version
-$dist = Join-Path $root "dist\Foldicon-$version"
+$packageVersion = $manifest.Package.Identity.Version
+$version = ($packageVersion -split '\.')[0..2] -join '.'
 
 # Finds MSBuild, which also builds the C++ extension
 $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -26,42 +21,77 @@ if ($null -eq $msbuild) {
     throw 'MSBuild was not found; install Visual Studio with the .NET desktop and C++ desktop workloads.'
 }
 
-# Builds the solution, then the package of the app into a clean folder
-$packages = Join-Path $root "obj\installer\$Platform"
-if (Test-Path $packages) {
-    Remove-Item $packages -Recurse -Force
+# Finds the Inno Setup compiler on the path, in the usual folders or where its uninstaller says it is
+function Find-Iscc {
+    $command = Get-Command ISCC.exe -ErrorAction SilentlyContinue
+    if ($command) { return $command.Source }
+    $folders = @("$env:LOCALAPPDATA\Programs\Inno Setup 6", "${env:ProgramFiles(x86)}\Inno Setup 6", "$env:ProgramFiles\Inno Setup 6")
+    $folders += Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue |
+        Where-Object { $_.DisplayName -like 'Inno Setup*' } | ForEach-Object { $_.InstallLocation }
+    foreach ($folder in $folders) {
+        if ($folder -and (Test-Path (Join-Path $folder 'ISCC.exe'))) { return Join-Path $folder 'ISCC.exe' }
+    }
+    return $null
+}
+$iscc = Find-Iscc
+if (-not $iscc) {
+    throw 'Inno Setup was not found; install it from https://jrsoftware.org/isinfo.php.'
 }
 
-& $msbuild (Join-Path $root 'Foldicon.slnx') -restore -p:Configuration=Release -p:Platform=$Platform -nologo -v:m
+# Prepares a clean folder for the payload
+$payload = Join-Path $root "obj\installer\$platform"
+if (Test-Path $payload) {
+    Remove-Item $payload -Recurse -Force
+}
+
+$appFolder = Join-Path $payload 'app'
+$shellFolder = Join-Path $payload 'shell'
+$sparseFolder = Join-Path $payload 'sparse'
+New-Item -ItemType Directory -Force $shellFolder, (Join-Path $sparseFolder 'Assets') | Out-Null
+
+# Builds the C++ extension, which the publish of the app copies next to the executable
+& $msbuild (Join-Path $root 'src\Foldicon.ContextMenu\Foldicon.ContextMenu.vcxproj') -p:Configuration=Release -p:Platform=$platform -nologo -v:m
 if ($LASTEXITCODE -ne 0) {
-    throw "The build failed with code $LASTEXITCODE."
+    throw "The build of the context menu failed with code $LASTEXITCODE."
 }
 
-& $msbuild (Join-Path $root 'src\Foldicon.App\Foldicon.App.csproj') -p:Configuration=Release -p:Platform=$Platform `
-    -p:GenerateAppxPackageOnBuild=true -p:AppxPackageDir="$packages\" -nologo -v:m
+# Publishes the app without a package, carrying .NET and the Windows App SDK
+& $msbuild (Join-Path $root 'src\Foldicon.App\Foldicon.App.csproj') -restore -t:Rebuild -t:Publish -p:Configuration=Release -p:Platform=$platform `
+    -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true -p:PublishDir="$appFolder\" -nologo -v:m
 if ($LASTEXITCODE -ne 0) {
-    throw "The packaging failed with code $LASTEXITCODE."
+    throw "The publish of the app failed with code $LASTEXITCODE."
 }
 
-# Signs the package with the development certificate, creating it when it is missing
+# Packs the package with external location with its version; its logos come from the app
+$sparseManifest = (Get-Content (Join-Path $root 'packaging\windows\sparse\AppxManifest.xml') -Raw).Replace('$version$', $packageVersion)
+[System.IO.File]::WriteAllText((Join-Path $sparseFolder 'AppxManifest.xml'), $sparseManifest)
+Copy-Item (Join-Path $root 'src\Foldicon.App\Assets\*.png') (Join-Path $sparseFolder 'Assets')
+$makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" | Sort-Object FullName -Descending | Select-Object -First 1
+if ($null -eq $makeappx) {
+    throw 'makeappx.exe was not found; install the Windows SDK.'
+}
+
+$sparsePackage = Join-Path $shellFolder 'Foldicon.Shell.msix'
+& $makeappx.FullName pack /d $sparseFolder /p $sparsePackage /nv /o
+if ($LASTEXITCODE -ne 0) {
+    throw "makeappx failed with code $LASTEXITCODE."
+}
+
+# Signs it with the development certificate, creating it when it is missing
 & (Join-Path $PSScriptRoot 'New-DevCertificate.ps1') | Out-Null
-$package = Get-ChildItem $packages -Recurse -Filter '*.msix' | Where-Object { $_.DirectoryName -notmatch 'Dependencies' } | Select-Object -First 1
-& (Join-Path $PSScriptRoot 'Sign-Package.ps1') -Package $package.FullName
+& (Join-Path $PSScriptRoot 'Sign-Package.ps1') -Package $sparsePackage
 
-# Lays out the installer folder from scratch
-if (Test-Path $dist) {
-    Remove-Item $dist -Recurse -Force
-}
-
-New-Item -ItemType Directory -Force (Join-Path $dist 'Dependencies') | Out-Null
-Copy-Item $package.FullName (Join-Path $dist "Foldicon_$($version)_$Platform.msix")
-Get-ChildItem (Join-Path $package.DirectoryName "Dependencies\$Platform") -Filter '*.msix' | Copy-Item -Destination (Join-Path $dist 'Dependencies')
-Get-ChildItem (Join-Path $PSScriptRoot 'installer') | Copy-Item -Destination $dist
-
-# Exports only the public part of the certificate
+# Adds the public part of the certificate and the scripts that register and unregister the package
 $certificate = Get-ChildItem Cert:\CurrentUser\My |
     Where-Object { $_.Subject -eq 'CN=Sencimo Labs' -and $_.FriendlyName -eq 'Foldicon development' -and $_.NotAfter -gt (Get-Date) } |
     Select-Object -First 1
-Export-Certificate -Cert $certificate -FilePath (Join-Path $dist 'Foldicon.cer') | Out-Null
+Export-Certificate -Cert $certificate -FilePath (Join-Path $shellFolder 'Foldicon.cer') | Out-Null
+Copy-Item (Join-Path $root 'packaging\windows\*-Shell.ps1') $shellFolder
 
-Write-Output "Installer ready in $dist"
+# Compiles the installer
+& $iscc "/DAppVersion=$version" "/DPayload=$payload" (Join-Path $root 'packaging\windows\foldicon.iss')
+if ($LASTEXITCODE -ne 0) {
+    throw "ISCC failed with code $LASTEXITCODE."
+}
+
+Write-Output (Join-Path $root "dist\Foldicon-Setup-$version.exe")

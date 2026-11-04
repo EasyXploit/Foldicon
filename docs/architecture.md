@@ -1,6 +1,6 @@
 # Architecture
 
-Foldicon has three parts, packaged together in one MSIX:
+Foldicon has three parts, shipped together by the installer or, for the Store, in one MSIX:
 
 | Part | Folder | What it does |
 | --- | --- | --- |
@@ -10,13 +10,17 @@ Foldicon has three parts, packaged together in one MSIX:
 
 ## Context menu
 
-The package declares the command with `desktop4:FileExplorerContextMenus` for the `Directory` item type, and its COM
+A package declares the command with `desktop4:FileExplorerContextMenus` for the `Directory` item type, and its COM
 class with a `com:SurrogateServer`, so the DLL runs in a surrogate process and never inside Explorer. The command:
 
 - shows itself only for exactly one folder of the file system (`GetState`);
 - takes its text from the string table of its own resources, in English and Spanish;
-- activates the app of its package with `IApplicationActivationManager` and the arguments
-  `--pick "<folder>"`, doubling the backslashes before the closing quote so `C:\` is not read as an escaped quote.
+- starts the app with the arguments `--pick "<folder>"`, doubling the backslashes before the closing quote so `C:\` is
+  not read as an escaped quote. Inside a full MSIX it activates the app with `IApplicationActivationManager`; the
+  installer has no manifest next to the DLL, so it runs `Foldicon.exe` from the same folder.
+
+The installer does not use the MSIX: it copies the files to Program Files and registers a package with external
+location (`packaging/windows/sparse`), which holds no code and points the same declarations to that folder.
 
 ## Icon index
 
@@ -66,9 +70,9 @@ Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the
 
 ## Still missing
 
-- **Check on a real folder:** the package builds and its manifest validates, but applying an icon from the context
-  menu has not been tried on an installed package yet. In particular, confirm that the shell writes `IconResource`
-  (not `IconFile` and `IconIndex`) and keeps `%SystemRoot%` unexpanded.
+- **Check on an installed copy:** the window and the folder changes were tried on the real system, and the shell writes
+  `IconResource` with `%SystemRoot%` unexpanded and keeps the other keys, but the setup and the item of the context menu
+  have not been tried installed yet.
 - **Tests of the C++ command:** the quoting of `BuildPickArguments` mirrors `LaunchArguments`, which is tested, but the
   C++ project has no test project of its own yet.
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a

@@ -1,4 +1,4 @@
-# Building and trying a local package
+# Building and installing
 
 ## Requirements
 
@@ -21,27 +21,31 @@ $msbuild = "$env:ProgramFiles\Microsoft Visual Studio\18\Community\MSBuild\Curre
 `dotnet build src\Foldicon.App -p:Platform=x64` still works for the app alone: it warns that the package will have no
 context menu when the DLL of the extension was not built before.
 
-## Local installer
+## Installer
 
 ```powershell
-.\scripts\Build-Installer.ps1            # or -Platform ARM64
+.\scripts\Build-Installer.ps1
 ```
 
-It builds the solution in Release, packages the app, signs the MSIX with the development certificate (created in the
-store of the current user by `scripts\New-DevCertificate.ps1` when it is missing) and lays out
-`dist\Foldicon-<version>\`:
+It needs [Inno Setup](https://jrsoftware.org/isinfo.php) 6 and writes `dist\Foldicon-Setup-<version>.exe`. The script:
 
-| File | What it is |
-| --- | --- |
-| `Foldicon_<version>_<platform>.msix` | The signed package. It carries .NET, so the PC needs no runtime installed. |
-| `Dependencies\*.msix` | The Windows App Runtime the package depends on. |
-| `Foldicon.cer` | The public part of the development certificate. The private key never leaves the store. |
-| `Install.cmd`, `Install.ps1` | Trust the certificate in Trusted People (one administrator prompt) and install the package for the current user. |
-| `Uninstall.cmd`, `Uninstall.ps1` | Remove the package; `-RemoveCertificate` also stops trusting the certificate. |
-| `README.txt` | The same instructions, in English and Spanish. |
+1. Publishes the app without a package (`WindowsPackageType=None`), carrying .NET and the Windows App SDK.
+2. Packs `packaging\windows\sparse\AppxManifest.xml` into `Foldicon.Shell.msix`, a package with external location that
+   holds no code, and signs it with the development certificate, created in the store of the current user when it is
+   missing.
+3. Compiles `packaging\windows\foldicon.iss` with the app, that package, the public `Foldicon.cer` and the scripts that
+   register and unregister the package.
 
-The script never trusts the certificate nor installs anything on the PC that builds it. The sources of the files of the
-installer are in `scripts\installer\`, and `dist\` is not versioned.
+The private key never leaves the store, and the script neither trusts the certificate nor installs anything on the PC
+that builds it.
+
+The setup installs in Program Files, with a normal entry in the installed apps. It trusts the certificate in Trusted
+People of the machine and registers the package for the user who started it, which gives the installation folder the
+identity the modern context menu needs. If that fails, it adds a classic item for every user instead, which shows under
+*Show more options*. The item of the modern menu is per user, so any other user of the PC has to run the setup too. The
+uninstaller removes the package for every user, the trust in the certificate and the classic item.
+
+The setup is not signed with a commercial certificate, so SmartScreen warns when it runs on a PC that downloaded it.
 
 Explorer loads new context menu commands when it starts again: sign out and in after the first install.
 

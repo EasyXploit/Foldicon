@@ -49,14 +49,14 @@ nuget.org.
 dotnet test tests\Foldicon.Core.Tests -p:Platform=x64
 ```
 
-To build a local installer, run `scripts\Build-Installer.ps1`: it leaves in `dist\Foldicon-<version>\` a signed MSIX
-with an `Install.cmd` that installs it on any PC. See [docs/building.md](docs/building.md).
+To build the installer, run `scripts\Build-Installer.ps1`, which also needs Inno Setup 6: it writes
+`dist\Foldicon-Setup-<version>.exe`. See [docs/building.md](docs/building.md).
 
 ## Distribution
 
-Foldicon will be published in the **Microsoft Store** with a free individual developer account. The Store signs the
-packages it distributes, so no code signing certificate has to be bought; the development certificate of `scripts/`
-is only for local testing.
+Foldicon will be published in the **Microsoft Store** with a free individual developer account, as a full MSIX that the
+Store signs. Until then it is distributed with a normal installer built with Inno Setup, whose context menu is signed
+with a self-signed development certificate that the setup trusts on the PC. No certificate has to be bought for either.
 
 ## Contributing
 

@@ -99,20 +99,26 @@
       <ProgressRing x:Name="LoadingRing" IsActive="True" HorizontalAlignment="Center" VerticalAlignment="Center" />
       <TextBlock x:Name="EmptyText" x:Uid="EmptyText" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
 
-      <!-- Preview of the selected icon at the sizes Explorer uses -->
-      <StackPanel Grid.Column="1" Spacing="12">
-        <Border Width="256" Height="256" HorizontalAlignment="Left">
+      <!-- Preview of the selected icon at the sizes Explorer uses; only the largest one shrinks, so the rest stays visible -->
+      <Grid Grid.Column="1" RowSpacing="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" MaxHeight="256" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top">
           <Image x:Name="Preview256" Width="256" Height="256" />
-        </Border>
-        <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Bottom">
+        </Viewbox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16">
           <Image x:Name="Preview48" Width="48" Height="48" VerticalAlignment="Bottom" />
           <Image x:Name="Preview32" Width="32" Height="32" VerticalAlignment="Bottom" />
           <Image x:Name="Preview24" Width="24" Height="24" VerticalAlignment="Bottom" />
           <Image x:Name="Preview16" Width="16" Height="16" VerticalAlignment="Bottom" />
         </StackPanel>
-        <TextBlock x:Name="SelectedName" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="Wrap" />
-        <TextBlock x:Name="SelectedReference" IsTextSelectionEnabled="True" Opacity="0.7" />
-      </StackPanel>
+        <TextBlock x:Name="SelectedName" Grid.Row="2" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="Wrap" />
+        <TextBlock x:Name="SelectedReference" Grid.Row="3" IsTextSelectionEnabled="True" Opacity="0.7" />
+      </Grid>
     </Grid>
 
     <InfoBar x:Name="ResultBar" Grid.Row="4" IsOpen="False" IsClosable="True">

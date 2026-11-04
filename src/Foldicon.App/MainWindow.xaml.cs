@@ -8,6 +8,7 @@ using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
 using Foldicon.Core.Search;
 using Foldicon.Core.Storage;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -22,6 +23,10 @@ public sealed partial class MainWindow : Window
     // Size of the window in effective pixels
     private const int WindowWidth = 900;
     private const int WindowHeight = 640;
+
+    // Smallest size of the window in effective pixels, which keeps the preview and the buttons usable
+    private const int MinimumWidth = 640;
+    private const int MinimumHeight = 500;
 
     // Share of the visible width that the arrows of the tabs scroll
     private const double TabsScrollStep = 0.75;
@@ -49,6 +54,12 @@ public sealed partial class MainWindow : Window
         SetTitleBar(TitleBar);
         var scale = NativeDpi.GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(this)) / 96.0;
         AppWindow.Resize(new SizeInt32((int)(WindowWidth * scale), (int)(WindowHeight * scale)));
+        if (AppWindow.Presenter is OverlappedPresenter presenter)
+        {
+            presenter.PreferredMinimumWidth = (int)(MinimumWidth * scale);
+            presenter.PreferredMinimumHeight = (int)(MinimumHeight * scale);
+        }
+
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "Foldicon.ico"));
 
         // Adds one tab per library after "All"

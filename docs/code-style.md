@@ -15,7 +15,7 @@ Foldicon follows the same way of programming as the other projects of Sencimo La
   errors; the C++ project builds with `/W4 /WX`.
 - **Errors:** each operation that touches the system throws a typed exception, and the entry points of the window catch
   the expected ones, trace them and show a translated message to the user, never the raw text of the system.
-- **Interface texts** only in `src/Foldicon.App/Strings/<language>/Resources.resw` (`en-US` and `es-ES`) and in the
+- **Interface texts** only in `src/Foldicon.App/Strings/<language>/Resources.resw` (`en-US`, the default, and `es`) and in the
   string table of `Foldicon.ContextMenu.rc`, never written in the code.
 
 ## Tests

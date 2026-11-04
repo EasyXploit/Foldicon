@@ -59,7 +59,7 @@
     <value>The icons of Windows could not be read.</value>
   </data>
   <data name="NoFolderMessage" xml:space="preserve">
-    <value>Open Foldicon from the context menu of a folder: Change folder icon…</value>
+    <value>Open Foldicon from the context menu of a folder: Change icon</value>
   </data>
   <data name="FolderNotFoundMessage" xml:space="preserve">
     <value>The folder does not exist.</value>

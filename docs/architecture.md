@@ -22,6 +22,13 @@ class with a `com:SurrogateServer`, so the DLL runs in a surrogate process and n
 The installer does not use the MSIX: it copies the files to Program Files and registers a package with external
 location (`packaging/windows/sparse`), which holds no code and points the same declarations to that folder.
 
+## Languages
+
+The app, the context menu and the installer are in Spanish when the language of the interface of the system is any
+variant of Spanish, and in English otherwise. The app sets it from `AppLanguage`, whose default strings are in
+`Strings/en-US`; the command of the context menu chooses between its two strings, and the installer uses
+`LanguageDetectionMethod=uilanguage` with English as the first language.
+
 ## Icon index
 
 1. `ResourceFileResolver` picks `C:\Windows\SystemResources\<library>.mun` when it exists, since recent builds of

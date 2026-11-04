@@ -1,4 +1,4 @@
-// Command "Change folder icon..." of the context menu of folders
+// Command "Change icon" of the context menu of folders
 #pragma once
 
 #include <windows.h>

@@ -1,4 +1,4 @@
-// Command "Change folder icon..." of the context menu of folders
+// Command "Change icon" of the context menu of folders
 #include "ExplorerCommand.h"
 
 #include <shlwapi.h>
@@ -57,9 +57,11 @@ namespace Foldicon
 {
     IFACEMETHODIMP ExplorerCommand::GetTitle(IShellItemArray*, LPWSTR* name)
     {
-        // Reads the string of the language of the user from the resources of the DLL
+        // Reads the string in Spanish for any variant of that language of the interface, and in English otherwise
+        auto const spanish = PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_SPANISH;
         wchar_t const* text = nullptr;
-        auto const length = LoadStringW(reinterpret_cast<HINSTANCE>(&__ImageBase), IDS_CHANGE_FOLDER_ICON,
+        auto const length = LoadStringW(reinterpret_cast<HINSTANCE>(&__ImageBase),
+            spanish ? IDS_CHANGE_ICON_SPANISH : IDS_CHANGE_ICON_ENGLISH,
             reinterpret_cast<LPWSTR>(&text), 0);
         if (length <= 0)
         {

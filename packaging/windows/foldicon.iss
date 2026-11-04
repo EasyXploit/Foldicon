@@ -53,20 +53,26 @@ Compression=lzma2/ultra
 SolidCompression=yes
 WizardStyle=modern
 
+; Follows the language of the interface of the system, without asking or keeping the one of a previous install
+LanguageDetectionMethod=uilanguage
+ShowLanguageDialog=no
+UsePreviousLanguage=no
+
 ; Keeps a log in the temporary folder, to see why the registration of the context menu failed
 SetupLogging=yes
 
 [Languages]
-Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+; English goes first: it is the language of any system that is not in Spanish
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 [CustomMessages]
-spanish.ChangeFolderIcon=Cambiar icono de carpeta...
-english.ChangeFolderIcon=Change folder icon...
-spanish.FinishedShell=Haz clic derecho en una carpeta y elige «Cambiar icono de carpeta...». Si aún no aparece, cierra la sesión y vuelve a entrar.
-english.FinishedShell=Right-click a folder and choose "Change folder icon...". If it does not show yet, sign out and in again.
-spanish.FinishedClassic=Windows no ha aceptado el menú moderno. Haz clic derecho en una carpeta, elige «Mostrar más opciones» y luego «Cambiar icono de carpeta...».
-english.FinishedClassic=Windows did not accept the modern menu. Right-click a folder, choose "Show more options" and then "Change folder icon...".
+spanish.ChangeIcon=Cambiar icono
+english.ChangeIcon=Change icon
+spanish.FinishedShell=Haz clic derecho en una carpeta y elige «Cambiar icono». Si aún no aparece, cierra la sesión y vuelve a entrar.
+english.FinishedShell=Right-click a folder and choose "Change icon". If it does not show yet, sign out and in again.
+spanish.FinishedClassic=Windows no ha aceptado el menú moderno. Haz clic derecho en una carpeta, elige «Mostrar más opciones» y luego «Cambiar icono».
+english.FinishedClassic=Windows did not accept the modern menu. Right-click a folder, choose "Show more options" and then "Change icon".
 
 [Files]
 Source: "{#Payload}\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -103,7 +109,7 @@ end;
 { Adds the classic item of the context menu of folders, for every user of the computer }
 procedure AddClassicVerb;
 begin
-  RegWriteStringValue(HKLM, '{#ClassicVerbKey}', '', CustomMessage('ChangeFolderIcon'));
+  RegWriteStringValue(HKLM, '{#ClassicVerbKey}', '', CustomMessage('ChangeIcon'));
   RegWriteStringValue(HKLM, '{#ClassicVerbKey}', 'Icon', ExpandConstant('{app}\{#AppExe}'));
   RegWriteStringValue(HKLM, '{#ClassicVerbKey}\command', '', ExpandConstant('"{app}\{#AppExe}" --pick "%1"'));
 end;

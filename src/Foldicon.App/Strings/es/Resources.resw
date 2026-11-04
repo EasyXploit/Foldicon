@@ -59,7 +59,7 @@
     <value>No se han podido leer los iconos de Windows.</value>
   </data>
   <data name="NoFolderMessage" xml:space="preserve">
-    <value>Abre Foldicon desde el menú contextual de una carpeta: Cambiar icono de carpeta…</value>
+    <value>Abre Foldicon desde el menú contextual de una carpeta: Cambiar icono</value>
   </data>
   <data name="FolderNotFoundMessage" xml:space="preserve">
     <value>La carpeta no existe.</value>

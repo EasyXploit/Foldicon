@@ -1,7 +1,7 @@
 # Foldicon
 
 A small Windows app that changes the icon of a folder with the icons that ship with Windows. Right-click a folder,
-choose **Change folder icon…**, search the icon, and apply it.
+choose **Change icon**, search the icon, and apply it.
 
 > **Status:** early development (version 0.1.0). There are no published releases yet.
 

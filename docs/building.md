@@ -36,6 +36,23 @@ them again. The same `.csproj` condition as for the context menu applies: `dotne
 package will have no Fluent icons when the library was not built before. A new icon needs its names in
 `Search/icon-names.json`, which a unit test checks.
 
+## Release
+
+```powershell
+.\scripts\Set-Version.ps1 -Version 0.2.0
+```
+
+Set the new version, describe it in `CHANGELOG.md`, commit and push `main`. Then, with the
+[GitHub CLI](https://cli.github.com/) signed in, run:
+
+```powershell
+.\scripts\Publish-Release.ps1
+```
+
+It builds both installers, lists their hashes in `SHA256SUMS.txt` and publishes them as a release of the tag `v<version>`,
+as a prerelease before version 1. Releases are built on the PC of the maintainer, since the private key of the certificate
+never leaves its store.
+
 ## Installer
 
 ```powershell

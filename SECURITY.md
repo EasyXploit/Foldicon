@@ -1,6 +1,6 @@
 # Security policy
 
-Foldicon is in early development and has no published releases yet, so only the `main` branch is supported.
+Foldicon is in early development, so only the latest release is supported.
 
 Please do not open public issues for security problems. Report them privately through the *Report a vulnerability*
 button of the *Security* tab of the repository, with the steps to reproduce the problem and the version of Windows.

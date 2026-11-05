@@ -7,7 +7,7 @@
 ; which prepares the payload folder and passes /DAppVersion=<version>, /DPayload=<folder> and /DPlatform=<x64 or arm64>.
 
 #ifndef AppVersion
-  #define AppVersion "0.1.0"
+  #define AppVersion "1.0.0"
 #endif
 
 #ifndef Payload

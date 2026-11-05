@@ -27,4 +27,4 @@ function Set-Text([string]$file, [string]$pattern, [string]$replacement) {
 Set-Text 'src\Foldicon.App\Package.appxmanifest' '(<Identity [^>]*Version=")[\d.]+(")' "`${1}$Version.0`${2}"
 Set-Text 'Directory.Build.props' '<Version>[\d.]+</Version>' "<Version>$Version</Version>"
 Set-Text 'packaging\windows\foldicon.iss' '(#define AppVersion ")[\d.]+(")' "`${1}$Version`${2}"
-Set-Text 'README.md' 'version [\d.]+\.</sub>' "version $Version.</sub>"
+Set-Text 'README.md' 'Version [\d.]+\.</sub>' "Version $Version.</sub>"

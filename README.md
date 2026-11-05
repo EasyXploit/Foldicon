@@ -19,7 +19,7 @@
 
 <p align="center">
   <sub>Windows 11 · x64 and ARM64 · Free and open source (GPL-3.0)</sub><br>
-  <sub>Early development, version 0.1.0.</sub>
+  <sub>Version 1.0.0.</sub>
 </p>
 
 <br>

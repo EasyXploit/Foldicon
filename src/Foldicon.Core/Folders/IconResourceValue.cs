@@ -1,4 +1,4 @@
-// Type that holds the file and the index of an IconResource value of desktop.ini
+// Type that holds the file and the index of an IconResource value in desktop.ini
 using System.Globalization;
 
 namespace Foldicon.Core.Folders;

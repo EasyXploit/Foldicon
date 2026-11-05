@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Library that holds only the icons of the Fluent pack as resources, with no code, so it runs nothing when loaded -->
+<!-- Library that holds only the Fluent pack icons as resources, with no code, so it runs nothing when loaded -->
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">

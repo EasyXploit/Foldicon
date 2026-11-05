@@ -1,4 +1,4 @@
-// Function to locate the files of the app in the local data of the user
+// Function to locate the app's files in the user's local data
 namespace Foldicon.Core.Storage;
 
 public static class LocalData
@@ -6,7 +6,7 @@ public static class LocalData
     // Returns the regenerable cache of the icon index
     public static string IndexPath() => PathOf("index.db");
 
-    // Returns the settings of the app
+    // Returns the app settings
     public static string SettingsPath() => PathOf("settings.json");
 
     // Returns the path of a file in %LOCALAPPDATA%\Foldicon, creating the folder

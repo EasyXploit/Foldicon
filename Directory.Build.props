@@ -1,4 +1,4 @@
-<!-- Build settings shared by every .NET project of the repository -->
+<!-- Build settings shared by every .NET project in the repository -->
 <Project>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>

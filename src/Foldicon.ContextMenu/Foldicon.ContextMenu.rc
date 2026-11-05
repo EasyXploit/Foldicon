@@ -1,4 +1,4 @@
-// Strings of the context menu; the command chooses the one of its language itself, with English as the default
+// Context menu strings; the command picks the one for its language itself, with English as the default
 #include <winres.h>
 #include "resource.h"
 

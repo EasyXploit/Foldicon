@@ -1,8 +1,8 @@
 # Builds the Windows installers of Foldicon in dist\Foldicon-Setup-<version>-<platform>.exe
 #
-# It publishes the app without a package, self-contained, packs and signs the package with external location of the
+# It publishes the app without a package, self-contained, packs and signs the external location package for the
 # context menu, and compiles packaging\windows\foldicon.iss with Inno Setup. It creates the development certificate in
-# the store of the current user when there is none, but it never trusts it on this PC nor installs anything. The
+# the current user's certificate store when there is none, but it never trusts it on this PC nor installs anything. The
 # private key never leaves the certificate store.
 
 param(
@@ -15,7 +15,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Common.ps1')
 $root = Split-Path $PSScriptRoot -Parent
 
-# Reads the version of the package from its manifest, and the three parts shown to the user
+# Reads the package version from its manifest, and the three parts shown to the user
 [xml]$manifest = Get-Content (Join-Path $root 'src\Foldicon.App\Package.appxmanifest')
 $packageVersion = $manifest.Package.Identity.Version
 $version = ($packageVersion -split '\.')[0..2] -join '.'
@@ -56,13 +56,13 @@ foreach ($platform in $Platforms) {
     $sparseFolder = Join-Path $payload 'sparse'
     New-Item -ItemType Directory -Force $shellFolder, (Join-Path $sparseFolder 'Assets') | Out-Null
 
-    # Builds the C++ extension, which the publish of the app copies next to the executable
+    # Builds the C++ extension, which publishing the app copies next to the executable
     & $msbuild (Join-Path $root 'src\Foldicon.ContextMenu\Foldicon.ContextMenu.vcxproj') -p:Configuration=Release -p:Platform=$platform -nologo -v:m
     if ($LASTEXITCODE -ne 0) {
         throw "The build of the context menu failed with code $LASTEXITCODE."
     }
 
-    # Builds the library of the Fluent icons, which the publish of the app also copies next to the executable
+    # Builds the Fluent icon library, which publishing the app also copies next to the executable
     & $msbuild (Join-Path $root 'src\Foldicon.FluentIcons\Foldicon.FluentIcons.vcxproj') -p:Configuration=Release -p:Platform=$platform -nologo -v:m
     if ($LASTEXITCODE -ne 0) {
         throw "The build of the Fluent icons failed with code $LASTEXITCODE."
@@ -89,7 +89,7 @@ foreach ($platform in $Platforms) {
     & (Join-Path $PSScriptRoot 'New-DevCertificate.ps1') | Out-Null
     & (Join-Path $PSScriptRoot 'Sign-Package.ps1') -Package $sparsePackage
 
-    # Adds the public part of the certificate and the scripts that register and unregister the package
+    # Adds the certificate's public part and the scripts that register and unregister the package
     Export-Certificate -Cert (Get-DevCertificate) -FilePath (Join-Path $shellFolder 'Foldicon.cer') | Out-Null
     Copy-Item (Join-Path $root 'packaging\windows\*-Shell.ps1') $shellFolder
 

@@ -233,7 +233,7 @@ public sealed class FolderIconServiceTests
         CollectionAssert.AreEqual(new[] { Folder }, shell.Refreshed);
     }
 
-    // Returns an icon of the bundled library
+    // Returns an icon from the bundled library
     private static IconReference Bundled(int id) => new(BundledIconLibrary.Name, id);
 
     // Creates the service over fakes

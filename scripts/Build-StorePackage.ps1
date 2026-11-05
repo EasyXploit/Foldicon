@@ -1,6 +1,6 @@
 # Builds dist\store\*.msixupload, with x64 and ARM64, to upload to the Microsoft Store
 #
-# The identity comes from Partner Center, in Product identity. The manifest of the repository keeps the development
+# The identity comes from Partner Center, in Product identity. The manifest in the repository keeps the development
 # identity: this script swaps it only during the build. The Store signs the package, so it needs no certificate.
 
 param(
@@ -24,7 +24,7 @@ if ($null -eq $msbuild) {
     throw 'MSBuild was not found; install Visual Studio with the .NET desktop and C++ desktop workloads.'
 }
 
-# Builds the native parts of both platforms, which the package copies next to the app
+# Builds the native parts for both platforms, which the package copies next to the app
 foreach ($platform in 'x64', 'ARM64') {
     foreach ($project in 'Foldicon.ContextMenu', 'Foldicon.FluentIcons') {
         & $msbuild (Join-Path $root "src\$project\$project.vcxproj") -p:Configuration=Release -p:Platform=$platform -nologo -v:m
@@ -34,7 +34,7 @@ foreach ($platform in 'x64', 'ARM64') {
     }
 }
 
-# Builds the package with the identity of the Store, and always puts the manifest back
+# Builds the package with the Store identity, and always puts the manifest back
 $original = [System.IO.File]::ReadAllText($manifestPath)
 try {
     [xml]$manifest = $original

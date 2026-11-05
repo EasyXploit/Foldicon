@@ -1,4 +1,4 @@
-// Interface to list the icon groups of a library file, so the indexer can be tested without native code
+// Interface to list a library file's icon groups, so the indexer can be tested without native code
 namespace Foldicon.Core.Indexing;
 
 public interface IGroupIconReader

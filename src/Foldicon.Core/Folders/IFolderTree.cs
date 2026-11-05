@@ -1,4 +1,4 @@
-// Interface to walk the folders of a disk, so the repair can be tested without one
+// Interface to walk the folders on a disk, so the repair can be tested without one
 namespace Foldicon.Core.Folders;
 
 public interface IFolderTree

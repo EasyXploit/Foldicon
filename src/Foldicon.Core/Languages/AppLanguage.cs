@@ -1,9 +1,9 @@
-// Function to choose the language of the app from the one of the system
+// Function to choose the app language from the system language
 namespace Foldicon.Core.Languages;
 
 public static class AppLanguage
 {
-    // Languages of the strings of the app; English is the default one
+    // App string languages; English is the default one
     public const string English = "en-US";
     public const string Spanish = "es";
 

@@ -1,4 +1,4 @@
-// Functions to locate the DLL of the command, whose folder also holds the executable
+// Functions to locate the command DLL, whose folder also holds the executable
 #pragma once
 
 #include <windows.h>
@@ -6,9 +6,9 @@
 
 namespace Foldicon
 {
-    // Returns the handle of this DLL
+    // Returns this DLL's handle
     HMODULE ThisModule() noexcept;
 
-    // Returns the folder of this DLL
+    // Returns this DLL's folder
     std::wstring ModuleDirectory();
 }

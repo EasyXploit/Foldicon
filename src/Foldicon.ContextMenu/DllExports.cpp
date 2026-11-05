@@ -1,4 +1,4 @@
-// Exported functions through which COM gets the factory of the command and unloads the DLL
+// Exported functions through which COM gets the command factory and unloads the DLL
 #include <windows.h>
 #include <unknwn.h>
 #include <winrt/base.h>
@@ -6,7 +6,7 @@
 #include "ClassFactory.h"
 #include "ExplorerCommand.h"
 
-// Returns the factory when COM asks for the class of the command
+// Returns the factory when COM asks for the command class
 STDAPI DllGetClassObject(REFCLSID clsid, REFIID iid, void** result)
 {
     *result = nullptr;

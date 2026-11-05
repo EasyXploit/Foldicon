@@ -1,4 +1,4 @@
-// Identifiers of the strings of the context menu, defined in Foldicon.ContextMenu.rc
+// Identifiers of the context menu strings, defined in Foldicon.ContextMenu.rc
 #pragma once
 
 #define IDS_CHANGE_ICON_ENGLISH 101

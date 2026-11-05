@@ -8,7 +8,7 @@ namespace Foldicon
 {
     struct ClassFactory : winrt::implements<ClassFactory, IClassFactory>
     {
-        // Creates the command and returns the requested interface of it
+        // Creates the command and returns its requested interface
         IFACEMETHODIMP CreateInstance(IUnknown* outer, REFIID iid, void** result) noexcept override;
 
         // Keeps the module loaded while a client holds the lock

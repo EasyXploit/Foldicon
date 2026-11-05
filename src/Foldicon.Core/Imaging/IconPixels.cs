@@ -3,7 +3,7 @@ namespace Foldicon.Core.Imaging;
 
 public static class IconPixels
 {
-    // Checks whether any pixel has a value of alpha
+    // Checks whether any pixel has an alpha value
     public static bool HasAlpha(byte[] pixels)
     {
         ArgumentNullException.ThrowIfNull(pixels);
@@ -28,7 +28,7 @@ public static class IconPixels
         }
     }
 
-    // Multiplies each color by its alpha, as the bitmaps of WinUI expect
+    // Multiplies each color by its alpha, as WinUI bitmaps expect
     public static void Premultiply(byte[] pixels)
     {
         ArgumentNullException.ThrowIfNull(pixels);

@@ -66,7 +66,7 @@ public sealed class FolderIconService(
         return name;
     }
 
-    // Deletes the copies of the folder, except for the one in use
+    // Deletes the folder's copies, except for the one in use
     private void DeleteCopies(string folder, string? kept)
     {
         foreach (var name in iconFiles.List(folder).Where(name => !FolderIconCopyName.Comparer.Equals(name, kept)))
@@ -108,7 +108,7 @@ public sealed class FolderIconService(
         var text = desktopIni.Read(folder);
         if (text is not null)
         {
-            // Drops the key and keeps every other setting of the folder
+            // Drops the key and keeps the folder's other settings
             var remaining = DesktopIniEditor.RemoveKey(text, DesktopIniEditor.ShellClassInfo, DesktopIniEditor.IconResource);
             if (DesktopIniEditor.IsEmpty(remaining))
             {

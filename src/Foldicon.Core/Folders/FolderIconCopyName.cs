@@ -1,4 +1,4 @@
-// Names of the copies of an icon that a folder keeps next to its desktop.ini
+// Names of the icon copies that a folder keeps next to its desktop.ini
 using System.Globalization;
 
 namespace Foldicon.Core.Folders;
@@ -13,10 +13,10 @@ public static class FolderIconCopyName
     // Compares two names as Windows does, since a sync client may change their case
     public static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
 
-    // Pattern that finds the copies of a folder
+    // Pattern that finds a folder's copies
     public const string SearchPattern = Prefix + "*" + Extension;
 
-    // Returns the name of the copy of an icon
+    // Returns the name of an icon's copy
     public static string For(int resourceId) => Prefix + resourceId.ToString(CultureInfo.InvariantCulture) + Extension;
 
     // Checks whether a file named by an IconResource value is one of the copies

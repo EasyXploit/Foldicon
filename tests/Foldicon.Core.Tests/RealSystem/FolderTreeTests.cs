@@ -37,7 +37,7 @@ public sealed class FolderTreeTests
         CollectionAssert.AreEqual(new[] { target.FullName }, folders.ToArray());
     }
 
-    // Runs a command of the command prompt, without a window
+    // Runs a command prompt command, without a window
     private static void RunCommand(string command)
     {
         using var process = Process.Start(new ProcessStartInfo("cmd.exe", "/c " + command)

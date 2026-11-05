@@ -1,4 +1,4 @@
-// Declarations of the functions of kernel32.dll used to read the resources of a library
+// Declarations of the kernel32.dll functions used to read the resources of a library
 using System.Runtime.InteropServices;
 
 namespace Foldicon.Core.Interop;
@@ -9,7 +9,7 @@ internal static unsafe partial class Kernel32
     internal const uint LoadLibraryAsDatafile = 0x00000002;
     internal const uint LoadLibraryAsImageResource = 0x00000020;
 
-    // Resource types of the images of an icon (MAKEINTRESOURCE(3)) and of the icon groups (MAKEINTRESOURCE(14))
+    // Resource types for icon images (MAKEINTRESOURCE(3)) and icon groups (MAKEINTRESOURCE(14))
     internal const nint RtIcon = 3;
     internal const nint RtGroupIcon = 14;
 

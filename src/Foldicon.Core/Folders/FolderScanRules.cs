@@ -1,9 +1,9 @@
-// Rules that keep the search of customized folders away from places where the user keeps no folders of their own
+// Rules that keep the search for customized folders away from places where the user keeps no folders of their own
 namespace Foldicon.Core.Folders;
 
 public static class FolderScanRules
 {
-    // Folders of the system, of apps and of development tools, which are large and hold no customized folders
+    // System, app and development tool folders, which are large and hold no customized folders
     private static readonly HashSet<string> Skipped = new(StringComparer.OrdinalIgnoreCase)
     {
         "AppData",

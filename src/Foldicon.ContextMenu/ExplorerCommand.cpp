@@ -1,4 +1,4 @@
-// Command "Change icon" of the context menu of folders
+// "Change icon" command of the folder context menu
 #include "ExplorerCommand.h"
 
 #include <shlwapi.h>
@@ -10,7 +10,7 @@
 
 namespace
 {
-    // Returns the path of the single folder of the selection, or an empty string when there is not exactly one
+    // Returns the path of the single selected folder, or an empty string when there is not exactly one
     std::wstring SingleFolder(IShellItemArray* items)
     {
         // Checks that exactly one item is selected
@@ -20,7 +20,7 @@ namespace
             return {};
         }
 
-        // Checks that it is a folder of the file system, not a library or a virtual item
+        // Checks that it is a file system folder, not a library or a virtual item
         winrt::com_ptr<IShellItem> item;
         SFGAOF attributes = 0;
         if (FAILED(items->GetItemAt(0, item.put()))
@@ -42,7 +42,7 @@ namespace
         return folder;
     }
 
-    // Translations of the title; a new one adds its string to the resources and its line here
+    // Title translations; a new one adds its string to the resources and its line here
     struct Translation
     {
         WORD language;
@@ -53,7 +53,7 @@ namespace
         {LANG_SPANISH, IDS_CHANGE_ICON_SPANISH},
     };
 
-    // Returns the title for the language of the interface and any of its variants, and the English one otherwise
+    // Returns the title for the UI language and any of its variants, and the English one otherwise
     UINT TitleForUserLanguage()
     {
         auto const language = PRIMARYLANGID(GetUserDefaultUILanguage());

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Window of the picker: search, one tab per library, grid of icons, preview and actions -->
+<!-- Picker window: search, one tab per library, grid of icons, preview and actions -->
 <Window
   x:Class="Foldicon.App.MainWindow"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

@@ -32,7 +32,7 @@ public sealed class DesktopIniFile : IDesktopIniFile
     {
         MarkedFile.Delete(Path.Combine(folder, FileName));
 
-        // Keeps every other attribute of the folder
+        // Keeps the folder's other attributes
         var attributes = File.GetAttributes(folder);
         File.SetAttributes(folder, attributes & ~(FileAttributes.ReadOnly | FileAttributes.System));
     }

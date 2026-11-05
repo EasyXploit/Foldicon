@@ -1,4 +1,4 @@
-// Real folder for the tests of the code that talks to the disk and the shell, deleted with everything in it
+// Real folder for testing the code that talks to the disk and the shell, deleted with everything in it
 using Microsoft.Data.Sqlite;
 
 namespace Foldicon.Core.Tests.Fakes;

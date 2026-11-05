@@ -1,4 +1,4 @@
-// Entry of the tool: exports the icons of every system library and draws the contact sheets used to name them
+// Tool entry point: exports the icons in every system library and draws the contact sheets used to name them
 //
 // Usage: dotnet run --project tools/IconExport -p:Platform=x64 [-- <output folder>]
 // The default output folder is tools/IconExport/out, which git ignores.
@@ -14,7 +14,7 @@ var duplicates = new DuplicateFinder();
 
 foreach (var library in SystemIconLibraries.All)
 {
-    // Lists the icon groups of the library
+    // Lists the library's icon groups
     var path = ResourceFileResolver.Resolve(library, windows, File.Exists);
     var icons = reader.ReadGroupIconIds(path).Select(id => new IconReference(library, id)).ToList();
 
@@ -25,7 +25,7 @@ foreach (var library in SystemIconLibraries.All)
         duplicates.Add(icon, pixels);
     }
 
-    // Draws the contact sheets of the library
+    // Draws the library's contact sheets
     var sheets = ContactSheet.DrawAll(library, exported, Path.Combine(output, "sheets"));
     Console.WriteLine($"{library}: {icons.Count} icons, {exported.Count} exported, {sheets} sheets");
 }

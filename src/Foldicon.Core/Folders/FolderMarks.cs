@@ -1,4 +1,4 @@
-// Marks of the real folders and files
+// Marks on real folders and files
 namespace Foldicon.Core.Folders;
 
 public sealed class FolderMarks : IFolderMarks
@@ -7,7 +7,7 @@ public sealed class FolderMarks : IFolderMarks
     public bool IsCustomized(string folder) =>
         (File.GetAttributes(folder) & (FileAttributes.ReadOnly | FileAttributes.System)) != 0;
 
-    // Adds the same mark as the shell, and keeps every other attribute of the folder
+    // Adds the same mark as the shell, and keeps the folder's other attributes
     public void MarkCustomized(string folder) =>
         File.SetAttributes(folder, File.GetAttributes(folder) | FileAttributes.ReadOnly);
 

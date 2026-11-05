@@ -1,4 +1,4 @@
-// Service that reads the icon groups of the libraries and keeps them in the cache
+// Service that reads the libraries' icon groups and keeps them in the cache
 using Foldicon.Core.Search;
 using Foldicon.Core.Storage;
 
@@ -11,7 +11,7 @@ public sealed class IconIndexer(
     Func<string, bool> fileExists,
     Func<string, LibraryStamp> stampOf)
 {
-    // Creates the indexer for the real system, with the files of the Windows folder
+    // Creates the indexer for the real system, with the files in the Windows folder
     public static IconIndexer ForSystem(IconIndexStore store) => new(
         new NativeGroupIconReader(),
         store,
@@ -19,7 +19,7 @@ public sealed class IconIndexer(
         File.Exists,
         LibraryStamp.Of);
 
-    // Brings the libraries of the tabs up to date and stores the search words of the catalog when they changed
+    // Brings the tab libraries up to date and stores the catalog search words when they changed
     public void RefreshAll(IReadOnlyCollection<IconCatalogEntry> catalog)
     {
         Refresh(IconLibraryTabs.All);

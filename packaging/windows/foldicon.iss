@@ -4,7 +4,7 @@
 ; After copying the files it trusts the public development certificate and registers, for the user who started the
 ; setup, the package with external location that adds the item to the modern context menu. If that registration fails,
 ; it falls back to a classic item, which shows under "Show more options". Build it with scripts\Build-Installer.ps1,
-; which prepares the folder of the payload and passes /DAppVersion=<version>, /DPayload=<folder> and /DPlatform=<x64 or arm64>.
+; which prepares the payload folder and passes /DAppVersion=<version>, /DPayload=<folder> and /DPlatform=<x64 or arm64>.
 
 #ifndef AppVersion
   #define AppVersion "0.1.0"
@@ -65,19 +65,19 @@ Compression=lzma2/ultra
 SolidCompression=yes
 WizardStyle=modern
 
-; Follows the language of the interface of the system, without asking or keeping the one of a previous install
+; Follows the system display language, without asking or keeping the one from a previous install
 LanguageDetectionMethod=uilanguage
 ShowLanguageDialog=no
 UsePreviousLanguage=no
 
-; The only per-user data is the cache and the settings of the user who uninstalls, removed on purpose
+; The only per-user data is the cache and the settings of whoever uninstalls, removed on purpose
 UsedUserAreasWarning=no
 
-; Keeps a log in the temporary folder, to see why the registration of the context menu failed
+; Keeps a log in the temporary folder, to see why the context menu registration failed
 SetupLogging=yes
 
 [Languages]
-; English goes first: it is the language of any system that is not in Spanish
+; English goes first: it is used on any system that is not in Spanish
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
@@ -103,7 +103,7 @@ Filename: "{#PowerShell}"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File
 var
   ClassicFallback: Boolean;
 
-{ Trusts the certificate in Trusted People of the machine, and returns whether it worked }
+{ Trusts the certificate in the machine's Trusted People store, and returns whether it worked }
 function TrustCertificate: Boolean;
 var
   ResultCode: Integer;
@@ -124,7 +124,7 @@ begin
   Log(Format('Registration of the context menu package finished with code %d', [ResultCode]));
 end;
 
-{ Adds the classic item of the context menu of folders, for every user of the computer }
+{ Adds the classic folder context menu item, for every user on the computer }
 procedure AddClassicVerb;
 begin
   RegWriteStringValue(HKLM, '{#ClassicVerbKey}', '', CustomMessage('ChangeIcon'));
@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-{ Says on the last page where the item of the menu is }
+{ Says on the last page where the menu item is }
 procedure CurPageChanged(CurPageID: Integer);
 begin
   if CurPageID = wpFinished then

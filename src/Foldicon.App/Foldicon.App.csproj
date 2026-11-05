@@ -1,4 +1,4 @@
-<!-- WinUI 3 app of the icon picker, packaged as MSIX together with the context menu extension -->
+<!-- WinUI 3 icon picker app, packaged as MSIX together with the context menu extension -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -10,7 +10,7 @@
     <ApplicationIcon>Assets\Foldicon.ico</ApplicationIcon>
     <Platforms>x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-    <!-- One runtime per package, so it only carries the native SQLite of its own architecture -->
+    <!-- One runtime per package, so it only carries the native SQLite for its own architecture -->
     <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
     <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
     <!-- Carries the .NET runtime inside the package, so it installs on a PC without .NET -->
@@ -40,7 +40,7 @@
     <Content Include="Assets\Foldicon.ico" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!-- Puts the context menu DLL, built before by MSBuild from the solution, at the root of the package -->
+  <!-- Puts the context menu DLL, built before by MSBuild from the solution, at the package root -->
   <PropertyGroup>
     <ContextMenuDll>$(MSBuildThisFileDirectory)..\Foldicon.ContextMenu\bin\$(Platform)\$(Configuration)\Foldicon.ContextMenu.dll</ContextMenuDll>
   </PropertyGroup>
@@ -51,7 +51,7 @@
     <Warning Text="Foldicon.ContextMenu.dll is not built for $(Platform)|$(Configuration); the package will have no context menu. Build Foldicon.slnx with MSBuild." />
   </Target>
 
-  <!-- Puts the library of the Fluent icons, built before by MSBuild from the solution, and their license next to the app -->
+  <!-- Puts the Fluent icon library, built before by MSBuild from the solution, and their license next to the app -->
   <PropertyGroup>
     <FluentIconsFolder>$(MSBuildThisFileDirectory)..\Foldicon.FluentIcons\</FluentIconsFolder>
     <FluentIconsDll>$(FluentIconsFolder)bin\$(Platform)\$(Configuration)\fluenticons.dll</FluentIconsDll>

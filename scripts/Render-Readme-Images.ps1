@@ -1,4 +1,4 @@
-# Generates the images of the README in docs\images from the sources of docs\images\src: the banner in light and dark,
+# Generates the README images in docs\images from the sources in docs\images\src: the banner in light and dark,
 # the framed screenshots and the buttons
 #
 # It renders them with the headless mode of Chrome or Edge, in a temporary profile, with the Inter font, which it
@@ -89,7 +89,7 @@ foreach ($scene in 'b-search', 'c-preview', 'd-fluent') {
     }
 }
 
-# Frames the strip of Explorer and the context menu in each theme, with the margins of their own sizes
+# Frames the Explorer strip and the context menu in each theme, each with margins for its size
 $tight = 'img{display:block;margin:20px 40px 44px;border-radius:14px;box-shadow:0 16px 36px rgba(11,27,51,.28)}'
 $strips = @{ 'explorer' = 'img{width:1040px}'; 'explorer-light' = 'img{background:#FFFFFF;padding:8px 35.5px}' }
 foreach ($name in $strips.Keys) {

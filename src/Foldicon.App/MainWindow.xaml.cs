@@ -1,4 +1,4 @@
-// Window of the picker: loads the index, filters it and applies the chosen icon to the folder
+// Picker window: loads the index, filters it and applies the chosen icon to the folder
 using System.Diagnostics;
 using System.Globalization;
 using Foldicon.App.Imaging;
@@ -31,7 +31,7 @@ public sealed partial class MainWindow : Window
     private const int MinimumWidth = 640;
     private const int MinimumHeight = 500;
 
-    // Share of the visible width that the arrows of the tabs scroll
+    // Share of the visible width that the tab arrows scroll
     private const double TabsScrollStep = 0.75;
 
     private string? folder;
@@ -161,7 +161,7 @@ public sealed partial class MainWindow : Window
         AppSettingsFile.Save(LocalData.SettingsPath(), settings);
     }
 
-    // Turns the repair of every start on or off
+    // Turns the startup repair on or off
     private void OnRepairAtStartupClick(object sender, RoutedEventArgs e) =>
         SaveSettings(settings with { RepairAtStartup = RepairAtStartupItem.IsChecked });
 
@@ -197,7 +197,7 @@ public sealed partial class MainWindow : Window
     {
         if (!items.TryGetValue(icon, out var item))
         {
-            // Names the icon in the language of the interface, or by its identifier when the catalog lacks it
+            // Names the icon in the UI language, or by its identifier when the catalog lacks it
             var name = catalog.TryGetValue(icon, out var entry)
                 ? entry.NameFor(CultureInfo.CurrentUICulture)
                 : string.Format(CultureInfo.CurrentCulture, strings.GetString("IconNameFormat"), icon.ResourceId);
@@ -283,7 +283,7 @@ public sealed partial class MainWindow : Window
         Run(() => folders.Undo(target, previousIcon), "UndoneMessage", canUndo: false);
     }
 
-    // Runs a change of the folder, reports how it went when there is a message for it, and returns whether it worked
+    // Runs a folder change, reports how it went when there is a message for it, and returns whether it worked
     private bool Run(Action change, string? successMessage, bool canUndo)
     {
         try
@@ -304,14 +304,14 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    // Opens the bar of results with a translated message
+    // Opens the result bar with a translated message
     private void ShowResult(InfoBarSeverity severity, string message, bool canUndo)
     {
         ShowText(severity, strings.GetString(message));
         UndoButton.Visibility = canUndo ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    // Opens the bar of results with a text already translated, without offering to undo
+    // Opens the result bar with a text already translated, without offering to undo
     private void ShowText(InfoBarSeverity severity, string text)
     {
         ResultBar.Severity = severity;

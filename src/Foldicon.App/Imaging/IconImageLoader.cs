@@ -1,4 +1,4 @@
-// Function to load an icon as an image of the interface, reading its pixels off the interface thread
+// Function to load an icon as a UI image, reading its pixels off the UI thread
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;

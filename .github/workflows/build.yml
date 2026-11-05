@@ -1,4 +1,4 @@
-# Builds the whole solution for each platform, including the C++ context menu, and runs the unit tests of the core on x64
+# Builds the whole solution for each platform, including the C++ context menu, and runs the core unit tests on x64
 name: build
 
 on:
@@ -18,17 +18,17 @@ jobs:
       matrix:
         platform: [x64, ARM64]
     steps:
-      # Official action only, pinned to the commit of its v4 tag; Dependabot proposes the updates
+      # Official action only, pinned to the v4 tag's commit; Dependabot proposes the updates
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      # MSBuild of the Visual Studio already on the runner, located without third-party actions
+      # MSBuild from the Visual Studio already on the runner, located without third-party actions
       - shell: pwsh
         run: |
           $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | Select-Object -First 1
           & $msbuild Foldicon.slnx -restore -p:Configuration=Release -p:Platform=${{ matrix.platform }} -nologo -v:m
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      # An x64 runner cannot start the tests of ARM64
+      # An x64 runner cannot run ARM64 tests
       - if: matrix.platform == 'x64'
         run: dotnet test tests/Foldicon.Core.Tests -c Release -p:Platform=x64 --no-build
       - if: matrix.platform == 'x64'

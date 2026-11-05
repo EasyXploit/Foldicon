@@ -1,7 +1,7 @@
 # Creates the self-signed certificate used to sign local development packages of Foldicon
 #
-# The subject matches the Publisher of Package.appxmanifest. The certificate stays in the store of the current user;
-# with -Trust, its public part is also added to Trusted People of the machine so Windows installs the package, which
+# The subject matches the Publisher in Package.appxmanifest. The certificate stays in the current user's certificate store;
+# with -Trust, its public part is also added to the machine's Trusted People store so Windows installs the package, which
 # needs an elevated PowerShell. Store builds never use it: the Store signs the packages it distributes.
 
 [CmdletBinding()]
@@ -28,7 +28,7 @@ if ($null -eq $existing) {
         -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')
 }
 
-# Adds the public part to Trusted People of the machine when asked
+# Adds the public part to the machine's Trusted People store when asked
 if ($Trust) {
     $file = Join-Path $env:TEMP 'foldicon-dev.cer'
     Export-Certificate -Cert $existing -FilePath $file | Out-Null

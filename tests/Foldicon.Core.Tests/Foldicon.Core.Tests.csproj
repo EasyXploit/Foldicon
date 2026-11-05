@@ -1,4 +1,4 @@
-<!-- Unit tests of Foldicon.Core, in folders that mirror the ones of the library -->
+<!-- Unit tests of Foldicon.Core, in folders that mirror the library -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>

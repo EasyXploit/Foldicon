@@ -27,7 +27,7 @@ namespace Foldicon
 
     IFACEMETHODIMP ClassFactory::LockServer(BOOL lock) noexcept
     {
-        // Uses the counter of C++/WinRT, which also counts every live object of the module
+        // Uses the C++/WinRT counter, which also counts every live object in the module
         lock ? ++winrt::get_module_lock() : --winrt::get_module_lock();
         return S_OK;
     }

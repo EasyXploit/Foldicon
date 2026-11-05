@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Package with external location: gives the files of the installation folder the identity the modern context menu
+<!-- Package with external location: gives the files in the installation folder the identity the modern context menu
      of Windows 11 requires. It holds no code; Executable and Path are relative to that folder. Build-Installer.ps1
      fills in the version. -->
 <Package
@@ -49,7 +49,7 @@
           </desktop4:FileExplorerContextMenus>
         </desktop4:Extension>
 
-        <!-- COM class of the command, loaded in a surrogate process rather than in Explorer -->
+        <!-- COM class for the command, loaded in a surrogate process rather than in Explorer -->
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:SurrogateServer DisplayName="Foldicon context menu">

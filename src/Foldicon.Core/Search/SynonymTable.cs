@@ -25,7 +25,7 @@ public sealed class SynonymTable
         return new SynonymTable(groups);
     }
 
-    // Returns the word with every word of the groups that has one starting with it, so a word still being typed
+    // Returns the word plus every group with a word that starts with it, so a word still being typed
     // ("carp") already brings its translation ("folder")
     public IReadOnlyList<string> Expand(string word)
     {

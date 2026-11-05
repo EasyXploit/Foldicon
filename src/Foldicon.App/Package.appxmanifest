@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Package of Foldicon: the app and the command of the context menu of folders, served by a COM surrogate -->
+<!-- Foldicon package: the app and the folder context menu command, served by a COM surrogate -->
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
@@ -9,7 +9,7 @@
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
   IgnorableNamespaces="uap rescap com desktop4 desktop5">
 
-  <!-- Name and Publisher match the development certificate of scripts/New-DevCertificate.ps1; a Store build needs the
+  <!-- Name and Publisher match the development certificate from scripts/New-DevCertificate.ps1; a Store build needs the
        values that Partner Center reserves for the app instead -->
   <Identity Name="EasyXploit.Foldicon" Publisher="CN=EasyXploit" Version="0.1.0.0" />
 
@@ -49,7 +49,7 @@
           </desktop4:FileExplorerContextMenus>
         </desktop4:Extension>
 
-        <!-- COM class of the command, loaded in a surrogate process rather than in Explorer -->
+        <!-- COM class for the command, loaded in a surrogate process rather than in Explorer -->
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:SurrogateServer DisplayName="Foldicon context menu">

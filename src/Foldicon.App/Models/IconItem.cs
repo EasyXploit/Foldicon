@@ -8,7 +8,7 @@ namespace Foldicon.App.Models;
 
 public sealed partial class IconItem(IconReference icon, string name) : INotifyPropertyChanged
 {
-    // Size of the image of the grid in effective pixels
+    // Size of the grid image in effective pixels
     public const int GridSize = 32;
 
     private ImageSource? image;
@@ -23,7 +23,7 @@ public sealed partial class IconItem(IconReference icon, string name) : INotifyP
     // Text shown under the name, as in "imageres.dll,-3"
     public string Reference => Icon.ToString();
 
-    // Text of the tooltip of the cell: the name over the reference
+    // Cell tooltip text: the name over the reference
     public string ToolTip => $"{Name}{Environment.NewLine}{Reference}";
 
     public ImageSource? Image

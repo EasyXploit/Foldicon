@@ -9,7 +9,7 @@ public sealed class IconBrowser(
     SynonymTable synonyms,
     IReadOnlyDictionary<IconReference, IconCatalogEntry> catalog)
 {
-    // Returns the icons of a library, or of all of them when it is null, that match the typed text
+    // Returns the icons in a library, or in all of them when it is null, that match the typed text
     public IReadOnlyList<IconReference> Find(string? text, string? library)
     {
         // Runs the search with the synonyms of each typed word

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Application of Foldicon: only the theme resources of WinUI -->
+<!-- Foldicon application: only the WinUI theme resources -->
 <Application
   x:Class="Foldicon.App.App"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

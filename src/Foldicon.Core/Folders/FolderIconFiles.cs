@@ -1,11 +1,11 @@
-// Access to the real copies of an icon inside a folder, hidden and marked as system files like desktop.ini
+// Access to the real icon copies inside a folder, hidden and marked as system files like desktop.ini
 using System.Diagnostics;
 
 namespace Foldicon.Core.Folders;
 
 public sealed class FolderIconFiles : IFolderIconFiles
 {
-    // Marks of a copy, which keep it out of the listing of the folder
+    // Marks of a copy, which keep it out of the folder listing
     internal const FileAttributes Hidden = FileAttributes.Hidden | FileAttributes.System;
 
     // Lists the copies, whose marks do not keep them out of this search

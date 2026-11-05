@@ -3,7 +3,7 @@ namespace Foldicon.Core.Indexing;
 
 public static class SystemIconLibraries
 {
-    // Keeps the order of their tabs in the interface
+    // Keeps the order of their tabs in the UI
     public static readonly IReadOnlyList<string> All =
     [
         "imageres.dll",

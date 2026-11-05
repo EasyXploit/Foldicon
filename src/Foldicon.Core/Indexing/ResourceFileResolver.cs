@@ -5,7 +5,7 @@ namespace Foldicon.Core.Indexing;
 
 public static class ResourceFileResolver
 {
-    // Returns the file of the bundled library, which is next to the app; for a system library, the .mun of
+    // Returns the bundled library file, which is next to the app; for a system library, the .mun of
     // SystemResources when it exists, since newer builds of Windows keep the icons there and leave a stub in System32,
     // and the library of System32 otherwise
     public static string Resolve(string library, string windowsDirectory, Func<string, bool> fileExists)

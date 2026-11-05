@@ -1,4 +1,4 @@
-# Signs a local MSIX of Foldicon with the development certificate created by New-DevCertificate.ps1
+# Signs a local Foldicon MSIX with the development certificate created by New-DevCertificate.ps1
 
 [CmdletBinding()]
 param(
@@ -9,13 +9,13 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Common.ps1')
 
-# Finds the development certificate in the store of the current user
+# Finds the development certificate in the current user's certificate store
 $certificate = Get-DevCertificate
 if ($null -eq $certificate) {
     throw 'There is no development certificate; run scripts\New-DevCertificate.ps1 first.'
 }
 
-# Signs the package with SHA-256 and the certificate of the store, without exporting its key; the timestamp keeps the
+# Signs the package with SHA-256 and the certificate in the store, without exporting its key; the timestamp keeps the
 # signature valid after the certificate expires
 & (Find-SdkTool 'signtool.exe') sign /fd SHA256 /sha1 $certificate.Thumbprint /s My /tr $TimestampServer /td SHA256 $Package
 if ($LASTEXITCODE -ne 0) {

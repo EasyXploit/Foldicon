@@ -1,6 +1,6 @@
-# Functions and names shared by the scripts of the repository; each script loads it with a dot
+# Functions and names shared by the repository scripts; each script loads it with a dot
 
-# Subject and name of the development certificate; the subject matches the Publisher of Package.appxmanifest
+# Subject and name of the development certificate; the subject matches the Publisher in Package.appxmanifest
 $DevCertificateSubject = 'CN=EasyXploit'
 $DevCertificateName = 'Foldicon development'
 
@@ -19,14 +19,14 @@ function Find-Browser {
     throw 'Neither Edge nor Chrome was found.'
 }
 
-# Returns the valid development certificate of the store of the current user, or nothing when there is none
+# Returns the valid development certificate of the current user's certificate store, or nothing when there is none
 function Get-DevCertificate {
     return Get-ChildItem Cert:\CurrentUser\My |
         Where-Object { $_.Subject -eq $DevCertificateSubject -and $_.FriendlyName -eq $DevCertificateName -and $_.NotAfter -gt (Get-Date) } |
         Select-Object -First 1
 }
 
-# Returns the newest copy of a tool of the Windows SDK
+# Returns the newest copy of a Windows SDK tool
 function Find-SdkTool([string]$name) {
     $tool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\$name" | Sort-Object FullName -Descending | Select-Object -First 1
     if ($null -eq $tool) {

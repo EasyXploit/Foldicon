@@ -6,7 +6,7 @@ namespace Foldicon.Core.Indexing;
 
 public sealed class NativeGroupIconReader : IGroupIconReader
 {
-    // Lists the integer identifiers of the RT_GROUP_ICON resources of the file
+    // Lists the integer identifiers of the file's RT_GROUP_ICON resources
     public IReadOnlyList<int> ReadGroupIconIds(string path)
     {
         using var module = ResourceModule.Open(path);

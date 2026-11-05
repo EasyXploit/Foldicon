@@ -1,4 +1,4 @@
-<!-- Versions of every NuGet package, kept in one place; all of them are free and open source -->
+<!-- Every NuGet package version, kept in one place; all of them are free and open source -->
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>

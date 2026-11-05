@@ -1,4 +1,4 @@
-// Declaration of the user function that reads the DPI of the monitor of a window
+// Declaration of the user32 function that reads the DPI of a window's monitor
 using System.Runtime.InteropServices;
 
 namespace Foldicon.App.Interop;

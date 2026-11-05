@@ -14,7 +14,7 @@ public sealed class FolderIconRepair(
     public static FolderIconRepair ForSystem() =>
         new(new FolderTree(), new FolderIconFiles(), new DesktopIniFile(), new FolderMarks(), new NativeFolderShell());
 
-    // Returns the places a search starts from: the folder of the user, where the sync clients keep theirs by default
+    // Returns the places a search starts from: the user folder, where sync clients keep theirs by default
     public static IReadOnlyList<string> StartupRoots() =>
         [Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)];
 
@@ -100,7 +100,7 @@ public sealed class FolderIconRepair(
         }
     }
 
-    // Puts back what a folder with a copy of an icon needs, and returns whether anything was missing
+    // Puts back what a folder with an icon copy needs, and returns whether anything was missing
     public bool Repair(string folder)
     {
         // Leaves alone a folder without copies, which is nearly all of them, without reading anything else

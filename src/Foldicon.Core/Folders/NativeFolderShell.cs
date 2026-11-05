@@ -1,4 +1,4 @@
-// Shell of the real system, through SHGetSetFolderCustomSettings and SHChangeNotify
+// Real system shell, through SHGetSetFolderCustomSettings and SHChangeNotify
 using System.Runtime.InteropServices;
 using Foldicon.Core.Interop;
 
@@ -6,13 +6,13 @@ namespace Foldicon.Core.Folders;
 
 public sealed class NativeFolderShell : IFolderShell
 {
-    // Writes IconResource with FCSM_ICONFILE, which keeps every other setting of the desktop.ini
+    // Writes IconResource with FCSM_ICONFILE, which keeps the other settings in desktop.ini
     public void SetIcon(string folder, string iconFile, int iconIndex)
     {
         var file = Marshal.StringToHGlobalUni(iconFile);
         try
         {
-            // Fills only the icon fields of the settings
+            // Fills only the icon fields
             var settings = new ShFolderCustomSettings
             {
                 Size = (uint)Marshal.SizeOf<ShFolderCustomSettings>(),
@@ -34,7 +34,7 @@ public sealed class NativeFolderShell : IFolderShell
         }
     }
 
-    // Notifies the change of the folder without waiting for Explorer
+    // Notifies the folder change without waiting for Explorer
     public void Refresh(string folder) =>
         Shell32.SHChangeNotify(Shell32.ShcneUpdateItem, Shell32.ShcnfPathW | Shell32.ShcnfFlushNoWait, folder, 0);
 }

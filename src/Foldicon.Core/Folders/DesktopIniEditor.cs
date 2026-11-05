@@ -1,15 +1,15 @@
-// Functions to read and remove keys of the text of a desktop.ini while keeping the rest of it untouched
+// Functions to read and remove keys in the text of a desktop.ini while keeping the rest of it untouched
 namespace Foldicon.Core.Folders;
 
 public static class DesktopIniEditor
 {
-    // Section of desktop.ini that holds the icon of the folder
+    // Section of desktop.ini that holds the folder icon
     public const string ShellClassInfo = ".ShellClassInfo";
 
-    // Key written by the shell for the icon of the folder
+    // Key written by the shell for the folder icon
     public const string IconResource = "IconResource";
 
-    // Returns the value of a key of a section, or null when it is missing
+    // Returns the value of a key in a section, or null when it is missing
     public static string? ReadValue(string text, string section, string key)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -23,7 +23,7 @@ public static class DesktopIniEditor
                 continue;
             }
 
-            // Returns the value of the first matching key of the section
+            // Returns the value of the first matching key in the section
             if (string.Equals(current, section, StringComparison.OrdinalIgnoreCase) && TryKey(line, out var lineKey, out var value)
                 && string.Equals(lineKey, key, StringComparison.OrdinalIgnoreCase))
             {
@@ -34,7 +34,7 @@ public static class DesktopIniEditor
         return null;
     }
 
-    // Returns the IconResource of the text of a desktop.ini, or null when there is no text or it has none
+    // Returns the IconResource in the text of a desktop.ini, or null when there is no text or it has none
     public static string? ReadIconResource(string? text) => text is null ? null : ReadValue(text, ShellClassInfo, IconResource);
 
     // Returns the text without the key in the section, and without the section if no key is left in it

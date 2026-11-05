@@ -1,16 +1,16 @@
-// Function to rebuild an .ico file from the resources of an icon group
+// Function to rebuild an .ico file from an icon group's resources
 using System.Buffers.Binary;
 
 namespace Foldicon.Core.Icons;
 
 public static class IconFileBuilder
 {
-    // Sizes of the headers: the common start, an entry of a group resource and an entry of an .ico file
+    // Header sizes: the common start, a group resource entry and an .ico file entry
     private const int HeaderSize = 6;
     private const int GroupEntrySize = 14;
     private const int FileEntrySize = 16;
 
-    // Offset, inside an entry of a group resource, of the identifier of its image
+    // Offset of the image identifier inside a group resource entry
     private const int GroupEntryIdOffset = 12;
 
     // Returns the .ico file of a group, or null when the group is malformed or one of its images is missing

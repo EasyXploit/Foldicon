@@ -1,4 +1,4 @@
-// Function to start the app of the package on a folder
+// Function to start the packaged app on a folder
 #pragma once
 
 #include <string>

@@ -6,7 +6,7 @@ namespace Foldicon.Core.Storage;
 
 public static class AppSettingsFile
 {
-    // Returns the settings of the file, or the default ones when it is missing or damaged
+    // Returns the file's settings, or the default ones when it is missing or damaged
     public static AppSettings Load(string path)
     {
         try

@@ -61,7 +61,7 @@ public sealed class IconCatalogTests
     [TestMethod]
     public void names_every_icon_of_the_fluent_pack_and_nothing_else()
     {
-        // Reads the identifiers of the list the icon library is built from
+        // Reads the identifiers in the list the icon library is built from
         using var stream = typeof(IconCatalogTests).Assembly.GetManifestResourceStream("Foldicon.Core.Tests.pack.json")!;
         using var pack = JsonDocument.Parse(stream);
         var ids = pack.RootElement.GetProperty("icons").EnumerateArray().Select(icon => icon.GetProperty("id").GetInt32());
@@ -126,7 +126,7 @@ public sealed class IconCatalogTests
         CollectionAssert.DoesNotContain(results, new IconReference("imageres.dll", 3));
     }
 
-    // Opens an in-memory index with every icon of the embedded catalog and its search words
+    // Opens an in-memory index with every icon in the embedded catalog and its search words
     private static IconIndexStore EmbeddedStore()
     {
         var store = InMemoryStore.Open();
@@ -140,7 +140,7 @@ public sealed class IconCatalogTests
         return store;
     }
 
-    // Runs the search of the window for a text
+    // Runs the window's search for a text
     private static List<IconReference> Search(IconIndexStore store, string text) =>
         store.Search(SearchQuery.Parse(text, SynonymTable.LoadEmbedded()), null).ToList();
 }

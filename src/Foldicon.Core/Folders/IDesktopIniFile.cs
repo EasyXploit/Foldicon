@@ -3,7 +3,7 @@ namespace Foldicon.Core.Folders;
 
 public interface IDesktopIniFile
 {
-    // Returns the text of the desktop.ini of the folder, or null when the folder has none
+    // Returns the text of the folder's desktop.ini, or null when the folder has none
     string? Read(string folder);
 
     // Replaces the text of the desktop.ini, keeping its encoding and attributes

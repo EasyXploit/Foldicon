@@ -1,4 +1,4 @@
-// Source that reads the icons of the bundled library as resources, without running any of its code
+// Source that reads the bundled library icons as resources, without running any of its code
 using System.Runtime.InteropServices;
 using Foldicon.Core.Interop;
 

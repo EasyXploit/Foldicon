@@ -1,4 +1,4 @@
-// Function to start the app of the package on a folder
+// Function to start the packaged app on a folder
 #include "Launcher.h"
 
 #include <windows.h>
@@ -16,11 +16,11 @@ namespace Foldicon
     {
         try
         {
-            // Reads the folder of this DLL, which also holds the executable
+            // Reads this DLL's folder, which also holds the executable
             auto const directory = ModuleDirectory();
             auto const arguments = BuildPickArguments(folder);
 
-            // Activates the application of a full package, the only one with a manifest next to the DLL; a full-trust
+            // Activates the app in a full package, the only one with a manifest next to the DLL; a full-trust
             // app receives the arguments in its command line
             if (PathFileExistsW((directory + L"\\AppxManifest.xml").c_str()))
             {
@@ -37,7 +37,7 @@ namespace Foldicon
                 return S_OK;
             }
 
-            // Starts the executable of the installation folder otherwise, when the DLL comes from a package with an
+            // Otherwise starts the executable in the installation folder, when the DLL comes from a package with an
             // external location
             auto const executable = directory + L"\\Foldicon.exe";
             auto commandLine = L"\"" + executable + L"\" " + arguments;

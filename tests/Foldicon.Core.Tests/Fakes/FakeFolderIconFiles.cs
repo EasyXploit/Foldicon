@@ -5,7 +5,7 @@ namespace Foldicon.Core.Tests.Fakes;
 
 internal sealed class FakeFolderIconFiles : IFolderIconFiles
 {
-    // Copies of the folder, by name
+    // The folder's copies, by name
     public Dictionary<string, byte[]> Files { get; } = [];
 
     // Whether writing fails, as in a read-only folder

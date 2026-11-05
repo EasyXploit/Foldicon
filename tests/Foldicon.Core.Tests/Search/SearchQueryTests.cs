@@ -1,4 +1,4 @@
-// Tests of the turn of the text of the search box into groups of words
+// Tests that turn the search box text into groups of words
 using Foldicon.Core.Search;
 using Foldicon.Core.Tests.Fakes;
 

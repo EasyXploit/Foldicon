@@ -1,12 +1,12 @@
-# Generates the icon files of the Fluent pack in src\Foldicon.FluentIcons\icons and the resource script that lists them,
+# Generates the Fluent pack icon files in src\Foldicon.FluentIcons\icons and the resource script that lists them,
 # from the icons named in src\Foldicon.FluentIcons\pack.json
 #
 # It fetches only the SVG files it needs, at the commit that pack.json pins, and rasterizes them once per size with the
-# headless mode of Chrome or Edge, in one page per size. The identifiers of pack.json are written in the desktop.ini of
-# the folders of the users, so an icon never changes its identifier. Run it again after changing pack.json.
+# headless mode of Chrome or Edge, in one page per size. The identifiers in pack.json are written in the desktop.ini of
+# users' folders, so an icon never changes its identifier. Run it again after changing pack.json.
 
 param(
-    # Folder of a checkout of the repository of the icons; when it is missing, the script fetches its own
+    # Folder with a checkout of the icon repository; when it is missing, the script fetches its own
     [string]$Source
 )
 
@@ -18,15 +18,15 @@ $project = Join-Path $root 'src\Foldicon.FluentIcons'
 $icons = Join-Path $project 'icons'
 $work = Join-Path $root 'obj\fluent'
 
-# Sizes of each icon file, and the free space between two icons of a page
+# Sizes in each icon file, and the free space between two icons on a page
 $iconSizes = 16, 24, 32, 48, 64, 256
 $gap = 2
 
-# Colors of the folders, which the source draws in one dark tone that a dark Explorer would hide
+# Folder colors, which the source draws in one dark tone that a dark Explorer would hide
 $folderTop = '#FFDD7A'
 $folderBottom = '#F5B22D'
 
-# Fetches the SVG files and the license of the pinned commit, without the rest of the repository
+# Fetches the SVG files and the license at the pinned commit, without the rest of the repository
 function Get-Source([string]$repository, [string]$commit) {
     $folder = Join-Path $work 'source'
     if (-not (Test-Path $folder)) {
@@ -41,12 +41,12 @@ function Get-Source([string]$repository, [string]$commit) {
     return $folder
 }
 
-# Returns the name of the file of an icon, as in "folder-add.ico"
+# Returns the file name of an icon, as in "folder-add.ico"
 function Get-IconFileName($icon) {
     return (($icon.asset.ToLowerInvariant() -replace '[^a-z0-9]+', '-') + '.ico')
 }
 
-# Returns the SVG files of an icon by the size they were drawn for
+# Returns an icon's SVG files by the size they were drawn for
 function Get-Drawings($icon) {
     $drawings = @{}
     foreach ($file in Get-ChildItem -LiteralPath (Join-Path $Source "assets\$($icon.asset)\SVG") -Filter "*_$($icon.style).svg") {
@@ -80,7 +80,7 @@ function Get-DrawingUri([string]$path, [string]$style) {
     return 'data:image/svg+xml;base64,' + [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($svg))
 }
 
-# Draws every icon of the pack at one size in a page, and returns the path of its screenshot
+# Draws every pack icon at one size on a page, and returns the path of its screenshot
 function Save-Page([object[]]$pack, [int]$size, [int]$columns) {
     $step = $size + $gap
     $rows = [int][Math]::Ceiling($pack.Count / $columns)
@@ -121,7 +121,7 @@ function Read-Page([string]$path) {
     return [pscustomobject]@{ Bitmap = $bitmap; Bytes = $bytes; Stride = $bitmap.Width * 4 }
 }
 
-# Returns the bytes of an entry of the icon file: PNG at 256 px, and a bitmap with an empty mask below it
+# Returns the bytes of an icon file entry: PNG at 256 px, and a bitmap with an empty mask below it
 function Get-IconEntry($page, [int]$left, [int]$top, [int]$size) {
     $stream = New-Object System.IO.MemoryStream
     if ($size -ge 256) {
@@ -143,7 +143,7 @@ function Get-IconEntry($page, [int]$left, [int]$top, [int]$size) {
     return , $stream.ToArray()
 }
 
-# Checks that the browser drew something in a cell of a page
+# Checks that the browser drew something in a page cell
 function Test-Cell($page, [int]$left, [int]$top, [int]$size) {
     for ($y = 0; $y -lt $size; $y++) {
         $start = ($top + $y) * $page.Stride + $left * 4
@@ -180,7 +180,7 @@ foreach ($key in @($definition.icons.id), @($definition.icons | ForEach-Object {
     if ($repeated) { throw "pack.json repeats $($repeated[0].Name)." }
 }
 
-# Prepares the working folder, the source and the drawings of each icon
+# Prepares the working folder, the source and each icon's drawings
 New-Item -ItemType Directory -Force $work | Out-Null
 if (-not $Source) { $Source = Get-Source $definition.repository $definition.commit }
 $pack = @($definition.icons | ForEach-Object { [pscustomobject]@{ Icon = $_; Drawings = (Get-Drawings $_) } })
@@ -216,7 +216,7 @@ for ($i = 0; $i -lt $pack.Count; $i++) {
 
 foreach ($page in $pages.Values) { $page.Bitmap.Dispose() }
 
-# Writes the resource script, which gives each icon group the identifier of the pack
+# Writes the resource script, which gives each icon group its identifier from the pack
 $lines = @('// Icon groups of the Fluent pack, written by scripts/Render-FluentIcons.ps1 from pack.json', '')
 foreach ($item in $pack) {
     $lines += "$($item.Icon.id) ICON `"icons/$(Get-IconFileName $item.Icon)`""
@@ -224,6 +224,6 @@ foreach ($item in $pack) {
 
 [System.IO.File]::WriteAllText((Join-Path $project 'Foldicon.FluentIcons.rc'), (($lines -join "`n") + "`n"))
 
-# Keeps the license of the source next to the icons
+# Keeps the source license next to the icons
 Copy-Item -LiteralPath (Join-Path $Source 'LICENSE') (Join-Path $project 'LICENSE')
 Write-Output "Wrote $($pack.Count) icons in $icons."

@@ -1,4 +1,4 @@
-// Order of the icon libraries in the tabs of the interface, which the lists of icons also follow
+// Order of the icon libraries in the UI tabs, which the lists of icons also follow
 using Foldicon.Core.Icons;
 
 namespace Foldicon.Core.Indexing;

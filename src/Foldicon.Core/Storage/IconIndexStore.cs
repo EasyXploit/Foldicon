@@ -9,10 +9,10 @@ namespace Foldicon.Core.Storage;
 
 public sealed class IconIndexStore : IDisposable
 {
-    // Version of the schema; a cache written with another one is dropped and rebuilt
+    // Schema version; a cache written with another one is dropped and rebuilt
     private const int SchemaVersion = 3;
 
-    // Errors of SQLite for a damaged file
+    // SQLite errors for a damaged file
     private const int SqliteCorrupt = 11;
     private const int SqliteNotADatabase = 26;
 
@@ -35,7 +35,7 @@ public sealed class IconIndexStore : IDisposable
         }
     }
 
-    // Opens a cache file and prepares it; a damaged file is deleted and built again, since it holds nothing of the user
+    // Opens a cache file and prepares it; a damaged file is deleted and built again, since it holds no user data
     public static IconIndexStore OpenPrepared(string path, Action<IconIndexStore> prepare)
     {
         ArgumentNullException.ThrowIfNull(prepare);
@@ -119,7 +119,7 @@ public sealed class IconIndexStore : IDisposable
         ArgumentNullException.ThrowIfNull(icons);
         using var transaction = connection.BeginTransaction();
 
-        // Drops the previous icons of the library
+        // Drops the library's previous icons
         Execute("DELETE FROM icons WHERE library = $library", ("$library", icons.Library));
 
         // Stores each icon group
@@ -135,7 +135,7 @@ public sealed class IconIndexStore : IDisposable
             }
         }
 
-        // Stores the stamp of the file
+        // Stores the file stamp
         Execute(
             "INSERT OR REPLACE INTO libraries (library, length, last_write) VALUES ($library, $length, $lastWrite)",
             ("$library", icons.Library),
@@ -148,14 +148,14 @@ public sealed class IconIndexStore : IDisposable
     // Returns the stamp of the catalog whose words are stored, or null if there is none
     public string? GetCatalogStamp() => Scalar("SELECT stamp FROM catalog") as string;
 
-    // Stores the stamp of the catalog whose words were just stored
+    // Stores the catalog stamp whose words were just stored
     public void SetCatalogStamp(string stamp)
     {
         Execute("DELETE FROM catalog");
         Execute("INSERT INTO catalog (stamp) VALUES ($stamp)", ("$stamp", stamp));
     }
 
-    // Replaces every search word of the icons with the given ones, already normalized
+    // Replaces every icon search word with the given ones, already normalized
     public void ReplaceNames(IEnumerable<(IconReference Icon, string Term)> names)
     {
         ArgumentNullException.ThrowIfNull(names);
@@ -179,8 +179,8 @@ public sealed class IconIndexStore : IDisposable
         transaction.Commit();
     }
 
-    // Returns the icons of one library, or of all of them when it is null, matching every group of words: an icon
-    // matches a group when one of its words, its library or its identifier starts with one of the words of the group
+    // Returns the icons in one library, or in all of them when it is null, matching every group of words: an icon
+    // matches a group when one of its words, its library or its identifier starts with a word in the group
     public IReadOnlyList<IconReference> Search(IReadOnlyList<IReadOnlyList<string>> termGroups, string? library)
     {
         ArgumentNullException.ThrowIfNull(termGroups);
@@ -226,7 +226,7 @@ public sealed class IconIndexStore : IDisposable
         return results.OrderBy(icon => IconLibraryTabs.Rank(icon.Library)).ToList();
     }
 
-    // Escapes the wildcards of LIKE in a word typed by the user
+    // Escapes the LIKE wildcards in a word typed by the user
     private static string EscapeLike(string value) =>
         value.Replace(@"\", @"\\", StringComparison.Ordinal)
             .Replace("%", @"\%", StringComparison.Ordinal)

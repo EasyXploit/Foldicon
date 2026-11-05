@@ -1,4 +1,4 @@
-# Generates every image of the app from assets\logo\foldicon.svg: the logos of the packages and Foldicon.ico, used by
+# Generates every image of the app from assets\logo\foldicon.svg: the package logos and Foldicon.ico, used by
 # the executable, the window, the installer and the context menu
 #
 # It rasterizes the SVG once with the headless mode of Chrome or Edge, in a temporary profile, and scales that image.
@@ -12,12 +12,12 @@ $svg = Join-Path $root 'assets\logo\foldicon.svg'
 $assets = Join-Path $root 'src\Foldicon.App\Assets'
 $work = Join-Path $root 'obj\logo'
 
-# Sizes of the master image, of the variants of the taskbar icon and of the icon file
+# Sizes of the master image, the taskbar icon variants and the icon file
 $masterSize = 1024
 $targetSizes = 16, 24, 32, 48, 256
 $iconSizes = 16, 24, 32, 48, 64, 256
 
-# Draws the master image centered on a transparent canvas, at the given height of logo
+# Draws the master image centered on a transparent canvas, at the given logo height
 function New-Canvas([System.Drawing.Image]$master, [int]$width, [int]$height, [int]$logoSize) {
     $bitmap = New-Object System.Drawing.Bitmap $width, $height, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
@@ -36,7 +36,7 @@ function Save-Png([System.Drawing.Image]$master, [string]$name, [int]$width, [in
     $bitmap.Dispose()
 }
 
-# Returns the bytes of an entry of the icon file: PNG at 256 px, and a bitmap with an empty mask below it
+# Returns the bytes of an icon file entry: PNG at 256 px, and a bitmap with an empty mask below it
 function Get-IconEntry([System.Drawing.Image]$master, [int]$size) {
     $bitmap = New-Canvas $master $size $size $size
     $stream = New-Object System.IO.MemoryStream
@@ -97,7 +97,7 @@ if ($master.Width -ne $masterSize -or $master.Height -ne $masterSize) {
     throw "The image of the logo is $($master.Width) x $($master.Height), not $masterSize x $masterSize."
 }
 
-# Writes the logos of the packages
+# Writes the package logos
 Save-Png $master 'Square44x44Logo.png' 44 44 44
 Save-Png $master 'Square150x150Logo.png' 150 150 150
 Save-Png $master 'StoreLogo.png' 50 50 50

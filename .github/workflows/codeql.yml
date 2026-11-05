@@ -22,7 +22,7 @@ jobs:
       matrix:
         language: [csharp, actions]
     steps:
-      # Official actions only, pinned to the commit of their tag; Dependabot proposes the updates
+      # Official actions only, pinned to their tag's commit; Dependabot proposes the updates
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false

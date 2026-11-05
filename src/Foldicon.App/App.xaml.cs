@@ -1,4 +1,4 @@
-// Entry of the app: reads the folder of the command line and opens the picker on it
+// App entry point: reads the folder from the command line and opens the picker on it
 using System.Globalization;
 using Foldicon.Core.Languages;
 using Foldicon.Core.Launch;
@@ -13,7 +13,7 @@ public partial class App : Application
 
     public App()
     {
-        // Uses Spanish for any variant of that language of the system and English for any other
+        // Uses Spanish on any Spanish system and English on any other
         ApplicationLanguages.PrimaryLanguageOverride = AppLanguage.For(CultureInfo.CurrentUICulture.Name);
 
         InitializeComponent();

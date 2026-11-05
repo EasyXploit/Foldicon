@@ -3,7 +3,7 @@ namespace Foldicon.Core.Folders;
 
 internal static class MarkedFile
 {
-    // Drops the marks of the file, when it exists, so it can be replaced
+    // Drops the file's marks, when it exists, so it can be replaced
     public static void ClearMarks(string path)
     {
         if (File.Exists(path))

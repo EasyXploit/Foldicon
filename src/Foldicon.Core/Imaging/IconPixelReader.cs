@@ -37,7 +37,7 @@ public static class IconPixelReader
         }
         finally
         {
-            // Frees every handle of the icon
+            // Frees every icon handle
             NativeIcons.DeleteObject(info.ColorBitmap);
             NativeIcons.DeleteObject(info.MaskBitmap);
             NativeIcons.DestroyIcon(handle);

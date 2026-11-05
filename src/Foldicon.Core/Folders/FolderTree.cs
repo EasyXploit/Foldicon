@@ -1,4 +1,4 @@
-// Walk of the real folders, which never leaves through a link and keeps the placeholders of sync clients
+// Walk of real folders, which never leaves through a link and keeps the placeholders of sync clients
 namespace Foldicon.Core.Folders;
 
 public sealed class FolderTree : IFolderTree

@@ -1,4 +1,4 @@
-// Declarations of the functions of shell32.dll used to customize a folder and refresh Explorer
+// Declarations of the shell32.dll functions used to customize a folder and refresh Explorer
 using System.Runtime.InteropServices;
 
 namespace Foldicon.Core.Interop;

@@ -6,7 +6,7 @@ namespace Foldicon.Core.Search;
 
 public static class IconBrowseOrder
 {
-    // Returns the folders of the bundled library and of the first system library, then each library in the order of
+    // Returns the folders in the bundled library and the first system library, then each library in the order of
     // the tabs by identifier, and leaves the repeated and blank icons at the end
     public static IReadOnlyList<IconReference> Sort(
         IEnumerable<IconReference> icons,

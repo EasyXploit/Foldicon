@@ -9,9 +9,9 @@ public interface IFolderMarks
     // Marks the folder as customized
     void MarkCustomized(string folder);
 
-    // Checks whether a file of the folder is hidden and a system file
+    // Checks whether a file in the folder is hidden and a system file
     bool IsHidden(string folder, string name);
 
-    // Hides a file of the folder and returns whether it worked
+    // Hides a file in the folder and returns whether it worked
     bool Hide(string folder, string name);
 }

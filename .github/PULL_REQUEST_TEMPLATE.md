@@ -13,4 +13,5 @@
 - [ ] User-facing strings are only in the `Resources.resw` files (and `Foldicon.ContextMenu.rc`), in English and Spanish
 - [ ] The code follows the style of the project (one type per file, a comment before each block)
 - [ ] The documentation in `docs/` is updated when the behaviour changes
+- [ ] The README is updated if this adds or changes something important
 - [ ] No secrets, passwords or personal data in the code, tests or commits

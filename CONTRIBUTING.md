@@ -40,6 +40,13 @@ finished. See [docs/code-style.md](docs/code-style.md#tests).
 dotnet test tests/Foldicon.Core.Tests -p:Platform=x64 --filter <filter>
 ```
 
+## README
+
+The README is the front page of the project, so review it with every important change: a new feature, a new source of
+icons, or a change in how Foldicon is installed or built. Update its text, its feature list and its third-party
+credits, and take new screenshots when the window changes. `scripts/Render-Readme-Images.ps1` regenerates the images of
+`docs/images` from the sources of `docs/images/src`.
+
 ## Commits
 
 - Write commit messages in English, as one sentence in the imperative mood that says what the change does, without a

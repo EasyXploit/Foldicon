@@ -1,0 +1,28 @@
+<!-- Banner of the README, in light and dark; scripts/Render-Readme-Images.ps1 inlines it and fills in $logo$ and $screen$ -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <radialGradient id="glowA" cx="50%" cy="50%" r="50%">
+      <stop offset="0" class="glow-a" stop-opacity=".55" />
+      <stop offset="1" class="glow-a" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowB" cx="50%" cy="50%" r="50%">
+      <stop offset="0" class="glow-b" stop-opacity=".55" />
+      <stop offset="1" class="glow-b" stop-opacity="0" />
+    </radialGradient>
+    <clipPath id="window"><rect x="210" y="306" width="860" height="615" rx="16" /></clipPath>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#0B1B33" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" class="page" />
+  <ellipse cx="170" cy="520" rx="420" ry="300" fill="url(#glowA)" />
+  <ellipse cx="1120" cy="470" rx="420" ry="300" fill="url(#glowB)" />
+
+  <image href="$logo$" x="592" y="20" width="96" height="96" />
+  <text x="640" y="196" text-anchor="middle" class="title">Foldicon</text>
+  <text x="640" y="256" text-anchor="middle" class="tagline">Give every folder a look of its own</text>
+
+  <rect x="210" y="306" width="860" height="615" rx="16" class="frame" filter="url(#shadow)" />
+  <image href="$screen$" x="210" y="306" width="860" clip-path="url(#window)" />
+</svg>

@@ -1,3 +1,4 @@
 # Paths that code searches skip (ripgrep reads this file); they stay in git.
 src/Foldicon.App/Assets/
+src/Foldicon.FluentIcons/icons/
 *.lock.json

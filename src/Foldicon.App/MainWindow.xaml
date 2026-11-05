@@ -25,12 +25,17 @@
       <KeyboardAccelerator Key="Escape" Invoked="OnEscapeInvoked" />
     </Grid.KeyboardAccelerators>
 
-    <!-- Title bar drawn over the content, with the folder being changed -->
-    <StackPanel x:Name="TitleBar" Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+    <!-- Title bar drawn over the content, with the folder being changed; the margin keeps it clear of the window buttons -->
+    <Grid x:Name="TitleBar" Grid.Row="0" ColumnSpacing="12" VerticalAlignment="Center" Margin="0,0,138,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
       <Image Source="Assets/Square44x44Logo.png" Width="16" Height="16" />
-      <TextBlock x:Uid="AppTitle" Style="{StaticResource CaptionTextBlockStyle}" />
-      <TextBlock x:Name="FolderText" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.7" TextTrimming="CharacterEllipsis" />
-    </StackPanel>
+      <TextBlock x:Uid="AppTitle" Grid.Column="1" Style="{StaticResource CaptionTextBlockStyle}" />
+      <TextBlock x:Name="FolderText" Grid.Column="2" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.7" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+    </Grid>
 
     <AutoSuggestBox
       x:Name="SearchBox"

@@ -25,5 +25,6 @@ versions follow [Semantic Versioning](https://semver.org/).
 ### Fixed
 
 - A very long text in the search box, or an unexpected error of the shell or of an icon, no longer closes the app.
+- A long folder path no longer runs under the window buttons.
 - A damaged cache is rebuilt instead of leaving the window with an error.
 - The repair goes on through the folders inside one that fails, and tells copies apart in any case.

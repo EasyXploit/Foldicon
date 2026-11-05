@@ -20,12 +20,13 @@ Foldicon follows the same way of programming as the other projects of Sencimo La
 
 ## Tests
 
-- Every change of code comes with unit tests of the new or changed logic. Code that cannot be tested in a unit test
-  (P/Invoke, COM, the window) is kept behind an interface (`IGroupIconReader`, `IFolderShell`, `IDesktopIniFile`) and
-  what surrounds it is tested.
-- Tests live in `tests/Foldicon.Core.Tests`, in folders that mirror the ones of the library, and use MSTest.
+- Every change of code comes with unit tests of the new or changed logic. Code that talks to the system is kept behind
+  an interface (`IGroupIconReader`, `IFolderShell`, `IDesktopIniFile`), so the logic around it is tested with fakes.
+- Tests live in `tests/Foldicon.Core.Tests`, in folders that mirror the ones of the library, and use MSTest. The C++ code
+  that needs no shell is tested by the console program of `tests/Foldicon.ContextMenu.Tests`.
 - Each test is named after what it checks, in snake case (`skips_libraries_whose_file_did_not_change`), not after the
   function.
 - The normal case, the edges and the errors are tested.
-- No real network or disk in unit tests: in-memory SQLite (`Data Source=:memory:`) and fakes.
+- No real network. Logic uses in-memory SQLite (`Data Source=:memory:`) and fakes, and the classes behind those
+  interfaces are tested for real in `RealSystem/`, inside a `TemporaryFolder` and without opening a window.
 - Run only the tests of what you change: `dotnet test tests/Foldicon.Core.Tests -p:Platform=x64 --filter <filter>`.

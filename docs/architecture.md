@@ -65,7 +65,7 @@ removed one leaves a gap. Folders are numbered from 1 and the color icons from 1
 The text of the search box is split into words, lowercased and stripped of accents (`TextNormalizer`). Each word is
 expanded with the groups of `Search/synonyms.json` that have a word starting with it (`SynonymTable`), so a word being
 typed already finds its translation. An icon matches when, for every typed word, one of its names, its library or its
-identifier starts with one of the expansions.
+identifier starts with one of the expansions. `IconBrowser` puts these steps together for the window.
 
 While nothing is being searched, the *All* tab starts with the folders of `fluenticons.dll` and `imageres.dll`, follows
 with each library in the order of the tabs (`IconLibraryTabs`) and leaves the repeated and blank icons at the end
@@ -85,7 +85,7 @@ versioned). Icons added by later builds of Windows are shown with their identifi
 
 ## Folder changes
 
-`FolderIconService` works through two interfaces, so it is tested without the shell or the disk:
+`FolderIconService` works through interfaces, so its logic is tested without the shell or the disk:
 
 - **Apply** reads the current `IconResource`, which it returns, and calls `SHGetSetFolderCustomSettings` with
   `FCSM_ICONFILE`, `%SystemRoot%\System32\<library>` and `-<id>`. The shell merges the key into the existing
@@ -130,7 +130,5 @@ of `.foldicon-*.ico`, and reads no file of a folder that has none.
 
 ## Still missing
 
-- **Tests of the C++ command:** the quoting of `BuildPickArguments` mirrors `LaunchArguments`, which is tested, but the
-  C++ project has no test project of its own yet.
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a
   folder keeps showing its old icon.

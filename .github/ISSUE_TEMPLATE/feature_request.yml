@@ -1,0 +1,24 @@
+name: Feature request
+description: An idea to make Foldicon better
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Foldicon is only a folder icon picker. CONTRIBUTING.md lists what is out of scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what gets in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: The solution you have in mind
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered

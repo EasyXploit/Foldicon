@@ -145,7 +145,8 @@
 
 Foldicon does only this. It has no favorites, recent icons, sync or list of folders: the only files it writes are the
 `desktop.ini` of the folder you change, a hidden copy of the icon in that folder when it is a Fluent one, and a cache of
-the icon index in `%LOCALAPPDATA%\Foldicon`.
+the icon index in `%LOCALAPPDATA%\Foldicon`. When a sync client strips a folder that already has a Fluent icon, Foldicon
+repairs that folder too, as [Synced folders](#synced-folders) explains.
 
 ## Install
 

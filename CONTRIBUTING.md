@@ -21,7 +21,8 @@ Bug reports, ideas and pull requests are welcome.
 
 ## Code style
 
-The full guide is in [docs/code-style.md](docs/code-style.md). In short:
+Read [docs/engineering-guidelines.md](docs/engineering-guidelines.md) first: it explains the decisions the code has to
+keep. The format is in [docs/code-style.md](docs/code-style.md). In short:
 
 - **One type per file**, grouped in folders by scope (`Indexing/`, `Folders/`, `Search/`…).
 - **The first line of each file** is a comment that says what it holds.
@@ -39,6 +40,8 @@ finished. See [docs/code-style.md](docs/code-style.md#tests).
 ```sh
 dotnet test tests/Foldicon.Core.Tests -p:Platform=x64 --filter <filter>
 ```
+
+MSBuild also builds `tests/Foldicon.ContextMenu.Tests`, a console program that returns the number of failed checks.
 
 ## README
 

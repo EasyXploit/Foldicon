@@ -110,6 +110,39 @@ public sealed partial class MainWindow : Window
         }
 
         SearchBox.Focus(FocusState.Programmatic);
+
+        // Repairs in the background the folders that a sync client brought without their marks
+        _ = RepairInBackgroundAsync(FolderIconRepair.StartupRoots(), FolderScanLimits.Startup);
+    }
+
+    // Repairs the folders at low priority, without ever failing the window, and returns how many it repaired; the walk
+    // ends with the process when the window closes
+    private static Task<int> RepairInBackgroundAsync(IReadOnlyList<string> roots, FolderScanLimits limits) => Task.Run(() =>
+    {
+        Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+        try
+        {
+            return FolderIconRepair.ForSystem().RepairAll(roots, limits);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Trace.TraceError($"Repair failed: {exception}");
+            return 0;
+        }
+        finally
+        {
+            Thread.CurrentThread.Priority = ThreadPriority.Normal;
+        }
+    });
+
+    // Repairs every folder that can be found, and says how many were repaired
+    private async void OnRepairClick(object sender, RoutedEventArgs e)
+    {
+        RepairItem.IsEnabled = false;
+        ShowText(InfoBarSeverity.Informational, strings.GetString("RepairingMessage"));
+        var repaired = await RepairInBackgroundAsync(FolderIconRepair.ManualRoots(), FolderScanLimits.Manual);
+        RepairItem.IsEnabled = true;
+        ShowText(InfoBarSeverity.Success, string.Format(System.Globalization.CultureInfo.CurrentCulture, strings.GetString("RepairedMessage"), repaired));
     }
 
     // Shows the icons that match the search box and the selected tab
@@ -253,9 +286,16 @@ public sealed partial class MainWindow : Window
     // Opens the bar of results with a translated message
     private void ShowResult(InfoBarSeverity severity, string message, bool canUndo)
     {
-        ResultBar.Severity = severity;
-        ResultBar.Message = strings.GetString(message);
+        ShowText(severity, strings.GetString(message));
         UndoButton.Visibility = canUndo ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    // Opens the bar of results with a text already translated, without offering to undo
+    private void ShowText(InfoBarSeverity severity, string text)
+    {
+        ResultBar.Severity = severity;
+        ResultBar.Message = text;
+        UndoButton.Visibility = Visibility.Collapsed;
         ResultBar.IsOpen = true;
     }
 

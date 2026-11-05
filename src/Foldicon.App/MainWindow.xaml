@@ -134,7 +134,17 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      <Button x:Name="RestoreButton" x:Uid="RestoreButton" Click="OnRestoreClick" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button x:Name="RestoreButton" x:Uid="RestoreButton" Click="OnRestoreClick" />
+        <Button x:Uid="MoreButton" VerticalAlignment="Stretch">
+          <FontIcon Glyph="&#xE712;" FontSize="14" />
+          <Button.Flyout>
+            <MenuFlyout Placement="Top">
+              <MenuFlyoutItem x:Name="RepairItem" x:Uid="RepairItem" Click="OnRepairClick" />
+            </MenuFlyout>
+          </Button.Flyout>
+        </Button>
+      </StackPanel>
       <Button x:Uid="CancelButton" Grid.Column="2" Click="OnCancelClick" />
       <Button x:Name="ApplyButton" x:Uid="ApplyButton" Grid.Column="3" Style="{StaticResource AccentButtonStyle}" Click="OnApplyClick" />
     </Grid>

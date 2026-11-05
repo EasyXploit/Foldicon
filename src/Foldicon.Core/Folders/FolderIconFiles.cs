@@ -6,7 +6,7 @@ namespace Foldicon.Core.Folders;
 public sealed class FolderIconFiles : IFolderIconFiles
 {
     // Marks of a copy, which keep it out of the listing of the folder
-    private const FileAttributes Hidden = FileAttributes.Hidden | FileAttributes.System;
+    internal const FileAttributes Hidden = FileAttributes.Hidden | FileAttributes.System;
 
     // Lists the copies, whose marks do not keep them out of this search
     public IReadOnlyList<string> List(string folder) =>
@@ -36,16 +36,19 @@ public sealed class FolderIconFiles : IFolderIconFiles
         Hide(path);
     }
 
-    // Puts back the marks of a copy, and leaves it visible when a network drive refuses them, since the icon still works
-    public static void Hide(string path)
+    // Puts back the marks of a copy and returns whether it worked; it stays visible when a network drive refuses them,
+    // since the icon still works
+    public static bool Hide(string path)
     {
         try
         {
             File.SetAttributes(path, Hidden);
+            return true;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
             Trace.TraceWarning($"The copy of the icon could not be hidden: {exception.Message}");
+            return false;
         }
     }
 

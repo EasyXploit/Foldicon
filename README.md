@@ -170,6 +170,15 @@ The Fluent icons are not part of Windows, so a folder that uses one keeps its ow
 next to its `desktop.ini`, and points to it by its bare name. The icon moves with the folder, stays after an update or
 after you uninstall Foldicon, and works on any other PC. *Restore default* deletes the copy.
 
+### Synced folders
+
+Synology Drive and other sync clients carry the files of a folder, but often not the marks that make Windows read its
+`desktop.ini`, so a synced folder can show the plain icon on the second PC. Open Foldicon there once: each time it
+starts, it looks in your user folder, in the background, for folders with a Fluent icon and puts back what they lost.
+It writes the icon again if the `desktop.ini` did not arrive. For a sync folder that lives elsewhere, choose **···** and
+then *Repair all icons*, which also looks through your fixed drives. Foldicon keeps no list of your folders, and nothing
+runs while it is closed.
+
 ## Build from source
 
 You need Windows, the .NET 10 SDK and Visual Studio 2026 with the *.NET desktop development* and *Desktop development

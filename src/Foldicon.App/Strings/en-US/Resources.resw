@@ -31,6 +31,21 @@
   <data name="FluentTabText" xml:space="preserve">
     <value>Fluent / Windows 11</value>
   </data>
+  <data name="MoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>More options</value>
+  </data>
+  <data name="MoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>More options</value>
+  </data>
+  <data name="RepairItem.Text" xml:space="preserve">
+    <value>Repair all icons</value>
+  </data>
+  <data name="RepairingMessage" xml:space="preserve">
+    <value>Looking for folders to repair…</value>
+  </data>
+  <data name="RepairedMessage" xml:space="preserve">
+    <value>Folders repaired: {0}.</value>
+  </data>
   <data name="EmptyText.Text" xml:space="preserve">
     <value>No icons match the search.</value>
   </data>

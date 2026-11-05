@@ -114,6 +114,20 @@ folder, and `IconResource` holds only its name, `.foldicon-<id>.ico,0`, which th
   and the window shows the usual error. When the shell refuses the icon, a copy that was new is removed.
 - A drive that refuses the marks, as a network drive can, keeps the copy visible, since the icon still works.
 
+### Repair of synced folders
+
+A sync client such as Synology Drive carries the files of a folder but may drop the read-only mark of the folder and the
+hidden and system marks of its files, and Explorer then ignores `desktop.ini`. `FolderIconRepair` puts them back. A
+folder is only touched when it holds a copy: without a `desktop.ini`, a single copy says which icon to write again, and a
+folder that points to another icon stays as it is.
+
+There is no list of folders, which would be empty on a second PC anyway: every start of the app walks the folder of the
+user in the background, at low priority, breadth first and with the limits of `FolderScanLimits` (depth 6, 20,000
+folders). *Repair all icons*, in the **···** button of the window, also walks every fixed drive with far wider limits.
+Both skip links, hidden folders and the folders of `FolderScanRules`, but not the placeholders of sync clients, which
+are reparse points too, and enumerating them does not download anything. The walk checks each folder with one listing
+of `.foldicon-*.ico`, and reads no file of a folder that has none.
+
 ## Still missing
 
 - **Tests of the C++ command:** the quoting of `BuildPickArguments` mirrors `LaunchArguments`, which is tested, but the

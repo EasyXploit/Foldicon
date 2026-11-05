@@ -6,11 +6,13 @@
   <Folder Name="/src/">
     <Project Path="src/Foldicon.App/Foldicon.App.csproj">
       <BuildDependency Project="src/Foldicon.ContextMenu/Foldicon.ContextMenu.vcxproj" />
+      <BuildDependency Project="src/Foldicon.FluentIcons/Foldicon.FluentIcons.vcxproj" />
       <Deploy />
       <Platform Solution="*|x64" Project="x64" />
       <Platform Solution="*|ARM64" Project="ARM64" />
     </Project>
     <Project Path="src/Foldicon.ContextMenu/Foldicon.ContextMenu.vcxproj" Id="3d1a7c52-6e0b-4f3a-9c1d-2b7e5a4f8c10" />
+    <Project Path="src/Foldicon.FluentIcons/Foldicon.FluentIcons.vcxproj" Id="7c2e9a14-5b3d-4e86-a1f7-90d6c3b84e25" />
     <Project Path="src/Foldicon.Core/Foldicon.Core.csproj">
       <Platform Solution="*|x64" Project="x64" />
       <Platform Solution="*|ARM64" Project="ARM64" />

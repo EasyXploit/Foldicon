@@ -1,5 +1,6 @@
 // Tests of the catalog of icon names and of the search over the embedded one
 using System.Globalization;
+using System.Text.Json;
 using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
 using Foldicon.Core.Search;
@@ -55,6 +56,39 @@ public sealed class IconCatalogTests
         Assert.IsGreaterThan(1400, entries.Count);
         Assert.IsTrue(entries.All(entry => entry.English.Length > 0 && entry.Spanish.Length > 0));
         Assert.HasCount(entries.Count, entries.Select(entry => entry.Icon).Distinct().ToList());
+    }
+
+    [TestMethod]
+    public void names_every_icon_of_the_fluent_pack_and_nothing_else()
+    {
+        // Reads the identifiers of the list the icon library is built from
+        using var stream = typeof(IconCatalogTests).Assembly.GetManifestResourceStream("Foldicon.Core.Tests.pack.json")!;
+        using var pack = JsonDocument.Parse(stream);
+        var ids = pack.RootElement.GetProperty("icons").EnumerateArray().Select(icon => icon.GetProperty("id").GetInt32());
+
+        var named = IconCatalog.LoadEmbedded().Where(entry => entry.Icon.Library == BundledIconLibrary.Name);
+
+        CollectionAssert.AreEquivalent(ids.ToArray(), named.Select(entry => entry.Icon.ResourceId).ToArray());
+    }
+
+    [TestMethod]
+    public void finds_the_fluent_pack_by_its_name()
+    {
+        using var store = EmbeddedStore();
+
+        var found = Search(store, "fluent");
+
+        Assert.IsNotEmpty(found);
+        Assert.IsTrue(found.All(icon => icon.Library == BundledIconLibrary.Name));
+    }
+
+    [TestMethod]
+    public void finds_a_fluent_folder_in_both_languages_before_those_of_the_system()
+    {
+        using var store = EmbeddedStore();
+
+        Assert.AreEqual(new IconReference(BundledIconLibrary.Name, 1), Search(store, "folder")[0]);
+        Assert.AreEqual(new IconReference(BundledIconLibrary.Name, 1), Search(store, "carpeta")[0]);
     }
 
     [TestMethod]

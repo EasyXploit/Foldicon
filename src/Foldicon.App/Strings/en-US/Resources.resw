@@ -28,6 +28,9 @@
   <data name="AllTab.Text" xml:space="preserve">
     <value>All</value>
   </data>
+  <data name="FluentTabText" xml:space="preserve">
+    <value>Fluent / Windows 11</value>
+  </data>
   <data name="EmptyText.Text" xml:space="preserve">
     <value>No icons match the search.</value>
   </data>

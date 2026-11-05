@@ -1,4 +1,4 @@
-// Catalog of the names given to the system icons, which the window shows and the index stores as search words
+// Catalog of the names given to the icons, which the window shows and the index stores as search words
 using System.Globalization;
 using System.Text.Json;
 using Foldicon.Core.Icons;

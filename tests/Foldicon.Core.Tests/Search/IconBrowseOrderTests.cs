@@ -40,12 +40,30 @@ public sealed class IconBrowseOrderTests
     }
 
     [TestMethod]
+    public void opens_with_the_folders_of_the_bundled_library_and_keeps_its_other_icons_after_them()
+    {
+        var bundledFolder = new IconReference(BundledIconLibrary.Name, 1);
+        var bundledStar = new IconReference(BundledIconLibrary.Name, 2);
+        var catalog = new Dictionary<IconReference, IconCatalogEntry>(Catalog)
+        {
+            [bundledFolder] = new IconCatalogEntry(bundledFolder, "Folder", "Carpeta", []),
+            [bundledStar] = new IconCatalogEntry(bundledStar, "Star", "Estrella", []),
+        };
+
+        var sorted = IconBrowseOrder.Sort([Picture, MusicFolder, bundledStar, Folder, bundledFolder], catalog);
+
+        CollectionAssert.AreEqual(
+            new[] { bundledFolder, Folder, MusicFolder, bundledStar, Picture },
+            sorted.ToArray());
+    }
+
+    [TestMethod]
     public void orders_the_embedded_catalog_from_the_first_folder()
     {
         var catalog = IconCatalog.LoadEmbedded().ToDictionary(entry => entry.Icon);
         var sorted = IconBrowseOrder.Sort(catalog.Keys, catalog);
 
-        Assert.AreEqual(Folder, sorted[0]);
+        Assert.AreEqual(new IconReference(BundledIconLibrary.Name, 1), sorted[0]);
         Assert.IsTrue(catalog[sorted[1]].IsFolder);
         Assert.IsTrue(catalog[sorted[^1]].IsFiller);
     }

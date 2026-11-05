@@ -1,4 +1,5 @@
-// Tests of the choice between the .mun of SystemResources and the library of System32
+// Tests of the choice of the file that holds the icons of a library
+using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
 
 namespace Foldicon.Core.Tests.Indexing;
@@ -18,5 +19,12 @@ public sealed class ResourceFileResolverTests
     {
         var path = ResourceFileResolver.Resolve("pifmgr.dll", @"C:\Windows", _ => false);
         Assert.AreEqual(@"C:\Windows\System32\pifmgr.dll", path);
+    }
+
+    [TestMethod]
+    public void looks_for_the_bundled_library_next_to_the_app()
+    {
+        var path = ResourceFileResolver.Resolve(BundledIconLibrary.Name, @"C:\Windows", _ => true);
+        Assert.AreEqual(BundledIconLibrary.FilePath, path);
     }
 }

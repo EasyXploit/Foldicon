@@ -18,6 +18,9 @@
     <ProjectReference Include="..\..\src\Foldicon.Core\Foldicon.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\src\Foldicon.FluentIcons\pack.json" LogicalName="Foldicon.Core.Tests.pack.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 </Project>

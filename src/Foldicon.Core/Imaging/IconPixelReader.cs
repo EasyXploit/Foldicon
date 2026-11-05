@@ -1,4 +1,4 @@
-// Function to read an icon of a system library as BGRA pixels with straight alpha, at the requested size
+// Function to read an icon of a library as BGRA pixels with straight alpha, at the requested size
 using Foldicon.Core.Icons;
 using Foldicon.Core.Interop;
 

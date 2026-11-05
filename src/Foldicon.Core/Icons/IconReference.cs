@@ -1,10 +1,12 @@
-// Type that points to one icon group of a system library
+// Type that points to one icon group of a system library or of the library bundled with the app
 namespace Foldicon.Core.Icons;
 
 public readonly record struct IconReference(string Library, int ResourceId)
 {
-    // Writes the path of the library under %SystemRoot%\System32, without expanding it
-    public string LibraryPath() => $@"%SystemRoot%\System32\{Library}";
+    // Writes the full path of the bundled library, or the path of a system library under %SystemRoot%\System32 without
+    // expanding it
+    public string LibraryPath() =>
+        Library == BundledIconLibrary.Name ? BundledIconLibrary.FilePath : $@"%SystemRoot%\System32\{Library}";
 
     // Writes the value of IconResource for desktop.ini
     public string ToIconResource() => $"{LibraryPath()},-{ResourceId}";

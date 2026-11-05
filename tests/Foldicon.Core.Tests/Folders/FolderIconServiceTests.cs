@@ -24,6 +24,17 @@ public sealed class FolderIconServiceTests
     }
 
     [TestMethod]
+    public void applies_an_icon_of_the_bundled_library_by_its_full_path()
+    {
+        var shell = new FakeFolderShell();
+        var service = new FolderIconService(shell, new FakeDesktopIniFile(null));
+
+        service.Apply(Folder, new IconReference(BundledIconLibrary.Name, 12));
+
+        Assert.AreEqual((Folder, BundledIconLibrary.FilePath, -12), shell.Icons.Single());
+    }
+
+    [TestMethod]
     public void returns_no_previous_icon_for_a_plain_folder()
     {
         var service = new FolderIconService(new FakeFolderShell(), new FakeDesktopIniFile(null));

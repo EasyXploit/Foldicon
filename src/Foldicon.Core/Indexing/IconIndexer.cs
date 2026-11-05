@@ -1,4 +1,4 @@
-// Service that reads the icon groups of the system libraries and keeps them in the cache
+// Service that reads the icon groups of the libraries and keeps them in the cache
 using Foldicon.Core.Storage;
 
 namespace Foldicon.Core.Indexing;

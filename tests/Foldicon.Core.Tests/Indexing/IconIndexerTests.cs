@@ -1,4 +1,5 @@
 // Tests of the refresh of the cached index from the library files
+using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
 using Foldicon.Core.Tests.Fakes;
 
@@ -22,6 +23,30 @@ public sealed class IconIndexerTests
 
         Assert.AreEqual(2, read);
         Assert.HasCount(3, store.Search([], null));
+    }
+
+    [TestMethod]
+    public void indexes_the_bundled_library_from_the_folder_of_the_app()
+    {
+        using var store = InMemoryStore.Open();
+        var reader = new FakeGroupIconReader(new() { [BundledIconLibrary.FilePath] = [1, 2] });
+        var indexer = new IconIndexer(reader, store, Windows, path => path == BundledIconLibrary.FilePath, _ => new LibraryStamp(1, 1));
+
+        var read = indexer.Refresh(IconLibraryTabs.All);
+
+        Assert.AreEqual(1, read);
+        CollectionAssert.AreEqual(
+            new[] { new IconReference(BundledIconLibrary.Name, 1), new IconReference(BundledIconLibrary.Name, 2) },
+            store.Search([], BundledIconLibrary.Name).ToArray());
+    }
+
+    [TestMethod]
+    public void skips_the_bundled_library_when_the_app_lacks_it()
+    {
+        using var store = InMemoryStore.Open();
+        var indexer = new IconIndexer(new FakeGroupIconReader([]), store, Windows, _ => false, _ => new LibraryStamp(1, 1));
+
+        Assert.AreEqual(0, indexer.Refresh([BundledIconLibrary.Name]));
     }
 
     [TestMethod]

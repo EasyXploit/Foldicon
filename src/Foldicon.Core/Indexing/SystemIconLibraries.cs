@@ -3,7 +3,7 @@ namespace Foldicon.Core.Indexing;
 
 public static class SystemIconLibraries
 {
-    // Keeps the order of the tabs of the interface, after the "All" tab
+    // Keeps the order of their tabs in the interface
     public static readonly IReadOnlyList<string> All =
     [
         "imageres.dll",
@@ -16,11 +16,4 @@ public static class SystemIconLibraries
         "mmcndmgr.dll",
         "setupapi.dll",
     ];
-
-    // Returns the position of a library among the tabs, and places any other one after them
-    public static int Rank(string library)
-    {
-        var rank = All.ToList().IndexOf(library);
-        return rank < 0 ? int.MaxValue : rank;
-    }
 }

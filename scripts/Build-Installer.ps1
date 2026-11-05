@@ -55,6 +55,12 @@ if ($LASTEXITCODE -ne 0) {
     throw "The build of the context menu failed with code $LASTEXITCODE."
 }
 
+# Builds the library of the Fluent icons, which the publish of the app also copies next to the executable
+& $msbuild (Join-Path $root 'src\Foldicon.FluentIcons\Foldicon.FluentIcons.vcxproj') -p:Configuration=Release -p:Platform=$platform -nologo -v:m
+if ($LASTEXITCODE -ne 0) {
+    throw "The build of the Fluent icons failed with code $LASTEXITCODE."
+}
+
 # Publishes the app without a package, carrying .NET and the Windows App SDK
 & $msbuild (Join-Path $root 'src\Foldicon.App\Foldicon.App.csproj') -restore -t:Rebuild -t:Publish -p:Configuration=Release -p:Platform=$platform `
     -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true -p:PublishDir="$appFolder\" -nologo -v:m

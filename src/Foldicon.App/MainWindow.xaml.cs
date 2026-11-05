@@ -62,10 +62,11 @@ public sealed partial class MainWindow : Window
 
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets", "Foldicon.ico"));
 
-        // Adds one tab per library after "All"
-        foreach (var library in SystemIconLibraries.All)
+        // Adds one tab per library after "All", named by its file except for the one bundled with the app
+        foreach (var library in IconLibraryTabs.All)
         {
-            LibraryBar.Items.Add(new SelectorBarItem { Text = library, Tag = library });
+            var text = library == BundledIconLibrary.Name ? strings.GetString("FluentTabText") : library;
+            LibraryBar.Items.Add(new SelectorBarItem { Text = text, Tag = library });
         }
 
         // Shows the folder, or explains how to open the app when there is none
@@ -92,7 +93,7 @@ public sealed partial class MainWindow : Window
             store = await Task.Run(() =>
             {
                 var opened = IconIndexStore.OpenDefault();
-                IconIndexer.ForSystem(opened).Refresh(SystemIconLibraries.All);
+                IconIndexer.ForSystem(opened).Refresh(IconLibraryTabs.All);
                 opened.ReplaceNames(IconCatalog.Terms(catalog.Values));
                 return opened;
             });

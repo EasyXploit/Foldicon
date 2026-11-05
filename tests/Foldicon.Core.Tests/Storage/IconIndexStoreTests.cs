@@ -57,6 +57,18 @@ public sealed class IconIndexStoreTests
     }
 
     [TestMethod]
+    public void lists_the_bundled_library_first()
+    {
+        using var store = InMemoryStore.Open();
+        store.ReplaceLibrary(new LibraryIcons("imageres.dll", Stamp, [3]));
+        store.ReplaceLibrary(new LibraryIcons(BundledIconLibrary.Name, Stamp, [5]));
+
+        var found = store.Search([], null);
+
+        Assert.AreEqual(new IconReference(BundledIconLibrary.Name, 5), found[0]);
+    }
+
+    [TestMethod]
     public void narrows_the_search_to_one_library()
     {
         using var store = Seeded();

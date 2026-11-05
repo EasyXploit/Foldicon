@@ -51,6 +51,21 @@
     <Warning Text="Foldicon.ContextMenu.dll is not built for $(Platform)|$(Configuration); the package will have no context menu. Build Foldicon.slnx with MSBuild." />
   </Target>
 
+  <!-- Puts the library of the Fluent icons, built before by MSBuild from the solution, and their license next to the app -->
+  <PropertyGroup>
+    <FluentIconsFolder>$(MSBuildThisFileDirectory)..\Foldicon.FluentIcons\</FluentIconsFolder>
+    <FluentIconsDll>$(FluentIconsFolder)bin\$(Platform)\$(Configuration)\fluenticons.dll</FluentIconsDll>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(FluentIconsFolder)LICENSE" Link="fluenticons.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('$(FluentIconsDll)')">
+    <Content Include="$(FluentIconsDll)" Link="fluenticons.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="WarnMissingFluentIcons" BeforeTargets="Build" Condition="!Exists('$(FluentIconsDll)')">
+    <Warning Text="fluenticons.dll is not built for $(Platform)|$(Configuration); the package will have no Fluent icons. Build Foldicon.slnx with MSBuild." />
+  </Target>
+
   <ItemGroup>
     <ProjectCapability Include="Msix" />
   </ItemGroup>

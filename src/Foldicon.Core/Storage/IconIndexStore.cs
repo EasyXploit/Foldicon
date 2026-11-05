@@ -164,7 +164,7 @@ public sealed class IconIndexStore : IDisposable
         }
 
         // Keeps the libraries in the order of the tabs, which a stable sort leaves inside each one by identifier
-        return results.OrderBy(icon => SystemIconLibraries.Rank(icon.Library)).ToList();
+        return results.OrderBy(icon => IconLibraryTabs.Rank(icon.Library)).ToList();
     }
 
     // Escapes the wildcards of LIKE in a word typed by the user

@@ -8,7 +8,7 @@
 
 <p align="center">
   Right-click a folder, choose <b>Change icon</b>, find the one you like, done.<br>
-  A small, free app for Windows that puts the icons you already have to work.
+  A small, free app for Windows that puts the icons you already have to work, and adds a pack in the style of Windows 11.
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@
     <td width="33%" valign="top">
       <img src="docs/images/features/search.svg" alt="" width="48"><br>
       <b>Search by what it shows</b><br>
-      All 1,498 icons have a name in English and Spanish, so <code>music</code> and <code>música</code> both work.
+      All 1,722 icons have a name in English and Spanish, so <code>music</code> and <code>música</code> both work.
     </td>
     <td width="33%" valign="top">
       <img src="docs/images/features/preview.svg" alt="" width="48"><br>
@@ -81,7 +81,7 @@
 <h2 align="center">Find the right icon in seconds</h2>
 
 <p align="center">
-  Type what you are looking for, or browse one tab per system library.<br>
+  Type what you are looking for, or browse one tab per library.<br>
   The arrows move through the grid, and <kbd>Enter</kbd> or a double click applies the icon and closes the window.
 </p>
 
@@ -90,6 +90,21 @@
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/shot-b-search-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="docs/images/shot-b-search-light.png">
     <img src="docs/images/shot-b-search-light.png" alt="Search results for the word music in the picker window" width="820">
+  </picture>
+</p>
+
+<h2 align="center">The look of Windows 11, ready to use</h2>
+
+<p align="center">
+  The <b>Fluent / Windows 11</b> tab brings 224 icons of Microsoft's Fluent family: 199 in full color and 25 folders.<br>
+  They come with Foldicon and look sharp at every size.
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/shot-d-fluent-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/shot-d-fluent-light.png">
+    <img src="docs/images/shot-d-fluent-light.png" alt="The Fluent / Windows 11 tab of the picker window, with golden folders and colorful icons" width="820">
   </picture>
 </p>
 
@@ -121,8 +136,8 @@
 
 - **Icons of Windows:** `imageres.dll`, `shell32.dll`, `ddores.dll`, `pifmgr.dll`, `moricons.dll`, `wmploc.dll`,
   `netshell.dll`, `mmcndmgr.dll` and `setupapi.dll`, from modern folders to classic pixel art.
-- **More icons on the way:** [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons) will be added
-  as an extra source.
+- **Fluent icons:** 224 icons of [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons), the 199 of
+  its color set and 25 folders painted in gold so they stand out on light and dark. They also show in the search, first.
 - **Keyboard:** <kbd>Ctrl</kbd>+<kbd>F</kbd> goes to the search box, the arrows move in the grid, <kbd>Enter</kbd>
   applies and <kbd>Esc</kbd> closes.
 - **Light and dark:** the window follows the theme of the system, over Mica.
@@ -149,6 +164,10 @@ The icon is written as `IconResource=%SystemRoot%\System32\<library>,-<id>` in t
 `SHGetSetFolderCustomSettings`, which keeps every other setting of the file. Restoring removes only that key. See
 [docs/architecture.md](docs/architecture.md).
 
+The Fluent icons are not part of Windows, so they live in `fluenticons.dll`, next to the app, and the folder points to
+that file. Folders that use them need Foldicon installed: if you uninstall it, or copy the folder to another PC, they
+lose their icon. Choose *Restore default* first if you plan to do that.
+
 ## Build from source
 
 You need Windows, the .NET 10 SDK and Visual Studio 2026 with the *.NET desktop development* and *Desktop development
@@ -173,13 +192,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Security problems are reported as descri
 
 | Project | Used for | License |
 | --- | --- | --- |
-| [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons) | Extra source of icons (coming soon) | MIT |
+| [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons) | The icons of the Fluent / Windows 11 tab | MIT |
 | [Windows App SDK](https://github.com/microsoft/WindowsAppSDK) | The window | MIT |
 | [Microsoft.Data.Sqlite](https://github.com/dotnet/efcore) | The cache of the index | MIT |
 | [Inter](https://github.com/rsms/inter) | The text of the images of this page | SIL OFL 1.1 |
 
 The icons of Windows belong to Microsoft. Foldicon does not copy them: it reads them from your own system and points
-your folders to them.
+your folders to them. The Fluent icons do ship with Foldicon, under the terms in
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## License
 

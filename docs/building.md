@@ -27,6 +27,15 @@ context menu when the DLL of the extension was not built before.
 rasterizes it with Edge or Chrome in headless mode and writes the logos of `src\Foldicon.App\Assets` and `Foldicon.ico`,
 the icon of the executable, the window, the installer and the context menu.
 
+## Fluent icons
+
+The `.ico` files of `src\Foldicon.FluentIcons\icons` and its resource script are generated, and versioned so a build
+needs neither a browser nor the network. After changing `pack.json`, run `scripts\Render-FluentIcons.ps1`, which fetches
+the SVG files of the pinned commit into `obj\fluent`, rasterizes them with Edge or Chrome in headless mode and writes
+them again. The same `.csproj` condition as for the context menu applies: `dotnet build` of the app alone warns that the
+package will have no Fluent icons when the library was not built before. A new icon needs its names in
+`Search/icon-names.json`, which a unit test checks.
+
 ## Installer
 
 ```powershell

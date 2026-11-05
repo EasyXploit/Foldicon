@@ -93,15 +93,25 @@ foreach ($theme in $themes.Keys) {
 
 # Frames each screenshot with rounded corners and a soft shadow
 $frame = 'img{display:block;margin:28px 48px 52px;width:884px;border-radius:12px;box-shadow:0 18px 40px rgba(11,27,51,.28)}'
-foreach ($scene in 'b-search', 'c-preview') {
+foreach ($scene in 'b-search', 'c-preview', 'd-fluent') {
     foreach ($theme in 'light', 'dark') {
         $screen = Get-FileUri (Join-Path $sources "screen-$scene-$theme.png")
         Save-Render "shot-$scene-$theme" "<img src='$screen'>" $frame 980 720 1
     }
 }
 
-$strip = Get-FileUri (Join-Path $sources 'screen-explorer.png')
-Save-Render 'shot-explorer' "<img src='$strip'>" 'img{display:block;margin:20px 40px 44px;width:1040px;border-radius:14px;box-shadow:0 16px 36px rgba(11,27,51,.28)}' 1120 196 1
+# Frames the strip of Explorer and the context menu in each theme, with the margins of their own sizes
+$tight = 'img{display:block;margin:20px 40px 44px;border-radius:14px;box-shadow:0 16px 36px rgba(11,27,51,.28)}'
+$strips = @{ 'explorer' = 'img{width:1040px}'; 'explorer-light' = 'img{background:#FFFFFF;padding:8px 35.5px}' }
+foreach ($name in $strips.Keys) {
+    $strip = Get-FileUri (Join-Path $sources "screen-$name.png")
+    Save-Render "shot-$name" "<img src='$strip'>" "$tight $($strips[$name])" 1120 196 1
+}
+
+foreach ($theme in 'light', 'dark') {
+    $menu = Get-FileUri (Join-Path $sources "screen-menu-$theme.png")
+    Save-Render "shot-menu-$theme" "<img src='$menu'>" "$tight img{width:506px}" 586 522 1
+}
 
 # Renders the buttons as pills
 $arrow = "<svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 4v11M7 11l5 5 5-5M5 20h14'/></svg>"

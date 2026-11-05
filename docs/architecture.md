@@ -1,12 +1,13 @@
 # Architecture
 
-Foldicon has three parts, shipped together by the installer or, for the Store, in one MSIX:
+Foldicon has four parts, shipped together by the installer or, for the Store, in one MSIX:
 
 | Part | Folder | What it does |
 | --- | --- | --- |
 | Core | `src/Foldicon.Core` | Icon index, search and folder changes, without any interface. Covered by `tests/`. |
 | App | `src/Foldicon.App` | WinUI 3 window of the picker. Started as `Foldicon.exe --pick "<folder>"`. |
 | Context menu | `src/Foldicon.ContextMenu` | C++/WinRT `IExplorerCommand` that only starts the app. |
+| Fluent icons | `src/Foldicon.FluentIcons` | `fluenticons.dll`, a library with only icon resources and no code. |
 
 ## Context menu
 
@@ -42,6 +43,23 @@ variant of Spanish, and in English otherwise. The app sets it from `AppLanguage`
 
 On a build of Windows 11 from 2026 the nine libraries hold about 1,500 icon groups.
 
+## Fluent icons
+
+The only icons that are not part of Windows are the 224 of `fluenticons.dll`, taken from
+[Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons). A library of icon groups, instead of loose
+`.ico` files, keeps them on the same path as the system icons: `IconReference`, the index, the catalog, the search, the
+tabs and `IconResource` work the same way, and `BundledIconLibrary` only says that the file is next to the app and not
+in `System32`. The library has no entry point and no code, so nothing runs when the shell loads it.
+
+`src/Foldicon.FluentIcons/pack.json` is the list of the pack: the commit of the source and, for each icon, its identifier,
+its asset and its style. `scripts/Render-FluentIcons.ps1` turns it into the `.ico` files of `icons/`, with frames of 16,
+24, 32, 48, 64 and 256 px, and into the resource script. Each frame comes from the drawing made for that size, or for
+the closest larger one, because the small drawings are adjusted to their grid of pixels. The folders of the source are
+drawn in one dark tone that a dark Explorer would hide, so the script paints them in gold.
+
+Identifiers end up in the `desktop.ini` of the folders of the users, so an icon keeps its identifier forever, and a
+removed one leaves a gap. Folders are numbered from 1 and the color icons from 101, so the tab opens with the folders.
+
 ## Search
 
 The text of the search box is split into words, lowercased and stripped of accents (`TextNormalizer`). Each word is
@@ -49,9 +67,10 @@ expanded with the groups of `Search/synonyms.json` that have a word starting wit
 typed already finds its translation. An icon matches when, for every typed word, one of its names, its library or its
 identifier starts with one of the expansions.
 
-While nothing is being searched, the *All* tab starts with the folders of `imageres.dll`, follows with each library in
-the order of the tabs and leaves the repeated and blank icons at the end (`IconBrowseOrder`). There is no ranking by
-relevance: a search and the tab of a library list the matches by library and identifier.
+While nothing is being searched, the *All* tab starts with the folders of `fluenticons.dll` and `imageres.dll`, follows
+with each library in the order of the tabs (`IconLibraryTabs`) and leaves the repeated and blank icons at the end
+(`IconBrowseOrder`). There is no ranking by relevance: a search and the tab of a library list the matches by library and
+identifier, so the Fluent icons come first.
 
 The names of the icons come from `Search/icon-names.json`, loaded into the cache on every start. Each icon has its
 English name, its Spanish name and a few keywords in both languages:
@@ -69,8 +88,8 @@ versioned). Icons added by later builds of Windows are shown with their identifi
 `FolderIconService` works through two interfaces, so it is tested without the shell or the disk:
 
 - **Apply** reads the current `IconResource`, which it returns, and calls `SHGetSetFolderCustomSettings` with
-  `FCSM_ICONFILE`, `%SystemRoot%\System32\<library>` and `-<id>`. The shell merges the key into the existing
-  `desktop.ini` and marks the folder as customized.
+  `FCSM_ICONFILE`, `%SystemRoot%\System32\<library>` and `-<id>`, or the full path of `fluenticons.dll` for a Fluent
+  icon. The shell merges the key into the existing `desktop.ini` and marks the folder as customized.
 - **Restore** removes only `IconResource` from `[.ShellClassInfo]`, drops the section if nothing is left in it, and
   deletes the file, with the read-only and system marks of the folder, if the file is left empty. The file keeps its
   encoding (UTF-16 as the shell writes it, or its bytes unchanged otherwise).
@@ -81,6 +100,9 @@ Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the
 
 ## Still missing
 
+- **Fluent icons in the Store build:** the folder points to the path of the running app, which is stable under Program
+  Files but holds the version inside an MSIX, so an update of the Store build would break the icons applied before it.
+  It needs a stable copy of the library before the Store build is published.
 - **Tests of the C++ command:** the quoting of `BuildPickArguments` mirrors `LaunchArguments`, which is tested, but the
   C++ project has no test project of its own yet.
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a

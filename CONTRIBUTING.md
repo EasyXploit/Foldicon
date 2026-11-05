@@ -11,7 +11,7 @@ Bug reports, ideas and pull requests are welcome.
 
 ## Setup
 
-1. Install the tools described in [Building from source](README.md#building-from-source).
+1. Install the tools described in [Building from source](README.md#build-from-source).
 2. Install [gitleaks](https://github.com/gitleaks/gitleaks/releases) and keep it in your `PATH`.
 3. Enable the hooks of the repository, which block any commit where gitleaks finds a secret:
 

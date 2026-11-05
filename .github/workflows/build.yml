@@ -1,4 +1,4 @@
-# Builds the whole solution, including the C++ context menu, and runs the unit tests of the core
+# Builds the whole solution for each platform, including the C++ context menu, and runs the unit tests of the core on x64
 name: build
 
 on:
@@ -12,6 +12,10 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x64, ARM64]
     steps:
       # Official action only; pin it to a full commit SHA when the repository is published
       - uses: actions/checkout@v4
@@ -21,6 +25,8 @@ jobs:
       - shell: pwsh
         run: |
           $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | Select-Object -First 1
-          & $msbuild Foldicon.slnx -restore -p:Configuration=Release -p:Platform=x64 -nologo -v:m
+          & $msbuild Foldicon.slnx -restore -p:Configuration=Release -p:Platform=${{ matrix.platform }} -nologo -v:m
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - run: dotnet test tests/Foldicon.Core.Tests -c Release -p:Platform=x64 --no-build
+      # An x64 runner cannot start the tests of ARM64
+      - if: matrix.platform == 'x64'
+        run: dotnet test tests/Foldicon.Core.Tests -c Release -p:Platform=x64 --no-build

@@ -1,4 +1,4 @@
-﻿; Inno Setup script of the Windows installer of Foldicon
+; Inno Setup script of the Windows installer of Foldicon
 ;
 ; Packs the self-contained app into Foldicon-Setup-<version>-<platform>.exe, installed in Program Files for the whole computer.
 ; After copying the files it trusts the public development certificate and registers, for the user who started the

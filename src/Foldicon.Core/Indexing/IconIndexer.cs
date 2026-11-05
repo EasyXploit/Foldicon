@@ -1,4 +1,5 @@
 // Service that reads the icon groups of the libraries and keeps them in the cache
+using Foldicon.Core.Search;
 using Foldicon.Core.Storage;
 
 namespace Foldicon.Core.Indexing;
@@ -17,6 +18,13 @@ public sealed class IconIndexer(
         Environment.GetFolderPath(Environment.SpecialFolder.Windows),
         File.Exists,
         LibraryStamp.Of);
+
+    // Brings the libraries of the tabs up to date and stores the search words of the catalog
+    public void RefreshAll(IEnumerable<IconCatalogEntry> catalog)
+    {
+        Refresh(IconLibraryTabs.All);
+        store.ReplaceNames(IconCatalog.Terms(catalog));
+    }
 
     // Brings the cache up to date, reading again only the libraries whose file changed; returns how many it read
     public int Refresh(IEnumerable<string> libraries)

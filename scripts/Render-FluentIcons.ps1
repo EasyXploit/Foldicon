@@ -11,6 +11,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'Common.ps1')
 Add-Type -AssemblyName System.Drawing
 $root = Split-Path $PSScriptRoot -Parent
 $project = Join-Path $root 'src\Foldicon.FluentIcons'
@@ -24,18 +25,6 @@ $gap = 2
 # Colors of the folders, which the source draws in one dark tone that a dark Explorer would hide
 $folderTop = '#FFDD7A'
 $folderBottom = '#F5B22D'
-
-# Finds an installed browser based on Chromium
-function Find-Browser {
-    foreach ($name in 'msedge.exe', 'chrome.exe') {
-        foreach ($hive in 'HKLM:', 'HKCU:') {
-            $key = "$hive\Software\Microsoft\Windows\CurrentVersion\App Paths\$name"
-            if (Test-Path $key) { return (Get-ItemProperty $key).'(default)' }
-        }
-    }
-
-    throw 'Neither Edge nor Chrome was found.'
-}
 
 # Fetches the SVG files and the license of the pinned commit, without the rest of the repository
 function Get-Source([string]$repository, [string]$commit) {

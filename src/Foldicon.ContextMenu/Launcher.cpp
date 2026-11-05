@@ -7,32 +7,17 @@
 #include <shobjidl_core.h>
 #include <winrt/base.h>
 
-extern "C" IMAGE_DOS_HEADER __ImageBase;
+#include "ModulePath.h"
+#include "PickArguments.h"
 
 namespace Foldicon
 {
-    std::wstring BuildPickArguments(std::wstring const& folder)
-    {
-        // Counts the backslashes at the end of the path
-        std::wstring::size_type trailing = 0;
-        while (trailing < folder.size() && folder[folder.size() - 1 - trailing] == L'\\')
-        {
-            ++trailing;
-        }
-
-        // Doubles them so the quote that follows closes the argument
-        return L"--pick \"" + folder + std::wstring(trailing, L'\\') + L"\"";
-    }
-
     long LaunchPicker(std::wstring const& folder) noexcept
     {
         try
         {
             // Reads the folder of this DLL, which also holds the executable
-            wchar_t module[MAX_PATH]{};
-            GetModuleFileNameW(reinterpret_cast<HMODULE>(&__ImageBase), module, MAX_PATH);
-            PathRemoveFileSpecW(module);
-            std::wstring const directory(module);
+            auto const directory = ModuleDirectory();
             auto const arguments = BuildPickArguments(folder);
 
             // Activates the application of a full package, the only one with a manifest next to the DLL; a full-trust

@@ -24,6 +24,6 @@ public static class IconBrowseOrder
 
     // Checks whether the icon is a folder of one of the libraries that open the list
     private static bool OpensTheList(IconReference icon, IReadOnlyDictionary<IconReference, IconCatalogEntry> catalog) =>
-        (icon.Library == BundledIconLibrary.Name || icon.Library == SystemIconLibraries.All[0])
+        (icon.IsBundled || icon.Library == SystemIconLibraries.All[0])
         && catalog.TryGetValue(icon, out var entry) && entry.IsFolder;
 }

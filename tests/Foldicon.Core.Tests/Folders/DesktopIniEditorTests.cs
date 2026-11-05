@@ -10,6 +10,14 @@ public sealed class DesktopIniEditorTests
     private const string Key = DesktopIniEditor.IconResource;
 
     [TestMethod]
+    public void reads_the_icon_of_a_text_and_nothing_without_one()
+    {
+        Assert.AreEqual("a.dll,-1", DesktopIniEditor.ReadIconResource("[.ShellClassInfo]\nIconResource=a.dll,-1\n"));
+        Assert.IsNull(DesktopIniEditor.ReadIconResource("[.ShellClassInfo]\n"));
+        Assert.IsNull(DesktopIniEditor.ReadIconResource(null));
+    }
+
+    [TestMethod]
     public void reads_a_key_ignoring_case_and_spaces()
     {
         var text = "[.ShellClassInfo]\r\n iconresource = imageres.dll,-3\r\n";

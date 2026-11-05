@@ -1,4 +1,5 @@
 // SQLite cache of the icon groups of each library and of the words they can be searched by
+using System.Globalization;
 using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
 using Microsoft.Data.Sqlite;
@@ -21,13 +22,16 @@ public sealed class IconIndexStore : IDisposable
     }
 
     // Opens the cache file of the user
-    public static IconIndexStore OpenDefault() => new($"Data Source={IndexCachePath.Get()}");
+    public static IconIndexStore OpenDefault() => Open(IndexCachePath.Get());
+
+    // Opens a cache file, whose path may hold any character
+    public static IconIndexStore Open(string path) => new(new SqliteConnectionStringBuilder { DataSource = path }.ToString());
 
     // Creates the tables, or drops them first when they come from another version of the schema
     private void EnsureSchema()
     {
         // Reads the version stored in the file
-        var version = Convert.ToInt32(Scalar("PRAGMA user_version"), System.Globalization.CultureInfo.InvariantCulture);
+        var version = Convert.ToInt32(Scalar("PRAGMA user_version"), CultureInfo.InvariantCulture);
 
         // Drops a cache of another version, since it can always be regenerated
         if (version != SchemaVersion)

@@ -17,6 +17,7 @@
 #define AppName "Foldicon"
 #define AppPublisher "Sencimo Labs"
 #define AppExe "Foldicon.exe"
+#define PowerShell "{sys}\WindowsPowerShell\v1.0\powershell.exe"
 #define ClassicVerbKey "Software\Classes\Directory\shell\Foldicon"
 
 [Setup]
@@ -79,7 +80,7 @@ Source: "{#Payload}\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdir
 Source: "{#Payload}\shell\*"; DestDir: "{app}\shell"; Flags: ignoreversion
 
 [UninstallRun]
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\shell\Unregister-Shell.ps1"""; Flags: runhidden; RunOnceId: "UnregisterShell"
+Filename: "{#PowerShell}"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\shell\Unregister-Shell.ps1"""; Flags: runhidden; RunOnceId: "UnregisterShell"
 
 [Code]
 var
@@ -100,7 +101,7 @@ function RegisterShellPackage: Boolean;
 var
   ResultCode: Integer;
 begin
-  Result := ExecAsOriginalUser('powershell.exe',
+  Result := ExecAsOriginalUser(ExpandConstant('{#PowerShell}'),
     ExpandConstant('-NoProfile -ExecutionPolicy Bypass -File "{app}\shell\Register-Shell.ps1" -InstallFolder "{app}"'),
     '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
   Log(Format('Registration of the context menu package finished with code %d', [ResultCode]));

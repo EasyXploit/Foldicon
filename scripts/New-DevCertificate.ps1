@@ -10,20 +10,19 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$subject = 'CN=Sencimo Labs'
+. (Join-Path $PSScriptRoot 'Common.ps1')
 
 # Reuses a valid development certificate if there is one
-$existing = Get-ChildItem Cert:\CurrentUser\My |
-    Where-Object { $_.Subject -eq $subject -and $_.FriendlyName -eq 'Foldicon development' -and $_.NotAfter -gt (Get-Date) } |
-    Select-Object -First 1
+$existing = Get-DevCertificate
 
-# Creates a code signing certificate valid for one year otherwise
+# Creates a code signing certificate valid for one year otherwise, whose private key can never leave the store
 if ($null -eq $existing) {
     $existing = New-SelfSignedCertificate `
         -Type Custom `
-        -Subject $subject `
-        -FriendlyName 'Foldicon development' `
+        -Subject $DevCertificateSubject `
+        -FriendlyName $DevCertificateName `
         -KeyUsage DigitalSignature `
+        -KeyExportPolicy NonExportable `
         -CertStoreLocation Cert:\CurrentUser\My `
         -NotAfter (Get-Date).AddYears(1) `
         -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')

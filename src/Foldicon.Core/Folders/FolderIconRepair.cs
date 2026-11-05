@@ -1,5 +1,6 @@
 // Service that repairs the folders whose Fluent icon lost its marks, or its desktop.ini, on the way through a sync client
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Foldicon.Core.Folders;
 
@@ -10,9 +11,6 @@ public sealed class FolderIconRepair(
     IFolderMarks marks,
     IFolderShell shell)
 {
-    // Name of the settings file, which is hidden like the copy of the icon
-    private const string DesktopIni = "desktop.ini";
-
     // Creates the service for the real system
     public static FolderIconRepair ForSystem() =>
         new(new FolderTree(), new FolderIconFiles(), new DesktopIniFile(), new FolderMarks(), new NativeFolderShell());
@@ -27,6 +25,17 @@ public sealed class FolderIconRepair(
         .. StartupRoots(),
         .. DriveInfo.GetDrives().Where(drive => drive.DriveType == DriveType.Fixed && drive.IsReady).Select(drive => drive.Name),
     ];
+
+    // Runs the walk at low priority on a thread of its own, which ends with the process when the window closes
+    public Task<int> RepairAllInBackground(IEnumerable<string> roots, FolderScanLimits limits) => Task.Factory.StartNew(
+        () =>
+        {
+            Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+            return RepairAll(roots, limits);
+        },
+        CancellationToken.None,
+        TaskCreationOptions.LongRunning,
+        TaskScheduler.Default);
 
     // Walks the folders from each root, breadth first so the limit leaves out the deepest ones, and returns how many it
     // repaired; a folder that fails is skipped
@@ -62,7 +71,7 @@ public sealed class FolderIconRepair(
                     }
                 }
             }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.COMException)
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or COMException)
             {
                 Trace.TraceWarning($"The folder {next.Folder} could not be repaired: {exception.Message}");
             }
@@ -81,8 +90,7 @@ public sealed class FolderIconRepair(
             return false;
         }
 
-        var text = desktopIni.Read(folder);
-        var current = text is null ? null : DesktopIniEditor.ReadValue(text, DesktopIniEditor.ShellClassInfo, DesktopIniEditor.IconResource);
+        var current = DesktopIniEditor.ReadIconResource(desktopIni.Read(folder));
         var inUse = IconResourceValue.Parse(current)?.File;
 
         // Writes the icon again when the settings did not arrive, if the single copy says which one it was; a folder
@@ -106,7 +114,7 @@ public sealed class FolderIconRepair(
 
         // Puts back each mark that was lost
         var changed = false;
-        foreach (var name in new[] { DesktopIni, inUse })
+        foreach (var name in new[] { DesktopIniFile.FileName, inUse })
         {
             if (!marks.IsHidden(folder, name))
             {

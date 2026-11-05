@@ -27,11 +27,7 @@ public sealed class FolderIconFiles : IFolderIconFiles
     public void Write(string folder, string name, byte[] icon)
     {
         var path = Path.Combine(folder, name);
-        if (File.Exists(path))
-        {
-            File.SetAttributes(path, FileAttributes.Normal);
-        }
-
+        MarkedFile.ClearMarks(path);
         File.WriteAllBytes(path, icon);
         Hide(path);
     }
@@ -53,13 +49,5 @@ public sealed class FolderIconFiles : IFolderIconFiles
     }
 
     // Deletes the file after dropping its marks
-    public void Delete(string folder, string name)
-    {
-        var path = Path.Combine(folder, name);
-        if (File.Exists(path))
-        {
-            File.SetAttributes(path, FileAttributes.Normal);
-            File.Delete(path);
-        }
-    }
+    public void Delete(string folder, string name) => MarkedFile.Delete(Path.Combine(folder, name));
 }

@@ -10,8 +10,7 @@ public static class IconCatalog
     // Loads the catalog embedded in the library
     public static IReadOnlyList<IconCatalogEntry> LoadEmbedded()
     {
-        using var stream = typeof(IconCatalog).Assembly.GetManifestResourceStream("Foldicon.Core.icon-names.json")
-            ?? throw new InvalidOperationException("The icon catalog is not embedded.");
+        using var stream = EmbeddedResource.Open("Foldicon.Core.icon-names.json");
         using var reader = new StreamReader(stream);
         return Parse(reader.ReadToEnd());
     }

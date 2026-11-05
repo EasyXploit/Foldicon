@@ -17,8 +17,8 @@ jobs:
       matrix:
         platform: [x64, ARM64]
     steps:
-      # Official action only; pin it to a full commit SHA when the repository is published
-      - uses: actions/checkout@v4
+      # Official action only, pinned to the commit of its v4 tag; Dependabot proposes the updates
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       # MSBuild of the Visual Studio already on the runner, located without third-party actions
@@ -30,3 +30,5 @@ jobs:
       # An x64 runner cannot start the tests of ARM64
       - if: matrix.platform == 'x64'
         run: dotnet test tests/Foldicon.Core.Tests -c Release -p:Platform=x64 --no-build
+      - if: matrix.platform == 'x64'
+        run: tests/Foldicon.ContextMenu.Tests/bin/x64/Release/Foldicon.ContextMenu.Tests.exe

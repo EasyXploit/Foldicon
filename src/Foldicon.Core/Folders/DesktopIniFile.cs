@@ -6,7 +6,7 @@ namespace Foldicon.Core.Folders;
 public sealed class DesktopIniFile : IDesktopIniFile
 {
     // Name of the file inside the folder
-    private const string FileName = "desktop.ini";
+    public const string FileName = "desktop.ini";
 
     // Reads the file with the encoding of its byte order mark
     public string? Read(string folder)
@@ -30,12 +30,7 @@ public sealed class DesktopIniFile : IDesktopIniFile
     // Deletes the file and drops the read-only and system marks that told Explorer to read it
     public void Delete(string folder)
     {
-        var path = Path.Combine(folder, FileName);
-        if (File.Exists(path))
-        {
-            File.SetAttributes(path, FileAttributes.Normal);
-            File.Delete(path);
-        }
+        MarkedFile.Delete(Path.Combine(folder, FileName));
 
         // Keeps every other attribute of the folder
         var attributes = File.GetAttributes(folder);

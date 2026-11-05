@@ -5,6 +5,7 @@
 # downloads to obj\readme. Run it again after changing a source or a screenshot.
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'Common.ps1')
 Add-Type -AssemblyName System.Drawing
 $root = Split-Path $PSScriptRoot -Parent
 $images = Join-Path $root 'docs\images'
@@ -13,18 +14,6 @@ $work = Join-Path $root 'obj\readme'
 
 # Version of the font, pinned so the images can be repeated
 $fontUrl = 'https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.2.8/files/inter-latin-wght-normal.woff2'
-
-# Finds an installed browser based on Chromium
-function Find-Browser {
-    foreach ($name in 'msedge.exe', 'chrome.exe') {
-        foreach ($hive in 'HKLM:', 'HKCU:') {
-            $key = "$hive\Software\Microsoft\Windows\CurrentVersion\App Paths\$name"
-            if (Test-Path $key) { return (Get-ItemProperty $key).'(default)' }
-        }
-    }
-
-    throw 'Neither Edge nor Chrome was found.'
-}
 
 # Returns the address of a local file
 function Get-FileUri([string]$path) {

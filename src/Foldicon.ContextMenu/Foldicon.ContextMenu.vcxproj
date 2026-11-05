@@ -47,6 +47,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <ConformanceMode>true</ConformanceMode>
       <SDLCheck>true</SDLCheck>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
       <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(Configuration)'=='Debug'">MultiThreadedDebug</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)'=='Release'">MultiThreaded</RuntimeLibrary>
@@ -61,6 +62,8 @@
     <ClInclude Include="ClassFactory.h" />
     <ClInclude Include="ExplorerCommand.h" />
     <ClInclude Include="Launcher.h" />
+    <ClInclude Include="ModulePath.h" />
+    <ClInclude Include="PickArguments.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +71,8 @@
     <ClCompile Include="DllExports.cpp" />
     <ClCompile Include="ExplorerCommand.cpp" />
     <ClCompile Include="Launcher.cpp" />
+    <ClCompile Include="ModulePath.cpp" />
+    <ClCompile Include="PickArguments.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foldicon.ContextMenu.def" />

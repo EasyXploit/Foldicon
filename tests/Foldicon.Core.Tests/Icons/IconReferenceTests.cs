@@ -7,10 +7,10 @@ namespace Foldicon.Core.Tests.Icons;
 public sealed class IconReferenceTests
 {
     [TestMethod]
-    public void writes_icon_resource_under_system_root()
+    public void knows_the_bundled_library()
     {
-        var icon = new IconReference("imageres.dll", 3);
-        Assert.AreEqual(@"%SystemRoot%\System32\imageres.dll,-3", icon.ToIconResource());
+        Assert.IsTrue(new IconReference(BundledIconLibrary.Name, 7).IsBundled);
+        Assert.IsFalse(new IconReference("imageres.dll", 3).IsBundled);
     }
 
     [TestMethod]
@@ -26,7 +26,6 @@ public sealed class IconReferenceTests
         var expected = Path.Combine(AppContext.BaseDirectory, "fluenticons.dll");
 
         Assert.AreEqual(expected, icon.LibraryPath());
-        Assert.AreEqual($"{expected},-7", icon.ToIconResource());
     }
 
     [TestMethod]

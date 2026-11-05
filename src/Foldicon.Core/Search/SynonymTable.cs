@@ -20,8 +20,7 @@ public sealed class SynonymTable
     // Loads the table embedded in the library
     public static SynonymTable LoadEmbedded()
     {
-        using var stream = typeof(SynonymTable).Assembly.GetManifestResourceStream("Foldicon.Core.synonyms.json")
-            ?? throw new InvalidOperationException("The synonym table is not embedded.");
+        using var stream = EmbeddedResource.Open("Foldicon.Core.synonyms.json");
         var groups = JsonSerializer.Deserialize<List<List<string>>>(stream) ?? [];
         return new SynonymTable(groups);
     }

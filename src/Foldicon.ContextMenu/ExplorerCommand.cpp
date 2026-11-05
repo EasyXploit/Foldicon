@@ -5,9 +5,8 @@
 #include <string>
 
 #include "Launcher.h"
+#include "ModulePath.h"
 #include "resource.h"
-
-extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 namespace
 {
@@ -46,10 +45,7 @@ namespace
     // Returns the path of Foldicon.exe, which lives next to this DLL in the package
     std::wstring AppExecutable()
     {
-        wchar_t module[MAX_PATH]{};
-        GetModuleFileNameW(reinterpret_cast<HMODULE>(&__ImageBase), module, MAX_PATH);
-        PathRemoveFileSpecW(module);
-        return std::wstring(module) + L"\\Foldicon.exe";
+        return Foldicon::ModuleDirectory() + L"\\Foldicon.exe";
     }
 }
 
@@ -60,7 +56,7 @@ namespace Foldicon
         // Reads the string in Spanish for any variant of that language of the interface, and in English otherwise
         auto const spanish = PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_SPANISH;
         wchar_t const* text = nullptr;
-        auto const length = LoadStringW(reinterpret_cast<HINSTANCE>(&__ImageBase),
+        auto const length = LoadStringW(ThisModule(),
             spanish ? IDS_CHANGE_ICON_SPANISH : IDS_CHANGE_ICON_ENGLISH,
             reinterpret_cast<LPWSTR>(&text), 0);
         if (length <= 0)

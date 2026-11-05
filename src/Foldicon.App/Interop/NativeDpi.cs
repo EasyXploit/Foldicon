@@ -6,5 +6,6 @@ namespace Foldicon.App.Interop;
 internal static partial class NativeDpi
 {
     [LibraryImport("user32.dll", EntryPoint = "GetDpiForWindow")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     internal static partial uint GetDpiForWindow(nint window);
 }

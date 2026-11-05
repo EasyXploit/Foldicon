@@ -1,6 +1,7 @@
 // Tests of the refresh of the cached index from the library files
 using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
+using Foldicon.Core.Search;
 using Foldicon.Core.Tests.Fakes;
 
 namespace Foldicon.Core.Tests.Indexing;
@@ -11,6 +12,27 @@ public sealed class IconIndexerTests
     private const string Windows = @"C:\Windows";
     private const string Imageres = @"C:\Windows\SystemResources\imageres.dll.mun";
     private const string Pifmgr = @"C:\Windows\System32\pifmgr.dll";
+
+    [TestMethod]
+    public void refreshes_the_libraries_of_the_tabs_and_stores_the_words_of_the_catalog()
+    {
+        using var store = InMemoryStore.Open();
+        var reader = new FakeGroupIconReader(new() { [Imageres] = [3] });
+        var indexer = new IconIndexer(reader, store, Windows, path => path == Imageres, _ => new LibraryStamp(1, 1));
+        var icon = new IconReference("imageres.dll", 3);
+
+        indexer.RefreshAll([new IconCatalogEntry(icon, "Folder", "Carpeta", [])]);
+
+        CollectionAssert.AreEqual(new[] { icon }, store.Search([["carpeta"]], null).ToArray());
+    }
+
+    [TestMethod]
+    public void creates_the_indexer_of_the_real_system()
+    {
+        using var store = InMemoryStore.Open();
+
+        Assert.IsNotNull(IconIndexer.ForSystem(store));
+    }
 
     [TestMethod]
     public void indexes_the_libraries_that_exist()

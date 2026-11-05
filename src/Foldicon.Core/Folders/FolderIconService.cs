@@ -14,14 +14,10 @@ public sealed class FolderIconService(
 
     // Creates the service for the real system
     public static FolderIconService ForSystem() =>
-        new(new NativeFolderShell(), new DesktopIniFile(), new FolderIconFiles(), new NativeBundledIconSource());
+        new(new NativeFolderShell(), new DesktopIniFile(), new FolderIconFiles(), new NativeBundledIconSource(BundledIconLibrary.FilePath));
 
     // Returns the IconResource the folder has now, or null when it shows the default icon
-    public string? GetCurrent(string folder)
-    {
-        var text = desktopIni.Read(folder);
-        return text is null ? null : DesktopIniEditor.ReadValue(text, DesktopIniEditor.ShellClassInfo, DesktopIniEditor.IconResource);
-    }
+    public string? GetCurrent(string folder) => DesktopIniEditor.ReadIconResource(desktopIni.Read(folder));
 
     // Applies the icon and returns the previous IconResource, so the change can be undone
     public string? Apply(string folder, IconReference icon)
@@ -30,7 +26,7 @@ public sealed class FolderIconService(
         var previous = GetCurrent(folder);
 
         // Writes the new icon, leaves only its own copy, if any, and redraws the folder
-        var kept = icon.Library == BundledIconLibrary.Name ? ApplyCopy(folder, icon.ResourceId) : ApplySystemIcon(folder, icon);
+        var kept = icon.IsBundled ? ApplyCopy(folder, icon.ResourceId) : ApplySystemIcon(folder, icon);
         DeleteCopies(folder, kept);
         shell.Refresh(folder);
         return previous;
@@ -39,8 +35,7 @@ public sealed class FolderIconService(
     // Points the folder to a system icon, which every copy of Windows has
     private string? ApplySystemIcon(string folder, IconReference icon)
     {
-        var value = IconResourceValue.Parse(icon.ToIconResource())!.Value;
-        shell.SetIcon(folder, value.File, value.Index);
+        shell.SetIcon(folder, icon.LibraryPath(), -icon.ResourceId);
         return null;
     }
 

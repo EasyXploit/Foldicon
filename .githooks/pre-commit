@@ -3,11 +3,11 @@
 # Install gitleaks from https://github.com/gitleaks/gitleaks/releases and keep it in the PATH.
 
 if ! command -v gitleaks >/dev/null 2>&1; then
-    echo "pre-commit: gitleaks no está instalado; instálalo antes de hacer commit" >&2
+    echo "pre-commit: gitleaks is not installed; install it before committing" >&2
     exit 1
 fi
 
 if ! gitleaks git --pre-commit --staged --redact --no-banner --verbose .; then
-    echo "pre-commit: gitleaks ha encontrado un posible secreto en los cambios; quítalo antes de hacer commit" >&2
+    echo "pre-commit: gitleaks found a possible secret in the changes; remove it before committing" >&2
     exit 1
 fi

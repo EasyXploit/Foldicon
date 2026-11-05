@@ -5,6 +5,7 @@
 # Run it again after changing the SVG.
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'Common.ps1')
 Add-Type -AssemblyName System.Drawing
 $root = Split-Path $PSScriptRoot -Parent
 $svg = Join-Path $root 'assets\logo\foldicon.svg'
@@ -15,18 +16,6 @@ $work = Join-Path $root 'obj\logo'
 $masterSize = 1024
 $targetSizes = 16, 24, 32, 48, 256
 $iconSizes = 16, 24, 32, 48, 64, 256
-
-# Finds an installed browser based on Chromium
-function Find-Browser {
-    foreach ($name in 'msedge.exe', 'chrome.exe') {
-        foreach ($hive in 'HKLM:', 'HKCU:') {
-            $key = "$hive\Software\Microsoft\Windows\CurrentVersion\App Paths\$name"
-            if (Test-Path $key) { return (Get-ItemProperty $key).'(default)' }
-        }
-    }
-
-    throw 'Neither Edge nor Chrome was found.'
-}
 
 # Draws the master image centered on a transparent canvas, at the given height of logo
 function New-Canvas([System.Drawing.Image]$master, [int]$width, [int]$height, [int]$logoSize) {

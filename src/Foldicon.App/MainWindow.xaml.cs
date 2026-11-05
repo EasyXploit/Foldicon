@@ -1,5 +1,7 @@
 // Window of the picker: loads the index, filters it and applies the chosen icon to the folder
 using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using Foldicon.App.Imaging;
 using Foldicon.App.Interop;
 using Foldicon.App.Models;
@@ -39,6 +41,7 @@ public sealed partial class MainWindow : Window
     private readonly Dictionary<IconReference, IconCatalogEntry> catalog =
         IconCatalog.LoadEmbedded().ToDictionary(entry => entry.Icon);
     private IconIndexStore? store;
+    private IconBrowser? browser;
 
     // IconResource the folder had before it was restored, for Undo
     private string? previousIcon;
@@ -93,10 +96,10 @@ public sealed partial class MainWindow : Window
             store = await Task.Run(() =>
             {
                 var opened = IconIndexStore.OpenDefault();
-                IconIndexer.ForSystem(opened).Refresh(IconLibraryTabs.All);
-                opened.ReplaceNames(IconCatalog.Terms(catalog.Values));
+                IconIndexer.ForSystem(opened).RefreshAll(catalog.Values);
                 return opened;
             });
+            browser = new IconBrowser(store, synonyms, catalog);
             Filter();
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or Microsoft.Data.Sqlite.SqliteException)
@@ -112,80 +115,50 @@ public sealed partial class MainWindow : Window
         SearchBox.Focus(FocusState.Programmatic);
 
         // Repairs in the background the folders that a sync client brought without their marks
-        _ = RepairInBackgroundAsync(FolderIconRepair.StartupRoots(), FolderScanLimits.Startup);
+        _ = FolderIconRepair.ForSystem().RepairAllInBackground(FolderIconRepair.StartupRoots(), FolderScanLimits.Startup);
     }
-
-    // Repairs the folders at low priority, without ever failing the window, and returns how many it repaired; the walk
-    // ends with the process when the window closes
-    private static Task<int> RepairInBackgroundAsync(IReadOnlyList<string> roots, FolderScanLimits limits) => Task.Run(() =>
-    {
-        Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-        try
-        {
-            return FolderIconRepair.ForSystem().RepairAll(roots, limits);
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-        {
-            Trace.TraceError($"Repair failed: {exception}");
-            return 0;
-        }
-        finally
-        {
-            Thread.CurrentThread.Priority = ThreadPriority.Normal;
-        }
-    });
 
     // Repairs every folder that can be found, and says how many were repaired
     private async void OnRepairClick(object sender, RoutedEventArgs e)
     {
         RepairItem.IsEnabled = false;
         ShowText(InfoBarSeverity.Informational, strings.GetString("RepairingMessage"));
-        var repaired = await RepairInBackgroundAsync(FolderIconRepair.ManualRoots(), FolderScanLimits.Manual);
+        var repaired = await FolderIconRepair.ForSystem().RepairAllInBackground(FolderIconRepair.ManualRoots(), FolderScanLimits.Manual);
         RepairItem.IsEnabled = true;
-        ShowText(InfoBarSeverity.Success, string.Format(System.Globalization.CultureInfo.CurrentCulture, strings.GetString("RepairedMessage"), repaired));
+        ShowText(InfoBarSeverity.Success, string.Format(CultureInfo.CurrentCulture, strings.GetString("RepairedMessage"), repaired));
     }
 
     // Shows the icons that match the search box and the selected tab
     private void Filter()
     {
-        if (store is null)
+        if (browser is null)
         {
             return;
         }
 
-        // Runs the search with the synonyms of each typed word
-        var library = LibraryBar.SelectedItem?.Tag as string;
-        var query = SearchQuery.Parse(SearchBox.Text, synonyms);
-        var results = store.Search(query, library);
-
-        // Browses the "All" tab in its own order while nothing is being searched
-        if (library is null && query.Count == 0)
-        {
-            results = IconBrowseOrder.Sort(results, catalog);
-        }
-
-        // Reuses the items already built, so their images stay loaded
-        var shown = results.Select(icon =>
-        {
-            if (!items.TryGetValue(icon, out var item))
-            {
-                // Names the icon in the language of the interface, or by its identifier when the catalog lacks it
-                var name = catalog.TryGetValue(icon, out var entry)
-                    ? entry.NameFor(System.Globalization.CultureInfo.CurrentUICulture)
-                    : string.Format(System.Globalization.CultureInfo.CurrentCulture, strings.GetString("IconNameFormat"), icon.ResourceId);
-                item = new IconItem(icon, name);
-                items[icon] = item;
-            }
-
-            return item;
-        }).ToList();
-
+        var shown = browser.Find(SearchBox.Text, LibraryBar.SelectedItem?.Tag as string).Select(ItemFor).ToList();
         IconGrid.ItemsSource = shown;
         EmptyText.Visibility = shown.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         if (shown.Count > 0)
         {
             IconGrid.SelectedIndex = 0;
         }
+    }
+
+    // Returns the item of an icon, reusing the one already built so its image stays loaded
+    private IconItem ItemFor(IconReference icon)
+    {
+        if (!items.TryGetValue(icon, out var item))
+        {
+            // Names the icon in the language of the interface, or by its identifier when the catalog lacks it
+            var name = catalog.TryGetValue(icon, out var entry)
+                ? entry.NameFor(CultureInfo.CurrentUICulture)
+                : string.Format(CultureInfo.CurrentCulture, strings.GetString("IconNameFormat"), icon.ResourceId);
+            item = new IconItem(icon, name);
+            items[icon] = item;
+        }
+
+        return item;
     }
 
     // Loads the image of a cell when the grid draws it for the first time
@@ -275,7 +248,7 @@ public sealed partial class MainWindow : Window
 
             return true;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.COMException)
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or COMException)
         {
             Trace.TraceError($"Folder change failed: {exception}");
             ShowResult(InfoBarSeverity.Error, "ApplyFailedMessage", canUndo: false);

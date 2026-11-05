@@ -9,39 +9,31 @@ public sealed class NativeGroupIconReader : IGroupIconReader
     // Lists the integer identifiers of the RT_GROUP_ICON resources of the file
     public IReadOnlyList<int> ReadGroupIconIds(string path)
     {
-        // Loads the file only as a source of resources
-        var module = Kernel32.LoadLibraryEx(path, 0, Kernel32.LoadLibraryAsDatafile | Kernel32.LoadLibraryAsImageResource);
-        if (module == 0)
+        using var module = ResourceModule.Open(path);
+        if (module is null)
         {
             return [];
         }
 
+        // Collects the identifiers through the callback; groups named with a string are skipped because IconResource
+        // can only point to them by position, which changes between builds of Windows
+        var ids = new List<int>();
+        var handle = GCHandle.Alloc(ids);
         try
         {
-            // Collects the identifiers through the callback; groups named with a string are skipped because
-            // IconResource can only point to them by position, which changes between builds of Windows
-            var ids = new List<int>();
-            var handle = GCHandle.Alloc(ids);
-            try
+            unsafe
             {
-                unsafe
-                {
-                    Kernel32.EnumResourceNames(module, Kernel32.RtGroupIcon, &Collect, GCHandle.ToIntPtr(handle));
-                }
+                Kernel32.EnumResourceNames(module.Handle, Kernel32.RtGroupIcon, &Collect, GCHandle.ToIntPtr(handle));
             }
-            finally
-            {
-                handle.Free();
-            }
-
-            // Returns them in order, so the grid shows them as the file holds them
-            ids.Sort();
-            return ids;
         }
         finally
         {
-            Kernel32.FreeLibrary(module);
+            handle.Free();
         }
+
+        // Returns them in order, so the grid shows them as the file holds them
+        ids.Sort();
+        return ids;
     }
 
     // Callback of EnumResourceNames that stores each integer identifier

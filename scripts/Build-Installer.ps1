@@ -6,6 +6,7 @@
 # private key never leaves the certificate store.
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'Common.ps1')
 $root = Split-Path $PSScriptRoot -Parent
 $platform = 'x64'
 
@@ -72,13 +73,8 @@ if ($LASTEXITCODE -ne 0) {
 $sparseManifest = (Get-Content (Join-Path $root 'packaging\windows\sparse\AppxManifest.xml') -Raw).Replace('$version$', $packageVersion)
 [System.IO.File]::WriteAllText((Join-Path $sparseFolder 'AppxManifest.xml'), $sparseManifest)
 Copy-Item (Join-Path $root 'src\Foldicon.App\Assets\*.png') (Join-Path $sparseFolder 'Assets')
-$makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" | Sort-Object FullName -Descending | Select-Object -First 1
-if ($null -eq $makeappx) {
-    throw 'makeappx.exe was not found; install the Windows SDK.'
-}
-
 $sparsePackage = Join-Path $shellFolder 'Foldicon.Shell.msix'
-& $makeappx.FullName pack /d $sparseFolder /p $sparsePackage /nv /o
+& (Find-SdkTool 'makeappx.exe') pack /d $sparseFolder /p $sparsePackage /nv /o
 if ($LASTEXITCODE -ne 0) {
     throw "makeappx failed with code $LASTEXITCODE."
 }
@@ -88,10 +84,7 @@ if ($LASTEXITCODE -ne 0) {
 & (Join-Path $PSScriptRoot 'Sign-Package.ps1') -Package $sparsePackage
 
 # Adds the public part of the certificate and the scripts that register and unregister the package
-$certificate = Get-ChildItem Cert:\CurrentUser\My |
-    Where-Object { $_.Subject -eq 'CN=Sencimo Labs' -and $_.FriendlyName -eq 'Foldicon development' -and $_.NotAfter -gt (Get-Date) } |
-    Select-Object -First 1
-Export-Certificate -Cert $certificate -FilePath (Join-Path $shellFolder 'Foldicon.cer') | Out-Null
+Export-Certificate -Cert (Get-DevCertificate) -FilePath (Join-Path $shellFolder 'Foldicon.cer') | Out-Null
 Copy-Item (Join-Path $root 'packaging\windows\*-Shell.ps1') $shellFolder
 
 # Compiles the installer

@@ -25,6 +25,7 @@
     </Project>
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Foldicon.ContextMenu.Tests/Foldicon.ContextMenu.Tests.vcxproj" Id="b4e1d6a2-2c7f-4d19-8a53-61f0c9e7d342" />
     <Project Path="tests/Foldicon.Core.Tests/Foldicon.Core.Tests.csproj">
       <Platform Solution="*|x64" Project="x64" />
       <Platform Solution="*|ARM64" Project="ARM64" />

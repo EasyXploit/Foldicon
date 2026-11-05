@@ -34,6 +34,9 @@ public static class DesktopIniEditor
         return null;
     }
 
+    // Returns the IconResource of the text of a desktop.ini, or null when there is no text or it has none
+    public static string? ReadIconResource(string? text) => text is null ? null : ReadValue(text, ShellClassInfo, IconResource);
+
     // Returns the text without the key in the section, and without the section if no key is left in it
     public static string RemoveKey(string text, string section, string key)
     {

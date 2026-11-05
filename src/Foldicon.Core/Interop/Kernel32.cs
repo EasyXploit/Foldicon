@@ -9,7 +9,8 @@ internal static unsafe partial class Kernel32
     internal const uint LoadLibraryAsDatafile = 0x00000002;
     internal const uint LoadLibraryAsImageResource = 0x00000020;
 
-    // Resource type of the icon groups (MAKEINTRESOURCE(14))
+    // Resource types of the images of an icon (MAKEINTRESOURCE(3)) and of the icon groups (MAKEINTRESOURCE(14))
+    internal const nint RtIcon = 3;
     internal const nint RtGroupIcon = 14;
 
     [LibraryImport("kernel32.dll", EntryPoint = "LoadLibraryExW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
@@ -26,4 +27,16 @@ internal static unsafe partial class Kernel32
         nint type,
         delegate* unmanaged<nint, nint, nint, nint, int> callback,
         nint state);
+
+    [LibraryImport("kernel32.dll", EntryPoint = "FindResourceW", SetLastError = true)]
+    internal static partial nint FindResource(nint module, nint name, nint type);
+
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    internal static partial nint LoadResource(nint module, nint resource);
+
+    [LibraryImport("kernel32.dll")]
+    internal static partial nint LockResource(nint data);
+
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    internal static partial uint SizeofResource(nint module, nint resource);
 }

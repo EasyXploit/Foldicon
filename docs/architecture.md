@@ -88,21 +88,34 @@ versioned). Icons added by later builds of Windows are shown with their identifi
 `FolderIconService` works through two interfaces, so it is tested without the shell or the disk:
 
 - **Apply** reads the current `IconResource`, which it returns, and calls `SHGetSetFolderCustomSettings` with
-  `FCSM_ICONFILE`, `%SystemRoot%\System32\<library>` and `-<id>`, or the full path of `fluenticons.dll` for a Fluent
-  icon. The shell merges the key into the existing `desktop.ini` and marks the folder as customized.
-- **Restore** removes only `IconResource` from `[.ShellClassInfo]`, drops the section if nothing is left in it, and
-  deletes the file, with the read-only and system marks of the folder, if the file is left empty. The file keeps its
-  encoding (UTF-16 as the shell writes it, or its bytes unchanged otherwise).
-- **Undo** writes the previous value again, or restores the default icon when there was none. The window offers it
-  after *Restore default*; *Apply* closes the window as soon as the icon is written.
+  `FCSM_ICONFILE`, `%SystemRoot%\System32\<library>` and `-<id>`. The shell merges the key into the existing
+  `desktop.ini` and marks the folder as customized. A Fluent icon first gets its copy in the folder, as described below,
+  and any copy the folder no longer uses is deleted.
+- **Restore** removes `IconResource` from `[.ShellClassInfo]`, drops the section if nothing is left in it, and deletes
+  the file, with the read-only and system marks of the folder, if the file is left empty, and then deletes the copies of
+  the icon. The file keeps its encoding (UTF-16 as the shell writes it, or its bytes unchanged otherwise).
+- **Undo** writes the previous value again, with the copy that *Restore* kept in memory, or restores the default icon
+  when there was none. The window offers it after *Restore default*; *Apply* closes the window as soon as the icon is
+  written.
 
 Each change ends with `SHChangeNotify(SHCNE_UPDATEITEM)` so Explorer redraws the folder.
 
+### Copies of the Fluent icons
+
+A folder must not depend on the path of the app: it would lose its icon when Foldicon is uninstalled or the folder goes
+to another PC, and the path of an MSIX holds its version, so an update would break it. So `NativeBundledIconSource`
+rebuilds the `.ico` file from the resources of `fluenticons.dll` (`IconFileBuilder`), `FolderIconFiles` writes it in the
+folder, and `IconResource` holds only its name, `.foldicon-<id>.ico,0`, which the shell resolves from the folder.
+
+- The name holds the identifier because Explorer caches an icon by its path and index, so a single name would keep
+  showing the previous icon. It starts with a dot so it also stays hidden on a NAS or on macOS, where the hidden and
+  system marks of Windows may not survive a sync.
+- When the copy cannot be written, in a read-only folder for example, the change stops before touching `desktop.ini`,
+  and the window shows the usual error. When the shell refuses the icon, a copy that was new is removed.
+- A drive that refuses the marks, as a network drive can, keeps the copy visible, since the icon still works.
+
 ## Still missing
 
-- **Fluent icons in the Store build:** the folder points to the path of the running app, which is stable under Program
-  Files but holds the version inside an MSIX, so an update of the Store build would break the icons applied before it.
-  It needs a stable copy of the library before the Store build is published.
 - **Tests of the C++ command:** the quoting of `BuildPickArguments` mirrors `LaunchArguments`, which is tested, but the
   C++ project has no test project of its own yet.
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a

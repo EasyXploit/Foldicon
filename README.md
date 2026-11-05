@@ -138,12 +138,14 @@
   `netshell.dll`, `mmcndmgr.dll` and `setupapi.dll`, from modern folders to classic pixel art.
 - **Fluent icons:** 224 icons of [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons), the 199 of
   its color set and 25 folders painted in gold so they stand out on light and dark. They also show in the search, first.
+  A folder keeps its Fluent icon wherever it goes, even without Foldicon.
 - **Keyboard:** <kbd>Ctrl</kbd>+<kbd>F</kbd> goes to the search box, the arrows move in the grid, <kbd>Enter</kbd>
   applies and <kbd>Esc</kbd> closes.
 - **Light and dark:** the window follows the theme of the system, over Mica.
 
-Foldicon does only this. It has no favorites, recent icons, sync or list of folders: the only file it writes besides the
-`desktop.ini` of the folder you change is a cache of the icon index in `%LOCALAPPDATA%\Foldicon`.
+Foldicon does only this. It has no favorites, recent icons, sync or list of folders: the only files it writes are the
+`desktop.ini` of the folder you change, a hidden copy of the icon in that folder when it is a Fluent one, and a cache of
+the icon index in `%LOCALAPPDATA%\Foldicon`.
 
 ## Install
 
@@ -164,9 +166,9 @@ The icon is written as `IconResource=%SystemRoot%\System32\<library>,-<id>` in t
 `SHGetSetFolderCustomSettings`, which keeps every other setting of the file. Restoring removes only that key. See
 [docs/architecture.md](docs/architecture.md).
 
-The Fluent icons are not part of Windows, so they live in `fluenticons.dll`, next to the app, and the folder points to
-that file. Folders that use them need Foldicon installed: if you uninstall it, or copy the folder to another PC, they
-lose their icon. Choose *Restore default* first if you plan to do that.
+The Fluent icons are not part of Windows, so a folder that uses one keeps its own copy, a hidden `.foldicon-<id>.ico`
+next to its `desktop.ini`, and points to it by its bare name. The icon moves with the folder, stays after an update or
+after you uninstall Foldicon, and works on any other PC. *Restore default* deletes the copy.
 
 ## Build from source
 

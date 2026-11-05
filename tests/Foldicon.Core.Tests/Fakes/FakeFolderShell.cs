@@ -11,7 +11,18 @@ internal sealed class FakeFolderShell : IFolderShell
     // Folders refreshed, in order
     public List<string> Refreshed { get; } = [];
 
-    public void SetIcon(string folder, string iconFile, int iconIndex) => Icons.Add((folder, iconFile, iconIndex));
+    // Whether the shell refuses to write the icon
+    public bool Refuses { get; set; }
+
+    public void SetIcon(string folder, string iconFile, int iconIndex)
+    {
+        if (Refuses)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        Icons.Add((folder, iconFile, iconIndex));
+    }
 
     public void Refresh(string folder) => Refreshed.Add(folder);
 }

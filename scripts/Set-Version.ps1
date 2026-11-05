@@ -18,7 +18,10 @@ function Set-Text([string]$file, [string]$pattern, [string]$replacement) {
         throw "$file does not hold a version."
     }
 
-    [System.IO.File]::WriteAllText($path, ($text -replace $pattern, $replacement))
+    # Keeps the byte order mark, without which Inno Setup misreads the accents of the Spanish messages
+    $bytes = [System.IO.File]::ReadAllBytes($path)
+    $hasMark = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+    [System.IO.File]::WriteAllText($path, ($text -replace $pattern, $replacement), (New-Object System.Text.UTF8Encoding $hasMark))
 }
 
 Set-Text 'src\Foldicon.App\Package.appxmanifest' '(<Identity [^>]*Version=")[\d.]+(")' "`${1}$Version.0`${2}"

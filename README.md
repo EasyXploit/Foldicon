@@ -173,7 +173,7 @@ after you uninstall Foldicon, and works on any other PC. *Restore default* delet
 
 ### Synced folders
 
-Synology Drive and other sync clients carry the files of a folder, but often not the marks that make Windows read its
+Sync clients carry the files of a folder, but often not the marks that make Windows read its
 `desktop.ini`, so a synced folder can show the plain icon on the second PC. Open Foldicon there once: each time it
 starts, it looks in your user folder, in the background, for folders with a Fluent icon and puts back what they lost.
 It writes the icon again if the `desktop.ini` did not arrive. For a sync folder that lives elsewhere, choose **···** and

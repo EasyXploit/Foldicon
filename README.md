@@ -63,6 +63,17 @@
 
 <br>
 
+<h2 align="center">One right click away</h2>
+
+<p align="center">
+  The item sits in the modern context menu of folders, with no need to open <i>Show more options</i>.<br>
+  <sub>Shown on Windows in Spanish, where it reads <b>Cambiar icono</b>.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/images/shot-menu-dark.png" alt="The modern context menu of a folder with the item that opens Foldicon" width="586">
+</p>
+
 <h2 align="center">Find the right icon in seconds</h2>
 
 <p align="center">

@@ -71,7 +71,11 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/shot-menu-dark.png" alt="The modern context menu of a folder with the item that opens Foldicon" width="586">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/shot-menu-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/shot-menu-light.png">
+    <img src="docs/images/shot-menu-light.png" alt="The modern context menu of a folder with the item that opens Foldicon" width="586">
+  </picture>
 </p>
 
 <h2 align="center">Find the right icon in seconds</h2>
@@ -106,7 +110,11 @@
 <h2 align="center">Folders you can tell apart</h2>
 
 <p align="center">
-  <img src="docs/images/shot-explorer.png" alt="An Explorer window with folders that have different icons: backups, documents, downloads, favorites, games, music, photos, videos and work" width="820">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/shot-explorer.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/shot-explorer-light.png">
+    <img src="docs/images/shot-explorer-light.png" alt="An Explorer window with folders that have different icons: backups, documents, downloads, favorites, games, music, photos, videos and work" width="820">
+  </picture>
 </p>
 
 ## What you get

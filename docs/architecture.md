@@ -131,7 +131,7 @@ setting of the app. Both walks skip links, hidden folders and the folders of `Fo
 are reparse points too, and enumerating them does not download anything. The walk checks each folder with one listing
 of `.foldicon-*.ico`, and reads no file of a folder that has none.
 
-## Still missing
+## Known limitations
 
 - **Folders customized with `IconFile` and `IconIndex`:** *Restore* removes only `IconResource`, as intended, so such a
   folder keeps showing its old icon.

@@ -1,7 +1,6 @@
 # Documentation
 
-- [architecture.md](architecture.md): the parts of the app, how the index and the folder changes work, and what is
-  still missing.
+- [architecture.md](architecture.md): the parts of the app, how the index and the folder changes work, and their known limitations.
 - [building.md](building.md): building, signing and installing a local package.
 - [engineering-guidelines.md](engineering-guidelines.md): the conclusions of the review of the code, which new work has
   to keep.

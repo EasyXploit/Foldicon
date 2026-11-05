@@ -49,8 +49,7 @@ Set the new version, describe it in `CHANGELOG.md`, commit and push `main`. Then
 .\scripts\Publish-Release.ps1
 ```
 
-It builds both installers, lists their hashes in `SHA256SUMS.txt` and publishes them as a release of the tag `v<version>`,
-as a prerelease before version 1. Releases are built on the PC of the maintainer, since the private key of the certificate
+It builds both installers, lists their hashes in `SHA256SUMS.txt` and publishes them as a release of the tag `v<version>`. Releases are built on the PC of the maintainer, since the private key of the certificate
 never leaves its store.
 
 ## Installer

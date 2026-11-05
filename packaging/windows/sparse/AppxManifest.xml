@@ -12,11 +12,11 @@
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
   IgnorableNamespaces="uap uap10 rescap com desktop4 desktop5">
 
-  <Identity Name="SencimoLabs.Foldicon.Shell" Publisher="CN=Sencimo Labs" Version="$version$" ProcessorArchitecture="neutral" />
+  <Identity Name="EasyXploit.Foldicon.Shell" Publisher="CN=EasyXploit" Version="$version$" ProcessorArchitecture="neutral" />
 
   <Properties>
     <DisplayName>Foldicon</DisplayName>
-    <PublisherDisplayName>Sencimo Labs</PublisherDisplayName>
+    <PublisherDisplayName>EasyXploit</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
     <uap10:AllowExternalContent>true</uap10:AllowExternalContent>
   </Properties>

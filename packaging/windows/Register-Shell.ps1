@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # Removes a previous registration, since Windows refuses a package with the same version and other content (0x80073CFB)
-Get-AppxPackage -Name 'SencimoLabs.Foldicon.Shell' | Remove-AppxPackage
+Get-AppxPackage -Name 'EasyXploit.Foldicon.Shell' | Remove-AppxPackage
 
 # Registers it on the system volume, next to the installation folder: when the default volume of the apps of the PC is
 # another drive, Windows can refuse the state of the package with 0x800701C0 (untrusted mount point)

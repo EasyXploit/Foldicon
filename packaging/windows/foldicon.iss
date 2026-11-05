@@ -15,7 +15,7 @@
 #endif
 
 #define AppName "Foldicon"
-#define AppPublisher "Sencimo Labs"
+#define AppPublisher "EasyXploit"
 #define AppExe "Foldicon.exe"
 #define PowerShell "{sys}\WindowsPowerShell\v1.0\powershell.exe"
 #define ClassicVerbKey "Software\Classes\Directory\shell\Foldicon"

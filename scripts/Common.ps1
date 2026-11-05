@@ -1,7 +1,7 @@
 # Functions and names shared by the scripts of the repository; each script loads it with a dot
 
 # Subject and name of the development certificate; the subject matches the Publisher of Package.appxmanifest
-$DevCertificateSubject = 'CN=Sencimo Labs'
+$DevCertificateSubject = 'CN=EasyXploit'
 $DevCertificateName = 'Foldicon development'
 
 # Finds an installed browser based on Chromium

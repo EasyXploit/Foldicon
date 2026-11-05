@@ -1,6 +1,6 @@
 # Code style
 
-Foldicon follows the same way of programming as the other projects of Sencimo Labs, adapted to C# and C++.
+Foldicon follows the same way of programming as the other projects of EasyXploit, adapted to C# and C++.
 
 - **Comments in English before each step**, in the third person and present tense: "Stores the…", "Checks
   whether…", "If the file does not exist". Each logical block is separated by a blank line.

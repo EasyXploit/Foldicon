@@ -215,5 +215,5 @@ your folders to them. The Fluent icons do ship with Foldicon, under the terms in
 
 ## License
 
-Copyright (c) 2026 Sencimo Labs. Licensed under the [GNU General Public License, version 3](LICENSE.md)
+Copyright (c) 2026 EasyXploit. Licensed under the [GNU General Public License, version 3](LICENSE.md)
 (`GPL-3.0-only`).

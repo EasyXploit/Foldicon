@@ -8,9 +8,9 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Company>Sencimo Labs</Company>
+    <Company>EasyXploit</Company>
     <Product>Foldicon</Product>
-    <Copyright>Copyright (c) 2026 Sencimo Labs</Copyright>
+    <Copyright>Copyright (c) 2026 EasyXploit</Copyright>
     <Version>0.1.0</Version>
   </PropertyGroup>
 </Project>

@@ -9,13 +9,13 @@
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
   IgnorableNamespaces="uap rescap com desktop4 desktop5">
 
-  <!-- The Store replaces Name and Publisher with the ones reserved for the app; CN=Sencimo Labs matches the
-       development certificate of scripts/New-DevCertificate.ps1 -->
-  <Identity Name="SencimoLabs.Foldicon" Publisher="CN=Sencimo Labs" Version="0.1.0.0" />
+  <!-- Name and Publisher match the development certificate of scripts/New-DevCertificate.ps1; a Store build needs the
+       values that Partner Center reserves for the app instead -->
+  <Identity Name="EasyXploit.Foldicon" Publisher="CN=EasyXploit" Version="0.1.0.0" />
 
   <Properties>
     <DisplayName>ms-resource:AppDisplayName</DisplayName>
-    <PublisherDisplayName>Sencimo Labs</PublisherDisplayName>
+    <PublisherDisplayName>EasyXploit</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

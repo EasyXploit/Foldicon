@@ -1,10 +1,10 @@
 ﻿; Inno Setup script of the Windows installer of Foldicon
 ;
-; Packs the self-contained app into Foldicon-Setup-<version>.exe, installed in Program Files for the whole computer.
+; Packs the self-contained app into Foldicon-Setup-<version>-<platform>.exe, installed in Program Files for the whole computer.
 ; After copying the files it trusts the public development certificate and registers, for the user who started the
 ; setup, the package with external location that adds the item to the modern context menu. If that registration fails,
 ; it falls back to a classic item, which shows under "Show more options". Build it with scripts\Build-Installer.ps1,
-; which prepares the folder of the payload and passes /DAppVersion=<version> and /DPayload=<folder>.
+; which prepares the folder of the payload and passes /DAppVersion=<version>, /DPayload=<folder> and /DPlatform=<x64 or arm64>.
 
 #ifndef AppVersion
   #define AppVersion "0.1.0"
@@ -12,6 +12,17 @@
 
 #ifndef Payload
   #define Payload "..\..\obj\installer\x64"
+#endif
+
+#ifndef Platform
+  #define Platform "x64"
+#endif
+
+; The x64 installer also runs on ARM64 through emulation, as before; the ARM64 one only runs there
+#if Platform == "arm64"
+  #define Architectures "arm64"
+#else
+  #define Architectures "x64compatible"
 #endif
 
 #define AppName "Foldicon"
@@ -38,10 +49,10 @@ DefaultDirName={autopf}\{#AppName}
 DisableProgramGroupPage=yes
 UsePreviousAppDir=yes
 
-; Runs only on 64-bit Windows from the first version with packages with external location
-ArchitecturesAllowed=x64compatible
-ArchitecturesInstallIn64BitMode=x64compatible
-MinVersion=10.0.19041
+; Runs only on 64-bit Windows 11, the first version with Mica
+ArchitecturesAllowed={#Architectures}
+ArchitecturesInstallIn64BitMode={#Architectures}
+MinVersion=10.0.22000
 
 SetupIconFile=..\..\src\Foldicon.App\Assets\Foldicon.ico
 UninstallDisplayIcon={app}\{#AppExe}
@@ -49,7 +60,7 @@ UninstallDisplayName={#AppName}
 
 ; Writes the installer in dist, which is not versioned
 OutputDir=..\..\dist
-OutputBaseFilename=Foldicon-Setup-{#AppVersion}
+OutputBaseFilename=Foldicon-Setup-{#AppVersion}-{#Platform}
 Compression=lzma2/ultra
 SolidCompression=yes
 WizardStyle=modern
@@ -58,6 +69,9 @@ WizardStyle=modern
 LanguageDetectionMethod=uilanguage
 ShowLanguageDialog=no
 UsePreviousLanguage=no
+
+; The only per-user data is the cache and the settings of the user who uninstalls, removed on purpose
+UsedUserAreasWarning=no
 
 ; Keeps a log in the temporary folder, to see why the registration of the context menu failed
 SetupLogging=yes
@@ -78,6 +92,9 @@ english.FinishedClassic=Windows did not accept the modern menu. Right-click a fo
 [Files]
 Source: "{#Payload}\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#Payload}\shell\*"; DestDir: "{app}\shell"; Flags: ignoreversion
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{localappdata}\{#AppName}"
 
 [UninstallRun]
 Filename: "{#PowerShell}"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\shell\Unregister-Shell.ps1"""; Flags: runhidden; RunOnceId: "UnregisterShell"

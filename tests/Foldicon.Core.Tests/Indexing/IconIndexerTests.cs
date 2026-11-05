@@ -27,6 +27,25 @@ public sealed class IconIndexerTests
     }
 
     [TestMethod]
+    public void stores_the_words_of_the_catalog_again_only_when_they_change()
+    {
+        using var store = InMemoryStore.Open();
+        var reader = new FakeGroupIconReader(new() { [Imageres] = [3] });
+        var indexer = new IconIndexer(reader, store, Windows, path => path == Imageres, _ => new LibraryStamp(1, 1));
+        var icon = new IconReference("imageres.dll", 3);
+        indexer.RefreshAll([new IconCatalogEntry(icon, "Folder", "Carpeta", [])]);
+        var stamp = store.GetCatalogStamp();
+        store.ReplaceNames([]);
+
+        indexer.RefreshAll([new IconCatalogEntry(icon, "Folder", "Carpeta", [])]);
+        Assert.IsEmpty(store.Search([["folder"]], null));
+
+        indexer.RefreshAll([new IconCatalogEntry(icon, "Star", "Estrella", [])]);
+        Assert.HasCount(1, store.Search([["star"]], null));
+        Assert.AreNotEqual(stamp, store.GetCatalogStamp());
+    }
+
+    [TestMethod]
     public void creates_the_indexer_of_the_real_system()
     {
         using var store = InMemoryStore.Open();

@@ -5,4 +5,9 @@ version 3 as published by the Free Software Foundation.
 
 SPDX-License-Identifier: GPL-3.0-only
 
+Additional permission under GNU GPL version 3 section 7: the copyright holders of Foldicon allow you to distribute it
+through the Microsoft Store under the terms of that store, and to combine it with the Windows App SDK and the other
+Microsoft libraries it is built on, without those terms or libraries becoming subject to the GPL. Everything else stays
+under the GPL, and the source of each version distributed that way must stay publicly available.
+
 Foldicon includes third-party icons under their own license: see THIRD-PARTY-NOTICES.md.

@@ -7,6 +7,12 @@ namespace Foldicon.Core.Tests.Folders;
 public sealed class FolderIconCopyNameTests
 {
     [TestMethod]
+    public void compares_names_in_any_case()
+    {
+        Assert.IsTrue(FolderIconCopyName.Comparer.Equals(".FOLDICON-1.ICO", ".foldicon-1.ico"));
+    }
+
+    [TestMethod]
     public void names_a_copy_after_its_identifier()
     {
         Assert.AreEqual(".foldicon-129.ico", FolderIconCopyName.For(129));

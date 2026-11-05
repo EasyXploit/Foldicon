@@ -24,11 +24,34 @@ public sealed class IconIndexFileTests
     [TestMethod]
     public void places_the_cache_in_the_local_data_of_the_user()
     {
-        var path = IndexCachePath.Get();
+        var path = LocalData.IndexPath();
 
         Assert.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), path);
         Assert.EndsWith(@"Foldicon\index.db", path);
+        Assert.AreEqual("settings.json", Path.GetFileName(LocalData.SettingsPath()));
         Assert.IsTrue(Directory.Exists(Path.GetDirectoryName(path)));
+    }
+
+    [TestMethod]
+    public void rebuilds_a_damaged_cache()
+    {
+        using var folder = new TemporaryFolder();
+        var path = folder.Inside("index.db");
+        File.WriteAllText(path, new string('x', 8192));
+        var icons = new LibraryIcons("shell32.dll", new LibraryStamp(1, 2), [4]);
+
+        using var store = IconIndexStore.OpenPrepared(path, opened => opened.ReplaceLibrary(icons));
+
+        Assert.HasCount(1, store.Search([], null));
+    }
+
+    [TestMethod]
+    public void leaves_alone_a_failure_that_is_not_damage()
+    {
+        using var folder = new TemporaryFolder();
+
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => IconIndexStore.OpenPrepared(folder.Inside("index.db"), _ => throw new InvalidOperationException()));
     }
 
     [TestMethod]

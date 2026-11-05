@@ -1,4 +1,5 @@
 // SQLite cache of the icon groups of each library and of the words they can be searched by
+using System.Diagnostics;
 using System.Globalization;
 using Foldicon.Core.Icons;
 using Foldicon.Core.Indexing;
@@ -9,7 +10,11 @@ namespace Foldicon.Core.Storage;
 public sealed class IconIndexStore : IDisposable
 {
     // Version of the schema; a cache written with another one is dropped and rebuilt
-    private const int SchemaVersion = 2;
+    private const int SchemaVersion = 3;
+
+    // Errors of SQLite for a damaged file
+    private const int SqliteCorrupt = 11;
+    private const int SqliteNotADatabase = 26;
 
     private readonly SqliteConnection connection;
 
@@ -17,12 +22,51 @@ public sealed class IconIndexStore : IDisposable
     public IconIndexStore(string connectionString)
     {
         connection = new SqliteConnection(connectionString);
-        connection.Open();
-        EnsureSchema();
+        try
+        {
+            connection.Open();
+            EnsureSchema();
+        }
+        catch
+        {
+            // Releases the file, which a damaged cache needs before it is deleted
+            connection.Dispose();
+            throw;
+        }
     }
 
-    // Opens the cache file of the user
-    public static IconIndexStore OpenDefault() => Open(IndexCachePath.Get());
+    // Opens a cache file and prepares it; a damaged file is deleted and built again, since it holds nothing of the user
+    public static IconIndexStore OpenPrepared(string path, Action<IconIndexStore> prepare)
+    {
+        ArgumentNullException.ThrowIfNull(prepare);
+        try
+        {
+            return Prepare(path, prepare);
+        }
+        catch (SqliteException exception) when (exception.SqliteErrorCode is SqliteCorrupt or SqliteNotADatabase)
+        {
+            Trace.TraceWarning($"The icon index was damaged and is rebuilt: {exception.Message}");
+            SqliteConnection.ClearAllPools();
+            File.Delete(path);
+            return Prepare(path, prepare);
+        }
+    }
+
+    // Opens a file and prepares it, closing it when that fails
+    private static IconIndexStore Prepare(string path, Action<IconIndexStore> prepare)
+    {
+        var store = Open(path);
+        try
+        {
+            prepare(store);
+            return store;
+        }
+        catch
+        {
+            store.Dispose();
+            throw;
+        }
+    }
 
     // Opens a cache file, whose path may hold any character
     public static IconIndexStore Open(string path) => new(new SqliteConnectionStringBuilder { DataSource = path }.ToString());
@@ -36,7 +80,7 @@ public sealed class IconIndexStore : IDisposable
         // Drops a cache of another version, since it can always be regenerated
         if (version != SchemaVersion)
         {
-            Execute("DROP TABLE IF EXISTS names; DROP TABLE IF EXISTS icons; DROP TABLE IF EXISTS libraries;");
+            Execute("DROP TABLE IF EXISTS names; DROP TABLE IF EXISTS icons; DROP TABLE IF EXISTS libraries; DROP TABLE IF EXISTS catalog;");
         }
 
         // Creates the tables when they are missing
@@ -54,6 +98,7 @@ public sealed class IconIndexStore : IDisposable
                 resource_id INTEGER NOT NULL,
                 term TEXT NOT NULL);
             CREATE INDEX IF NOT EXISTS names_by_icon ON names (library, resource_id, term);
+            CREATE TABLE IF NOT EXISTS catalog (stamp TEXT NOT NULL);
             PRAGMA user_version = {SchemaVersion};
             """);
     }
@@ -98,6 +143,16 @@ public sealed class IconIndexStore : IDisposable
             ("$lastWrite", icons.Stamp.LastWriteTicks));
 
         transaction.Commit();
+    }
+
+    // Returns the stamp of the catalog whose words are stored, or null if there is none
+    public string? GetCatalogStamp() => Scalar("SELECT stamp FROM catalog") as string;
+
+    // Stores the stamp of the catalog whose words were just stored
+    public void SetCatalogStamp(string stamp)
+    {
+        Execute("DELETE FROM catalog");
+        Execute("INSERT INTO catalog (stamp) VALUES ($stamp)", ("$stamp", stamp));
     }
 
     // Replaces every search word of the icons with the given ones, already normalized

@@ -18,6 +18,13 @@ public sealed class AppLanguageTests
     }
 
     [TestMethod]
+    [DataRow("EN-gb")]
+    public void reads_the_language_code_in_any_case(string culture)
+    {
+        Assert.AreEqual(AppLanguage.English, AppLanguage.For(culture));
+    }
+
+    [TestMethod]
     [DataRow("en-US")]
     [DataRow("en-GB")]
     [DataRow("de-DE")]

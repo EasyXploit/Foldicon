@@ -46,7 +46,7 @@ public sealed class FolderIconService(
         var icon = bundledIcons.ReadIconFile(resourceId)
             ?? throw new IOException($"The bundled icon {resourceId} cannot be read.");
         var name = FolderIconCopyName.For(resourceId);
-        var existed = iconFiles.List(folder).Contains(name);
+        var existed = iconFiles.List(folder).Contains(name, FolderIconCopyName.Comparer);
         iconFiles.Write(folder, name, icon);
         try
         {
@@ -69,7 +69,7 @@ public sealed class FolderIconService(
     // Deletes the copies of the folder, except for the one in use
     private void DeleteCopies(string folder, string? kept)
     {
-        foreach (var name in iconFiles.List(folder).Where(name => name != kept))
+        foreach (var name in iconFiles.List(folder).Where(name => !FolderIconCopyName.Comparer.Equals(name, kept)))
         {
             iconFiles.Delete(folder, name);
         }
@@ -87,7 +87,7 @@ public sealed class FolderIconService(
         }
 
         // Brings back the copy the previous icon needs
-        if (removedCopy is { } copy && copy.Name == value.Value.File)
+        if (removedCopy is { } copy && FolderIconCopyName.Comparer.Equals(copy.Name, value.Value.File))
         {
             iconFiles.Write(folder, copy.Name, copy.Icon);
         }

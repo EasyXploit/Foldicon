@@ -5,7 +5,7 @@ Foldicon has four parts, shipped together by the installer or, for the Store, in
 | Part | Folder | What it does |
 | --- | --- | --- |
 | Core | `src/Foldicon.Core` | Icon index, search and folder changes, without any interface. Covered by `tests/`. |
-| App | `src/Foldicon.App` | WinUI 3 window of the picker. Started as `Foldicon.exe --pick "<folder>"`. |
+| App | `src/Foldicon.App` | WinUI 3 window of the picker. Started as `Foldicon.exe --pick "<folder>"`, or from Start, where it offers to choose the folder. |
 | Context menu | `src/Foldicon.ContextMenu` | C++/WinRT `IExplorerCommand` that only starts the app. |
 | Fluent icons | `src/Foldicon.FluentIcons` | `fluenticons.dll`, a library with only icon resources and no code. |
 
@@ -27,8 +27,8 @@ location (`packaging/windows/sparse`), which holds no code and points the same d
 
 The app, the context menu and the installer are in Spanish when the language of the interface of the system is any
 variant of Spanish, and in English otherwise. The app sets it from `AppLanguage`, whose default strings are in
-`Strings/en-US`; the command of the context menu chooses between its two strings, and the installer uses
-`LanguageDetectionMethod=uilanguage` with English as the first language.
+`Strings/en-US`; the command of the context menu looks its language up in `Translations`, and the installer uses
+`LanguageDetectionMethod=uilanguage` with English as the first language. `CONTRIBUTING.md` lists the steps to add one.
 
 ## Icon index
 
@@ -38,8 +38,9 @@ variant of Spanish, and in English otherwise. The app sets it from `AppLanguage`
    and lists its `RT_GROUP_ICON` resources with integer identifiers. Groups named with a string are skipped, because
    `IconResource` could only point to them by position.
 3. `IconIndexer` reads again only the libraries whose size or write time changed, and `IconIndexStore` keeps the result
-   in SQLite at `%LOCALAPPDATA%\Foldicon\index.db`. The file is a cache: a different schema version drops it, and
-   deleting it only makes the next start slower.
+   in SQLite at `%LOCALAPPDATA%\Foldicon\index.db`. The file is a cache: a different schema version drops it, a
+   damaged one is deleted and built again, and deleting it only makes the next start slower. The search words are only
+   stored again when the catalog changes, which `IconCatalog.Stamp` tells.
 
 On a build of Windows 11 from 2026 the nine libraries hold about 1,500 icon groups.
 
@@ -65,7 +66,8 @@ removed one leaves a gap. Folders are numbered from 1 and the color icons from 1
 The text of the search box is split into words, lowercased and stripped of accents (`TextNormalizer`). Each word is
 expanded with the groups of `Search/synonyms.json` that have a word starting with it (`SynonymTable`), so a word being
 typed already finds its translation. An icon matches when, for every typed word, one of its names, its library or its
-identifier starts with one of the expansions. `IconBrowser` puts these steps together for the window.
+identifier starts with one of the expansions. `IconBrowser` puts these steps together for the window. Only the first 32
+words of a search count (`SearchQuery.MaximumWords`), since a pasted text would exceed what SQLite can run.
 
 While nothing is being searched, the *All* tab starts with the folders of `fluenticons.dll` and `imageres.dll`, follows
 with each library in the order of the tabs (`IconLibraryTabs`) and leaves the repeated and blank icons at the end
@@ -121,10 +123,11 @@ hidden and system marks of its files, and Explorer then ignores `desktop.ini`. `
 folder is only touched when it holds a copy: without a `desktop.ini`, a single copy says which icon to write again, and a
 folder that points to another icon stays as it is.
 
-There is no list of folders, which would be empty on a second PC anyway: every start of the app walks the folder of the
-user in the background, at low priority, breadth first and with the limits of `FolderScanLimits` (depth 6, 20,000
+There is no list of folders, which would be empty on a second PC anyway: every start of the app, unless *Repair icons at
+startup* is off in the **···** button, walks the folder of the user in the background, at low priority, breadth first and with the limits of `FolderScanLimits` (depth 6, 20,000
 folders). *Repair all icons*, in the **···** button of the window, also walks every fixed drive with far wider limits.
-Both skip links, hidden folders and the folders of `FolderScanRules`, but not the placeholders of sync clients, which
+The first start tells the user about it once. The choice is kept in `%LOCALAPPDATA%\Foldicon\settings.json`, the only
+setting of the app. Both walks skip links, hidden folders and the folders of `FolderScanRules`, but not the placeholders of sync clients, which
 are reparse points too, and enumerating them does not download anything. The walk checks each folder with one listing
 of `.foldicon-*.ico`, and reads no file of a folder that has none.
 

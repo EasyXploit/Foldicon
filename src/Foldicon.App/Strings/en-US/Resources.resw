@@ -29,7 +29,7 @@
     <value>All</value>
   </data>
   <data name="FluentTabText" xml:space="preserve">
-    <value>Fluent / Windows 11</value>
+    <value>Fluent</value>
   </data>
   <data name="MoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>More options</value>
@@ -77,7 +77,7 @@
     <value>The icons of Windows could not be read.</value>
   </data>
   <data name="NoFolderMessage" xml:space="preserve">
-    <value>Open Foldicon from the context menu of a folder: Change icon</value>
+    <value>Choose a folder to change its icon, or right-click it in Explorer and choose Change icon.</value>
   </data>
   <data name="FolderNotFoundMessage" xml:space="preserve">
     <value>The folder does not exist.</value>
@@ -93,5 +93,14 @@
   </data>
   <data name="TabsForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Next tabs</value>
+  </data>
+  <data name="ChooseFolderButton.Content" xml:space="preserve">
+    <value>Choose folder…</value>
+  </data>
+  <data name="RepairAtStartupItem.Text" xml:space="preserve">
+    <value>Repair icons at startup</value>
+  </data>
+  <data name="RepairNoticeMessage" xml:space="preserve">
+    <value>Each time it starts, Foldicon looks in your user folder for folders with a Fluent icon and repairs the ones a sync client changed. You can turn this off in More options.</value>
   </data>
 </root>

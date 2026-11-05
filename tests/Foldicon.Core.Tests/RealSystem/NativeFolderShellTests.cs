@@ -38,6 +38,6 @@ public sealed class NativeFolderShellTests
     {
         using var folder = new TemporaryFolder();
 
-        Assert.ThrowsExactly<DirectoryNotFoundException>(() => Shell.SetIcon(folder.Inside("missing"), "icon.ico", 0));
+        Assert.ThrowsExactly<IOException>(() => Shell.SetIcon(folder.Inside("missing"), "icon.ico", 0));
     }
 }

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Windows 10 2004 or later.
+- Windows 11.
 - .NET 10 SDK.
 - Visual Studio 2026 with the *.NET desktop development* and *Desktop development with C++* workloads. ARM64 builds of
   the context menu also need the *MSVC ARM64 build tools* component.
@@ -42,12 +42,14 @@ package will have no Fluent icons when the library was not built before. A new i
 .\scripts\Build-Installer.ps1
 ```
 
-It needs [Inno Setup](https://jrsoftware.org/isinfo.php) 6 and writes `dist\Foldicon-Setup-<version>.exe`. The script:
+It needs [Inno Setup](https://jrsoftware.org/isinfo.php) 6 and writes `dist\Foldicon-Setup-<version>-x64.exe` and
+`-arm64.exe`; `-Platforms x64` builds only one. The ARM64 build needs the *MSVC ARM64 build tools*. For each platform, the
+script:
 
 1. Publishes the app without a package (`WindowsPackageType=None`), carrying .NET and the Windows App SDK.
 2. Packs `packaging\windows\sparse\AppxManifest.xml` into `Foldicon.Shell.msix`, a package with external location that
-   holds no code, and signs it with the development certificate, created in the store of the current user when it is
-   missing.
+   holds no code, and signs it, with a timestamp, with the development certificate, created in the store of the current user
+   when it is missing.
 3. Compiles `packaging\windows\foldicon.iss` with the app, that package, the public `Foldicon.cer` and the scripts that
    register and unregister the package.
 
@@ -66,4 +68,4 @@ The setup is not signed with a commercial certificate, so SmartScreen warns when
 Explorer loads new context menu commands when it starts again: sign out and in after the first install.
 
 The Store builds are uploaded unsigned (`.msixupload`), and the Store signs them with the identity reserved for the
-app; the development certificate is never part of them.
+app; the development certificate is never part of them. See [microsoft-store.md](microsoft-store.md).

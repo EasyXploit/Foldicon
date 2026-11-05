@@ -11,7 +11,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    # The image with Visual Studio 2026, whose toolset v145 the C++ projects use
+    runs-on: windows-2025-vs2026
     strategy:
       fail-fast: false
       matrix:

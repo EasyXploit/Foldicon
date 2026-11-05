@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <sub>Windows 10 2004 or later · x64 · Free and open source (GPL-3.0)</sub><br>
+  <sub>Windows 11 · x64 and ARM64 · Free and open source (GPL-3.0)</sub><br>
   <sub>Early development, version 0.1.0. There are no published releases yet.</sub>
 </p>
 
@@ -96,7 +96,7 @@
 <h2 align="center">The look of Windows 11, ready to use</h2>
 
 <p align="center">
-  The <b>Fluent / Windows 11</b> tab brings 224 icons of Microsoft's Fluent family: 199 in full color and 25 folders.<br>
+  The <b>Fluent</b> tab brings 224 icons of Microsoft's Fluent family: 199 in full color and 25 folders.<br>
   They come with Foldicon and look sharp at every size.
 </p>
 
@@ -104,7 +104,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/shot-d-fluent-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="docs/images/shot-d-fluent-light.png">
-    <img src="docs/images/shot-d-fluent-light.png" alt="The Fluent / Windows 11 tab of the picker window, with golden folders and colorful icons" width="820">
+    <img src="docs/images/shot-d-fluent-light.png" alt="The Fluent tab of the picker window, with golden folders and colorful icons" width="820">
   </picture>
 </p>
 
@@ -145,12 +145,14 @@
 
 Foldicon does only this. It has no favorites, recent icons, sync or list of folders: the only files it writes are the
 `desktop.ini` of the folder you change, a hidden copy of the icon in that folder when it is a Fluent one, and a cache of
-the icon index in `%LOCALAPPDATA%\Foldicon`. When a sync client strips a folder that already has a Fluent icon, Foldicon
-repairs that folder too, as [Synced folders](#synced-folders) explains.
+the icon index and its settings in `%LOCALAPPDATA%\Foldicon`. When a sync client strips a folder that already has a
+Fluent icon, Foldicon repairs that folder too, as [Synced folders](#synced-folders) explains. It collects no data: see
+the [privacy policy](PRIVACY.md).
 
 ## Install
 
-1. Download `Foldicon-Setup-<version>.exe` from [Releases](../../releases).
+1. Download `Foldicon-Setup-<version>-x64.exe` from [Releases](../../releases), or the `arm64` one for a PC with an ARM
+   processor.
 2. Run it. Windows asks once for administrator rights.
 3. Right-click a folder and choose **Change icon**. If it does not show yet, sign out and in again.
 
@@ -159,7 +161,8 @@ The installer is not signed with a commercial certificate, so **SmartScreen may 
 it removes that trust when you uninstall Foldicon from the installed apps. The item of the modern menu is per user, so
 any other user of the PC has to run the installer too.
 
-Foldicon will also be published in the Microsoft Store.
+Foldicon will also be published in the Microsoft Store. Use one of the two on a PC, not both. You can also open it from
+Start and choose a folder there.
 
 ## How it works
 
@@ -177,7 +180,8 @@ Sync clients carry the files of a folder, but often not the marks that make Wind
 `desktop.ini`, so a synced folder can show the plain icon on the second PC. Open Foldicon there once: each time it
 starts, it looks in your user folder, in the background, for folders with a Fluent icon and puts back what they lost.
 It writes the icon again if the `desktop.ini` did not arrive. For a sync folder that lives elsewhere, choose **···** and
-then *Repair all icons*, which also looks through your fixed drives. Foldicon keeps no list of your folders, and nothing
+then *Repair all icons*, which also looks through your fixed drives. To stop the search at each start, turn off *Repair icons at startup* in the same menu.
+Foldicon keeps no list of your folders, and nothing
 runs while it is closed.
 
 ## Build from source
@@ -198,13 +202,13 @@ To build the installer, run `scripts\Build-Installer.ps1`, which also needs Inno
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Security problems are reported as described in [SECURITY.md](SECURITY.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md), which also explains how to add a language. Security problems are reported as described in [SECURITY.md](SECURITY.md).
 
 ## Credits
 
 | Project | Used for | License |
 | --- | --- | --- |
-| [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons) | The icons of the Fluent / Windows 11 tab | MIT |
+| [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons) | The icons of the Fluent tab | MIT |
 | [Windows App SDK](https://github.com/microsoft/WindowsAppSDK) | The window | MIT |
 | [Microsoft.Data.Sqlite](https://github.com/dotnet/efcore) | The cache of the index | MIT |
 | [Inter](https://github.com/rsms/inter) | The text of the images of this page | SIL OFL 1.1 |
@@ -216,4 +220,4 @@ your folders to them. The Fluent icons do ship with Foldicon, under the terms in
 ## License
 
 Copyright (c) 2026 EasyXploit. Licensed under the [GNU General Public License, version 3](LICENSE.md)
-(`GPL-3.0-only`).
+(`GPL-3.0-only`), with the additional permission described in [NOTICE](NOTICE).

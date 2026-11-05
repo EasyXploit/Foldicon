@@ -1,6 +1,5 @@
 // Service that repairs the folders whose Fluent icon lost its marks, or its desktop.ini, on the way through a sync client
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Foldicon.Core.Folders;
 
@@ -38,7 +37,7 @@ public sealed class FolderIconRepair(
         TaskScheduler.Default);
 
     // Walks the folders from each root, breadth first so the limit leaves out the deepest ones, and returns how many it
-    // repaired; a folder that fails is skipped
+    // repaired; a folder that fails is skipped, and the search goes on through the folders inside it
     public int RepairAll(IEnumerable<string> roots, FolderScanLimits limits)
     {
         ArgumentNullException.ThrowIfNull(roots);
@@ -56,28 +55,49 @@ public sealed class FolderIconRepair(
             }
 
             visited++;
-            try
+            if (TryRepair(next.Folder))
             {
-                if (Repair(next.Folder))
-                {
-                    repaired++;
-                }
-
-                if (next.Depth < limits.MaximumDepth)
-                {
-                    foreach (var folder in tree.Subfolders(next.Folder))
-                    {
-                        pending.Enqueue((folder, next.Depth + 1));
-                    }
-                }
+                repaired++;
             }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or COMException)
+
+            if (next.Depth < limits.MaximumDepth)
             {
-                Trace.TraceWarning($"The folder {next.Folder} could not be repaired: {exception.Message}");
+                foreach (var folder in SubfoldersOf(next.Folder))
+                {
+                    pending.Enqueue((folder, next.Depth + 1));
+                }
             }
         }
 
         return repaired;
+    }
+
+    // Repairs a folder and returns whether anything changed, without letting a failure stop the search
+    private bool TryRepair(string folder)
+    {
+        try
+        {
+            return Repair(folder);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Trace.TraceWarning($"The folder {folder} could not be repaired: {exception.Message}");
+            return false;
+        }
+    }
+
+    // Lists the folders inside a folder, or none when it cannot be read
+    private IReadOnlyList<string> SubfoldersOf(string folder)
+    {
+        try
+        {
+            return tree.Subfolders(folder);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Trace.TraceWarning($"The folder {folder} could not be listed: {exception.Message}");
+            return [];
+        }
     }
 
     // Puts back what a folder with a copy of an icon needs, and returns whether anything was missing
@@ -107,7 +127,7 @@ public sealed class FolderIconRepair(
             return true;
         }
 
-        if (inUse is null || !copies.Contains(inUse))
+        if (inUse is null || !copies.Contains(inUse, FolderIconCopyName.Comparer))
         {
             return false;
         }

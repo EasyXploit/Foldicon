@@ -6,8 +6,8 @@ Bug reports, ideas and pull requests are welcome.
 
 - For a bug or an idea, open an issue first, so the change can be discussed before you write it.
 - Security problems are reported privately: see [SECURITY.md](SECURITY.md).
-- Foldicon is only a folder icon picker. Favorites, recent icons, sync, lists of folders and settings of its own are out
-  of scope, and so is any paid dependency or third-party service.
+- Foldicon is only a folder icon picker. Favorites, recent icons, sync and lists of folders are out of scope, and so is
+  any paid dependency or third-party service.
 
 ## Setup
 
@@ -43,6 +43,21 @@ dotnet test tests/Foldicon.Core.Tests -p:Platform=x64 --filter <filter>
 
 MSBuild also builds `tests/Foldicon.ContextMenu.Tests`, a console program that returns the number of failed checks.
 
+## Translations
+
+Foldicon is in English and Spanish, and any other language is welcome. Open a
+[translation issue](../../issues/new?template=translation.yml) first, so two people do not work on the same one.
+
+1. Copy `src/Foldicon.App/Strings/en-US/Resources.resw` to `Strings/<code>/Resources.resw` and translate the values. Keep
+   the names, and keep `{0}` where it appears.
+2. Add the language to `Translations` in `src/Foldicon.Core/Languages/AppLanguage.cs`.
+3. Add the two strings of the context menu: a new identifier in `resource.h`, its text in `Foldicon.ContextMenu.rc` and
+   a line in `Translations` in `ExplorerCommand.cpp`.
+4. Add the language to `[Languages]` and `[CustomMessages]` in `packaging/windows/foldicon.iss`.
+
+The names of the icons in `Search/icon-names.json` exist in English and Spanish only. Other languages show the English
+name, and a word in their language can still find an icon when it is added to `Search/synonyms.json`.
+
 ## README
 
 The README is the front page of the project, so review it with every important change: a new feature, a new source of
@@ -60,4 +75,5 @@ credits, and take new screenshots when the window changes. `scripts/Render-Readm
 ## License
 
 Foldicon is licensed under the [GNU General Public License, version 3](LICENSE.md) (`GPL-3.0-only`). By contributing,
-you agree that your contributions are licensed under the same terms.
+you agree that your contributions are licensed under the same terms, including the additional permission in
+[NOTICE](NOTICE), which lets the project ship through the Microsoft Store.

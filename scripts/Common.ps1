@@ -4,6 +4,9 @@
 $DevCertificateSubject = 'CN=EasyXploit'
 $DevCertificateName = 'Foldicon development'
 
+# Public timestamp service used when signing; it only receives a hash of the package
+$TimestampServer = 'http://timestamp.digicert.com'
+
 # Finds an installed browser based on Chromium
 function Find-Browser {
     foreach ($name in 'msedge.exe', 'chrome.exe') {

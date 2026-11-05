@@ -1,7 +1,6 @@
 // Window of the picker: loads the index, filters it and applies the chosen icon to the folder
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using Foldicon.App.Imaging;
 using Foldicon.App.Interop;
 using Foldicon.App.Models;
@@ -12,10 +11,12 @@ using Foldicon.Core.Search;
 using Foldicon.Core.Storage;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.Graphics;
+using Windows.Storage.Pickers;
 using Windows.System;
 
 namespace Foldicon.App;
@@ -33,7 +34,7 @@ public sealed partial class MainWindow : Window
     // Share of the visible width that the arrows of the tabs scroll
     private const double TabsScrollStep = 0.75;
 
-    private readonly string? folder;
+    private string? folder;
     private readonly ResourceLoader strings = new();
     private readonly FolderIconService folders = FolderIconService.ForSystem();
     private readonly SynonymTable synonyms = SynonymTable.LoadEmbedded();
@@ -42,6 +43,7 @@ public sealed partial class MainWindow : Window
         IconCatalog.LoadEmbedded().ToDictionary(entry => entry.Icon);
     private IconIndexStore? store;
     private IconBrowser? browser;
+    private AppSettings settings = AppSettingsFile.Load(LocalData.SettingsPath());
 
     // IconResource the folder had before it was restored, for Undo
     private string? previousIcon;
@@ -72,14 +74,8 @@ public sealed partial class MainWindow : Window
             LibraryBar.Items.Add(new SelectorBarItem { Text = text, Tag = library });
         }
 
-        // Shows the folder, or explains how to open the app when there is none
-        FolderText.Text = folder ?? "";
-        if (folder is null || !Directory.Exists(folder))
-        {
-            ShowResult(InfoBarSeverity.Error, folder is null ? "NoFolderMessage" : "FolderNotFoundMessage", canUndo: false);
-            ApplyButton.IsEnabled = false;
-            RestoreButton.IsEnabled = false;
-        }
+        ShowFolder();
+        RepairAtStartupItem.IsChecked = settings.RepairAtStartup;
 
         // Listens to the wheel even after the scroll viewer handles it
         LibraryScroller.AddHandler(UIElement.PointerWheelChangedEvent, new PointerEventHandler(OnLibraryWheel), true);
@@ -88,17 +84,47 @@ public sealed partial class MainWindow : Window
         Closed += (_, _) => store?.Dispose();
     }
 
+    // Shows the folder and enables the actions on it, or offers to choose one when there is none
+    private void ShowFolder()
+    {
+        var usable = folder is not null && Directory.Exists(folder);
+        FolderText.Text = folder ?? "";
+        ApplyButton.IsEnabled = usable;
+        RestoreButton.IsEnabled = usable;
+        ChooseFolderButton.Visibility = usable ? Visibility.Collapsed : Visibility.Visible;
+        if (folder is null)
+        {
+            ShowResult(InfoBarSeverity.Informational, "NoFolderMessage", canUndo: false);
+        }
+        else if (!usable)
+        {
+            ShowResult(InfoBarSeverity.Error, "FolderNotFoundMessage", canUndo: false);
+        }
+    }
+
+    // Lets the user choose the folder when the app was not opened on one
+    private async void OnChooseFolderClick(object sender, RoutedEventArgs e)
+    {
+        var picker = new FolderPicker();
+        picker.FileTypeFilter.Add("*");
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(this));
+        var picked = await picker.PickSingleFolderAsync();
+        if (picked is not null)
+        {
+            folder = picked.Path;
+            ResultBar.IsOpen = false;
+            ShowFolder();
+        }
+    }
+
     // Opens the cache and brings it up to date in the background, then shows every icon
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         try
         {
-            store = await Task.Run(() =>
-            {
-                var opened = IconIndexStore.OpenDefault();
-                IconIndexer.ForSystem(opened).RefreshAll(catalog.Values);
-                return opened;
-            });
+            store = await Task.Run(() => IconIndexStore.OpenPrepared(
+                LocalData.IndexPath(),
+                opened => IconIndexer.ForSystem(opened).RefreshAll(catalog.Values)));
             browser = new IconBrowser(store, synonyms, catalog);
             Filter();
         }
@@ -114,9 +140,30 @@ public sealed partial class MainWindow : Window
 
         SearchBox.Focus(FocusState.Programmatic);
 
+        // Tells the user once that the app looks after synced folders, unless the bar already says something else
+        if (!settings.RepairNoticeShown && !ResultBar.IsOpen)
+        {
+            ShowText(InfoBarSeverity.Informational, strings.GetString("RepairNoticeMessage"));
+            SaveSettings(settings with { RepairNoticeShown = true });
+        }
+
         // Repairs in the background the folders that a sync client brought without their marks
-        _ = FolderIconRepair.ForSystem().RepairAllInBackground(FolderIconRepair.StartupRoots(), FolderScanLimits.Startup);
+        if (settings.RepairAtStartup)
+        {
+            _ = FolderIconRepair.ForSystem().RepairAllInBackground(FolderIconRepair.StartupRoots(), FolderScanLimits.Startup);
+        }
     }
+
+    // Keeps the new settings in memory and on disk
+    private void SaveSettings(AppSettings changed)
+    {
+        settings = changed;
+        AppSettingsFile.Save(LocalData.SettingsPath(), settings);
+    }
+
+    // Turns the repair of every start on or off
+    private void OnRepairAtStartupClick(object sender, RoutedEventArgs e) =>
+        SaveSettings(settings with { RepairAtStartup = RepairAtStartupItem.IsChecked });
 
     // Repairs every folder that can be found, and says how many were repaired
     private async void OnRepairClick(object sender, RoutedEventArgs e)
@@ -166,6 +213,7 @@ public sealed partial class MainWindow : Window
     {
         if (!args.InRecycleQueue && args.Item is IconItem item)
         {
+            AutomationProperties.SetName(args.ItemContainer, item.Name);
             item.EnsureImage(Root.XamlRoot?.RasterizationScale ?? 1.0);
         }
     }
@@ -198,12 +246,12 @@ public sealed partial class MainWindow : Window
     // Applies the selected icon and closes the window, or stays open to show why it failed
     private void ApplySelected()
     {
-        if (folder is null || !ApplyButton.IsEnabled || IconGrid.SelectedItem is not IconItem item)
+        if (folder is not { } target || !ApplyButton.IsEnabled || IconGrid.SelectedItem is not IconItem item)
         {
             return;
         }
 
-        if (Run(() => folders.Apply(folder, item.Icon), successMessage: null, canUndo: false))
+        if (Run(() => folders.Apply(target, item.Icon), successMessage: null, canUndo: false))
         {
             Close();
         }
@@ -212,27 +260,27 @@ public sealed partial class MainWindow : Window
     // Puts back the default icon of the folder and offers to undo it
     private void OnRestoreClick(object sender, RoutedEventArgs e)
     {
-        if (folder is null)
+        if (folder is not { } target)
         {
             return;
         }
 
         Run(() =>
         {
-            previousIcon = folders.GetCurrent(folder);
-            folders.Restore(folder);
+            previousIcon = folders.GetCurrent(target);
+            folders.Restore(target);
         }, "RestoredMessage", canUndo: true);
     }
 
     // Puts back the icon the folder had before the last change
     private void OnUndoClick(object sender, RoutedEventArgs e)
     {
-        if (folder is null)
+        if (folder is not { } target)
         {
             return;
         }
 
-        Run(() => folders.Undo(folder, previousIcon), "UndoneMessage", canUndo: false);
+        Run(() => folders.Undo(target, previousIcon), "UndoneMessage", canUndo: false);
     }
 
     // Runs a change of the folder, reports how it went when there is a message for it, and returns whether it worked
@@ -248,7 +296,7 @@ public sealed partial class MainWindow : Window
 
             return true;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or COMException)
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
             Trace.TraceError($"Folder change failed: {exception}");
             ShowResult(InfoBarSeverity.Error, "ApplyFailedMessage", canUndo: false);

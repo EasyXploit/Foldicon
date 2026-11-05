@@ -19,11 +19,16 @@ public sealed class IconIndexer(
         File.Exists,
         LibraryStamp.Of);
 
-    // Brings the libraries of the tabs up to date and stores the search words of the catalog
-    public void RefreshAll(IEnumerable<IconCatalogEntry> catalog)
+    // Brings the libraries of the tabs up to date and stores the search words of the catalog when they changed
+    public void RefreshAll(IReadOnlyCollection<IconCatalogEntry> catalog)
     {
         Refresh(IconLibraryTabs.All);
-        store.ReplaceNames(IconCatalog.Terms(catalog));
+        var stamp = IconCatalog.Stamp(catalog);
+        if (store.GetCatalogStamp() != stamp)
+        {
+            store.ReplaceNames(IconCatalog.Terms(catalog));
+            store.SetCatalogStamp(stamp);
+        }
     }
 
     // Brings the cache up to date, reading again only the libraries whose file changed; returns how many it read

@@ -9,7 +9,8 @@ covers the decisions behind it.
 - A refactor changes no behaviour and no pixel of the window. A change of behaviour is a decision of the maintainer, and
   it goes in its own commit, with its own entry in [CHANGELOG.md](../CHANGELOG.md).
 - A folder is user data. Nothing writes in a folder unless the user chose it, or it already carries a copy of an icon of
-  Foldicon. Every action that writes in a folder is described in [SECURITY.md](../SECURITY.md) and in the README.
+  Foldicon. Every action that writes in a folder is described in [SECURITY.md](../SECURITY.md) and in the README, and
+  anything automatic can be turned off.
 - Identifiers of `pack.json`, the name `.foldicon-<id>.ico` and the format of `IconResource` live in the folders of the
   users, so they never change.
 
@@ -42,6 +43,8 @@ covers the decisions behind it.
 
 - Only well-known, maintained packages, versioned in `Directory.Packages.props`. A new one needs a reason, and a line in
   the credits of the README when it ships with the app.
+- Each native call that can fail raises the one exception type its callers catch. Expected failures never close the
+  app, and a list that takes text from the user has a limit.
 - Before a release, check them with
   `dotnet list src/Foldicon.App package --vulnerable --include-transitive`.
 

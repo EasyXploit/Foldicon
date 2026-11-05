@@ -1,5 +1,7 @@
 // Catalog of the names given to the icons, which the window shows and the index stores as search words
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Foldicon.Core.Icons;
 
@@ -38,6 +40,13 @@ public static class IconCatalog
         }
 
         return entries;
+    }
+
+    // Returns a value that changes with the search words of the entries, to store them again only when they change
+    public static string Stamp(IEnumerable<IconCatalogEntry> entries)
+    {
+        var terms = Terms(entries).Select(name => $"{name.Icon}={name.Term}");
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join('\n', terms))));
     }
 
     // Returns the search words of every entry, as the index stores them

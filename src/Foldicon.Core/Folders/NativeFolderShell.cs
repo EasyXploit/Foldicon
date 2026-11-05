@@ -21,8 +21,12 @@ public sealed class NativeFolderShell : IFolderShell
                 IconIndex = iconIndex,
             };
 
-            // Raises the error of the shell, such as a denied access
-            Marshal.ThrowExceptionForHR(Shell32.SHGetSetFolderCustomSettings(ref settings, folder, Shell32.FcsForceWrite));
+            // Raises every error of the shell, such as a denied access, as the one type the callers expect
+            var result = Shell32.SHGetSetFolderCustomSettings(ref settings, folder, Shell32.FcsForceWrite);
+            if (result < 0)
+            {
+                throw new IOException($"The shell refused the icon of {folder}.", result);
+            }
         }
         finally
         {

@@ -10,6 +10,9 @@ public static class FolderIconCopyName
     private const string Prefix = ".foldicon-";
     private const string Extension = ".ico";
 
+    // Compares two names as Windows does, since a sync client may change their case
+    public static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
+
     // Pattern that finds the copies of a folder
     public const string SearchPattern = Prefix + "*" + Extension;
 

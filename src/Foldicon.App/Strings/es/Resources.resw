@@ -29,7 +29,7 @@
     <value>Todos</value>
   </data>
   <data name="FluentTabText" xml:space="preserve">
-    <value>Fluent / Windows 11</value>
+    <value>Fluent</value>
   </data>
   <data name="MoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Más opciones</value>
@@ -77,7 +77,7 @@
     <value>No se han podido leer los iconos de Windows.</value>
   </data>
   <data name="NoFolderMessage" xml:space="preserve">
-    <value>Abre Foldicon desde el menú contextual de una carpeta: Cambiar icono</value>
+    <value>Elige una carpeta para cambiar su icono, o haz clic derecho sobre ella en el Explorador y elige Cambiar icono.</value>
   </data>
   <data name="FolderNotFoundMessage" xml:space="preserve">
     <value>La carpeta no existe.</value>
@@ -93,5 +93,14 @@
   </data>
   <data name="TabsForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Pestañas siguientes</value>
+  </data>
+  <data name="ChooseFolderButton.Content" xml:space="preserve">
+    <value>Elegir carpeta…</value>
+  </data>
+  <data name="RepairAtStartupItem.Text" xml:space="preserve">
+    <value>Reparar iconos al iniciar</value>
+  </data>
+  <data name="RepairNoticeMessage" xml:space="preserve">
+    <value>Cada vez que se inicia, Foldicon busca en tu carpeta de usuario las carpetas con un icono Fluent y repara las que haya cambiado un cliente de sincronización. Puedes desactivarlo en Más opciones.</value>
   </data>
 </root>

@@ -42,6 +42,32 @@ namespace
         return folder;
     }
 
+    // Translations of the title; a new one adds its string to the resources and its line here
+    struct Translation
+    {
+        WORD language;
+        UINT title;
+    };
+
+    constexpr Translation Translations[]{
+        {LANG_SPANISH, IDS_CHANGE_ICON_SPANISH},
+    };
+
+    // Returns the title for the language of the interface and any of its variants, and the English one otherwise
+    UINT TitleForUserLanguage()
+    {
+        auto const language = PRIMARYLANGID(GetUserDefaultUILanguage());
+        for (auto const& translation : Translations)
+        {
+            if (translation.language == language)
+            {
+                return translation.title;
+            }
+        }
+
+        return IDS_CHANGE_ICON_ENGLISH;
+    }
+
     // Returns the path of Foldicon.exe, which lives next to this DLL in the package
     std::wstring AppExecutable()
     {
@@ -53,11 +79,9 @@ namespace Foldicon
 {
     IFACEMETHODIMP ExplorerCommand::GetTitle(IShellItemArray*, LPWSTR* name)
     {
-        // Reads the string in Spanish for any variant of that language of the interface, and in English otherwise
-        auto const spanish = PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_SPANISH;
         wchar_t const* text = nullptr;
         auto const length = LoadStringW(ThisModule(),
-            spanish ? IDS_CHANGE_ICON_SPANISH : IDS_CHANGE_ICON_ENGLISH,
+            TitleForUserLanguage(),
             reinterpret_cast<LPWSTR>(&text), 0);
         if (length <= 0)
         {

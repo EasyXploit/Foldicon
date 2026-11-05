@@ -15,8 +15,9 @@ if ($null -eq $certificate) {
     throw 'There is no development certificate; run scripts\New-DevCertificate.ps1 first.'
 }
 
-# Signs the package with SHA-256 and the certificate of the store, without exporting its key
-& (Find-SdkTool 'signtool.exe') sign /fd SHA256 /sha1 $certificate.Thumbprint /s My $Package
+# Signs the package with SHA-256 and the certificate of the store, without exporting its key; the timestamp keeps the
+# signature valid after the certificate expires
+& (Find-SdkTool 'signtool.exe') sign /fd SHA256 /sha1 $certificate.Thumbprint /s My /tr $TimestampServer /td SHA256 $Package
 if ($LASTEXITCODE -ne 0) {
     throw "signtool failed with code $LASTEXITCODE."
 }
